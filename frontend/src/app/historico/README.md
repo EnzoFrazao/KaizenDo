@@ -10,7 +10,7 @@ historico/
   _components/HistoricoView.tsx   filtros + tabela
 ```
 
-## Dados (de `@/lib/api`)
+## Dados (de `@/lib/dados`)
 
 - `historico(filtros)` · leituras filtradas, mais recentes primeiro. Filtros: `nome`, `turno`, `funcao`, `status`, `trecho`, `dia` (tipo `FiltrosHistorico` em `@/lib/tipos`)
 - `listarTrechos()` · opções do filtro de trecho

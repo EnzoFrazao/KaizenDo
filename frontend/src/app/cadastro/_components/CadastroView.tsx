@@ -4,7 +4,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Card } from "@/components/Card";
-import { listarDispositivos, listarPessoas, vincularDispositivo } from "@/lib/api";
+import { listarDispositivos, listarPessoas, vincularDispositivo } from "@/lib/dados";
 import { ROTULO_FUNCAO } from "@/lib/rotulos";
 import type { Dispositivo, Pessoa } from "@/lib/tipos";
 

@@ -5,7 +5,7 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/Card";
 import { StatusBadge } from "@/components/StatusBadge";
-import { listarAlertas, listarTrechos, posicoesAtuais } from "@/lib/api";
+import { listarAlertas, listarTrechos, posicoesAtuais } from "@/lib/dados";
 import { ROTULO_ALERTA } from "@/lib/rotulos";
 import type { Alerta, PosicaoAtual, StatusTrabalho, Trecho } from "@/lib/tipos";
 

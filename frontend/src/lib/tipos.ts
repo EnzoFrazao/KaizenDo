@@ -1,5 +1,4 @@
 // Tipos compartilhados por todas as telas.
-// Espelham o contrato da API descrito em docs/arquitetura.md.
 // Quem mudar algo aqui avisa o time: todas as páginas dependem destes tipos.
 
 export type Funcao = "maquinista" | "manobrista";
@@ -55,13 +54,13 @@ export interface Dispositivo {
   id: string; // ex.: "ESP32-0A1B"
   mac: string;
   bateriaPct: number;
-  /** ISO 8601 do último pacote recebido pelo Raspberry Pi. */
+  /** ISO 8601 do último sinal recebido. */
   ultimoSinal: string;
   firmware: string;
   pessoaId: string | null;
 }
 
-/** Uma leitura recebida pelo Raspberry Pi e já enriquecida pelo backend. */
+/** Uma leitura de posição de uma pessoa. */
 export interface Leitura {
   dispositivoId: string;
   pessoaId: string;

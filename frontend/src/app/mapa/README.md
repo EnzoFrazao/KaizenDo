@@ -13,7 +13,7 @@ mapa/
 
 O Leaflet não roda no servidor; por isso `MapaView` importa `MapaLeaflet` com `dynamic(..., { ssr: false })`. Mantenha assim.
 
-## Dados (de `@/lib/api`)
+## Dados (de `@/lib/dados`)
 
 - `posicoesAtuais()` · um ponto por pessoa (lat, lon, status, velocidade, bateria)
 - `listarTrechos()` · centro de cada trecho e se é área de risco
@@ -31,4 +31,4 @@ Mapa OpenStreetMap, círculos dos trechos (viradores em vermelho), pontos colori
 - [ ] Rastro dos últimos minutos ao clicar numa pessoa (usar `historico({ nome, dia })`)
 - [ ] Imagem do mapa oficial do TFPM como camada (`docs/slides/09-mapa-tfpm-a.png`)
 
-Obs.: as coordenadas dos dados fictícios são inventadas. Quando tivermos as reais, só `dados-mock.ts` muda.
+Obs.: as coordenadas dos dados fictícios são inventadas. São só ilustrativas.

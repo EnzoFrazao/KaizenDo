@@ -1,4 +1,4 @@
-// Dados FICTÍCIOS para desenvolver as telas antes do backend existir.
+// Dados ILUSTRATIVOS para o protótipo visual.
 // Coordenadas aproximadas da região do TFPM, só para o mapa ter onde desenhar.
 // Tudo é gerado com semente fixa, para servidor e navegador produzirem os mesmos dados.
 

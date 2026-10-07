@@ -6,7 +6,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/Card";
-import { posicoesAtuais } from "@/lib/api";
+import { posicoesAtuais } from "@/lib/dados";
 import { COR_STATUS_MAPA, ROTULO_FUNCAO, ROTULO_STATUS } from "@/lib/rotulos";
 import type { Funcao, PosicaoAtual, StatusTrabalho } from "@/lib/tipos";
 
@@ -23,7 +23,6 @@ export function MapaView() {
   const [status, setStatus] = useState<StatusTrabalho | "">("");
   const [busca, setBusca] = useState("");
 
-  // TODO: quando houver backend, trocar o polling por WebSocket/SSE.
   useEffect(() => {
     const atualizar = () => posicoesAtuais().then(setPosicoes);
     atualizar();

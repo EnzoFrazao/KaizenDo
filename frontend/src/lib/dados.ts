@@ -1,7 +1,5 @@
-// Camada de acesso a dados. HOJE devolve dados fictícios de dados-mock.ts.
-// Quando o backend existir, só este arquivo muda (troca por fetch na API);
-// as páginas continuam chamando as mesmas funções.
-// Contrato da API: docs/arquitetura.md
+// Funções de dados usadas pelas telas. Devolvem dados ILUSTRATIVOS de dados-mock.ts.
+// O protótipo é só visual: as telas sempre pegam dados por aqui, nunca direto do mock.
 
 import { ALERTAS, DISPOSITIVOS, LEITURAS, PESSOAS, TRECHOS } from "./dados-mock";
 import type {
@@ -16,22 +14,19 @@ import type {
 
 const atraso = <T,>(valor: T) => new Promise<T>((r) => setTimeout(() => r(valor), 150));
 
-/** GET /api/trechos */
 export async function listarTrechos(): Promise<Trecho[]> {
   return atraso(TRECHOS);
 }
 
-/** GET /api/pessoas */
 export async function listarPessoas(): Promise<Pessoa[]> {
   return atraso(PESSOAS);
 }
 
-/** GET /api/dispositivos */
 export async function listarDispositivos(): Promise<Dispositivo[]> {
   return atraso(DISPOSITIVOS);
 }
 
-/** GET /api/posicoes/atual — última leitura de cada pessoa com dispositivo. */
+/** Última leitura de cada pessoa com dispositivo. */
 export async function posicoesAtuais(): Promise<PosicaoAtual[]> {
   const ultima = new Map<string, Leitura>();
   for (const l of LEITURAS) ultima.set(l.pessoaId, l);
@@ -44,7 +39,6 @@ export async function posicoesAtuais(): Promise<PosicaoAtual[]> {
   return atraso(posicoes);
 }
 
-/** GET /api/historico?nome=&turno=&funcao=&status=&trecho=&dia= */
 export async function historico(filtros: FiltrosHistorico = {}): Promise<(Leitura & { pessoa: Pessoa })[]> {
   const nome = filtros.nome?.toLowerCase().trim();
   const resultado = LEITURAS.flatMap((l) => {
@@ -60,12 +54,11 @@ export async function historico(filtros: FiltrosHistorico = {}): Promise<(Leitur
   return atraso(resultado.reverse());
 }
 
-/** GET /api/alertas?ativos=true */
 export async function listarAlertas(somenteAtivos = false): Promise<Alerta[]> {
   return atraso(somenteAtivos ? ALERTAS.filter((a) => a.fim === null) : ALERTAS);
 }
 
-/** PUT /api/vinculos — vincula (ou desvincula, com dispositivoId null) uma pessoa a um ESP32. */
+/** Vincula (ou desvincula, com dispositivoId null) uma pessoa a um ESP32. */
 export async function vincularDispositivo(pessoaId: string, dispositivoId: string | null): Promise<void> {
   const pessoa = PESSOAS.find((p) => p.id === pessoaId);
   if (!pessoa) throw new Error("Pessoa não encontrada");
@@ -81,14 +74,12 @@ export async function vincularDispositivo(pessoaId: string, dispositivoId: strin
   return atraso(undefined);
 }
 
-/** POST /api/pessoas */
 export async function cadastrarPessoa(dados: Omit<Pessoa, "id" | "ativo">): Promise<Pessoa> {
   const pessoa: Pessoa = { ...dados, id: `P${String(PESSOAS.length + 1).padStart(3, "0")}`, ativo: true };
   PESSOAS.push(pessoa);
   return atraso(pessoa);
 }
 
-/** POST /api/dispositivos */
 export async function cadastrarDispositivo(id: string, mac: string): Promise<Dispositivo> {
   const d: Dispositivo = { id, mac, bateriaPct: 100, ultimoSinal: new Date().toISOString(), firmware: "0.1.0", pessoaId: null };
   DISPOSITIVOS.push(d);

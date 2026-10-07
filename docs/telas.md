@@ -1,15 +1,15 @@
 # GUARÁ · Especificação das telas
 
-São 4 telas, uma por membro da equipe. Todas já existem em [`web/`](../web/) com uma **versão inicial funcionando com dados fictícios**, para ninguém começar do zero. Cada pessoa evolui a sua a partir do mockup (quando houver) e desta especificação.
+São 4 telas, uma por membro da equipe. O protótipo é **só visual, com dados ilustrativos**. Todas já existem em [`frontend/`](../frontend/) com uma versão inicial, para ninguém começar do zero. Cada pessoa evolui a sua a partir do mockup (quando houver) e desta especificação.
 
 | Tela | Rota | Pasta | Responsável |
 |---|---|---|---|
-| Dashboard de monitoramento | `/dashboard` | [`web/src/app/dashboard/`](../web/src/app/dashboard/) | _a definir_ |
-| Mapa ao vivo | `/mapa` | [`web/src/app/mapa/`](../web/src/app/mapa/) | _a definir_ |
-| Histórico | `/historico` | [`web/src/app/historico/`](../web/src/app/historico/) | _a definir_ |
-| Cadastro (pessoa ↔ ESP32) | `/cadastro` | [`web/src/app/cadastro/`](../web/src/app/cadastro/) | _a definir_ |
+| Dashboard de monitoramento | `/dashboard` | [`frontend/src/app/dashboard/`](../frontend/src/app/dashboard/) | _a definir_ |
+| Mapa ao vivo | `/mapa` | [`frontend/src/app/mapa/`](../frontend/src/app/mapa/) | _a definir_ |
+| Histórico | `/historico` | [`frontend/src/app/historico/`](../frontend/src/app/historico/) | _a definir_ |
+| Cadastro (pessoa ↔ ESP32) | `/cadastro` | [`frontend/src/app/cadastro/`](../frontend/src/app/cadastro/) | _a definir_ |
 
-Cada pasta tem um `README.md` com o que a tela precisa ter, as funções de dados a usar e o que falta fazer. Como trabalhar em equipe está em [`web/README.md`](../web/README.md).
+Cada pasta tem um `README.md` com o que a tela precisa ter, as funções de dados a usar e o que falta fazer. Como trabalhar em equipe está em [`frontend/README.md`](../frontend/README.md).
 
 ## Quem usa
 
@@ -42,7 +42,7 @@ Mapa do pátio com cada pessoa como um ponto colorido pelo status.
 - **Ao clicar:** nome, matrícula, função, status, trecho, velocidade, bateria e horário da última leitura.
 - **Trechos:** desenhados no mapa; área de risco (viradores) em vermelho.
 - **Legenda** de cores e contador "N pessoas no mapa".
-- **Atualização:** a cada 5 s (depois WebSocket).
+- **Atualização:** a cada 5 s.
 - Evolução: rastro dos últimos minutos ao clicar numa pessoa; imagem do mapa oficial do TFPM como camada.
 
 ## 3. Histórico
@@ -74,8 +74,8 @@ Vincular cada pessoa ao ESP32 que ela carrega. Sem isso o sistema não sabe de q
 | Em pausa | cinza | `slate` |
 | Sem sinal | vermelho | `red` |
 
-- Cores e rótulos ficam em [`web/src/lib/rotulos.ts`](../web/src/lib/rotulos.ts). **Não repita cores na página**, importe de lá.
-- Componentes comuns em `web/src/components/`: `PageHeader`, `Card`, `StatusBadge`, `Sidebar`.
+- Cores e rótulos ficam em [`frontend/src/lib/rotulos.ts`](../frontend/src/lib/rotulos.ts). **Não repita cores na página**, importe de lá.
+- Componentes comuns em `frontend/src/components/`: `PageHeader`, `Card`, `StatusBadge`, `Sidebar`.
 - Textos em português; horários no formato 24 h; ids técnicos (P001, ESP32-0A1B) em fonte monoespaçada.
 
 ## Sobre o mockup

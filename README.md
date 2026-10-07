@@ -16,33 +16,31 @@ Cada pessoa leva um **ESP32** (GPS + rádio) e um **Raspberry Pi** no pátio rec
 |---|---|
 | [docs/problema.md](docs/problema.md) | Contexto completo: terminal, operação, ficha oficial, descobertas da visita de campo, glossário, perguntas abertas e hipóteses |
 | [docs/solucao.md](docs/solucao.md) | Solução explicada passo a passo, opções, protótipo, pitch e o módulo de segurança |
-| [docs/arquitetura.md](docs/arquitetura.md) | ESP32 → Raspberry → API → telas: pacote de rádio, API, modelo de dados, regras de status e alertas |
 | [docs/telas.md](docs/telas.md) | Especificação das 4 telas e divisão por membro da equipe |
 | [docs/slides/](docs/slides/) | Fotos dos slides da apresentação e do mapa oficial do terminal |
 
 ## Estrutura do repositório
 
+O protótipo é **só visual, com dados ilustrativos**. Não há conexão com ESP32 nem com Raspberry.
+
 ```
-docs/                 problema, solução, arquitetura, telas, slides
-web/                  telas (Next.js), uma pasta por tela  → veja web/README.md
-  src/app/dashboard/    Dashboard de monitoramento
-  src/app/mapa/         Mapa ao vivo
-  src/app/historico/    Histórico com filtros
-  src/app/cadastro/     Cadastro pessoa ↔ ESP32
-firmware/esp32/       transmissor (GPS + LoRa)
-receptor/raspberry/   receptor, envio para a API e relé de segurança
-api/                  backend (FastAPI + PostgreSQL/PostGIS)
+docs/                    problema, solução, especificação das telas, slides
+frontend/                telas (Next.js), uma pasta por membro da equipe → veja frontend/README.md
+  src/app/dashboard/       Dashboard de monitoramento
+  src/app/mapa/            Mapa ao vivo
+  src/app/historico/       Histórico com filtros
+  src/app/cadastro/        Cadastro pessoa ↔ ESP32
 ```
 
 ## Rodar as telas
 
 ```bash
-cd web
+cd frontend
 npm install
 npm run dev
 ```
 
-Abra http://localhost:3000. As telas usam dados fictícios até o backend existir.
+Abra http://localhost:3000.
 
 ## Time
 

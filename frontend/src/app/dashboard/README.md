@@ -11,7 +11,7 @@ dashboard/
   _components/...             crie aqui os componentes que quiser (gráficos, cartões)
 ```
 
-## Dados (de `@/lib/api`)
+## Dados (de `@/lib/dados`)
 
 - `posicoesAtuais()` · status, função e trecho de cada pessoa agora
 - `listarAlertas(true)` · alertas ativos

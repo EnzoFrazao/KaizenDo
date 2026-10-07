@@ -5,7 +5,7 @@
 import { useEffect, useState } from "react";
 import { Card } from "@/components/Card";
 import { StatusBadge } from "@/components/StatusBadge";
-import { historico } from "@/lib/api";
+import { historico } from "@/lib/dados";
 import { DIA_BASE, TRECHOS } from "@/lib/dados-mock";
 import { ROTULO_FUNCAO, ROTULO_STATUS, ROTULO_TURNO } from "@/lib/rotulos";
 import type { FiltrosHistorico, Leitura, Pessoa } from "@/lib/tipos";

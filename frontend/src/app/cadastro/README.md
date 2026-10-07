@@ -10,7 +10,7 @@ cadastro/
   _components/CadastroView.tsx   lista, vínculo e (a fazer) formulários
 ```
 
-## Dados (de `@/lib/api`)
+## Dados (de `@/lib/dados`)
 
 - `listarPessoas()`, `listarDispositivos()`
 - `vincularDispositivo(pessoaId, dispositivoId)` · passe `null` para desvincular. Dá erro se o ESP32 já estiver com outra pessoa
