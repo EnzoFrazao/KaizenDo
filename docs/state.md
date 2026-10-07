@@ -5,9 +5,9 @@ Protótipo visual do GUARÁ (Next.js em `frontend/`), quatro telas com dados ilu
 VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
 
 ## Pendências
-- [ ] Deploy Netlify: `frontend/netlify.toml` já está na `main`; falta confirmar que `/`,
-  `/mapa`, `/dashboard` respondem 200 em `https://guaramonitoramento.netlify.app`. Se o build
-  falhar, suspeitar de suporte do adaptador ao Next 16.4 (`cacheComponents`, `partialPrefetching`).
+- [ ] Deploy Netlify no site novo `https://guaramonitora.netlify.app`: confirmar que `/`, `/mapa`
+  e `/dashboard` respondem 200 e mostram as abas embaixo no celular. Se o build falhar, suspeitar
+  de suporte do adaptador ao Next 16.4 (`cacheComponents`, `partialPrefetching`).
 - [ ] Evoluções das telas listadas em [`docs/telas.md`](telas.md) (responsáveis por tela).
 - [ ] Não há testes automatizados; só `npm run lint` e `npm run build`.
 - [ ] Coordenadas dos trechos X divergem do diagrama oficial: aguardam pontos levantados
@@ -34,6 +34,11 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
 - O status "aguardando programação" é o antigo "livre": é quem está disponível para acionar.
 
 ## Última sessão (2026-10-07, Claude)
+- Conta do Netlify trocada: o site oficial passou a ser `guaramonitora` e deu 404 em tudo, porque
+  o `netlify.toml` estava em `frontend/` e o site novo não tem base directory no painel. Movido
+  para a raiz com `base = "frontend"`; detalhe em `specs/system.md` (Deploy).
+- O site antigo `guaramonitoramento` nunca publicou o build da junção com o mobile (`c55407e`):
+  continuou no build do PR #1. Abandonado junto com a conta antiga.
 - Juntadas na `main` as duas linhas paralelas: `mapa-pessoas` (status novos, restaurante do Porto
   Vale, pontos sem sobreposição, popup que fica aberto, já na `main` pelo PR #1) e
   `mobile-qrcode` (versão de celular). Conflitos em 9 arquivos: layout, abas e cartões vieram do

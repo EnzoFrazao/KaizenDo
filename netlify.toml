@@ -1,0 +1,16 @@
+# Deploy no Netlify. Fica na raiz para funcionar sem configurar nada no painel: o Netlify lê
+# este arquivo antes de saber a base directory, e é `base` que manda o build para `frontend/`.
+# Sem isso, um site novo builda na raiz (que não tem package.json) e toda rota dá 404.
+[build]
+  base = "frontend"
+  # `command` roda e `publish` é resolvido a partir de `base`.
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Sem o adaptador o Netlify serve o .next como arquivos estáticos e toda rota dá 404.
+# O primeiro site mostrava "Runtime: Not set", então o plugin é declarado explicitamente.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
