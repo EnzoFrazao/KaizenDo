@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Sidebar } from "@/components/Sidebar";
 import "./globals.css";
 
@@ -13,6 +14,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full bg-zinc-950 text-zinc-100">
         <Sidebar />
         <main className="flex-1 overflow-x-hidden p-8">{children}</main>
+        {/* VLibras (tradução para Libras do governo federal). O loader se inicializa
+            sozinho: cria o botão flutuante à direita, fora da árvore do React, e só
+            baixa o app do avatar quando alguém clica. */}
+        <Script src="https://vlibras.gov.br/app/vlibras-plugin.js" strategy="afterInteractive" />
       </body>
     </html>
   );
