@@ -25,6 +25,18 @@ ESP32. Não há permissões: o admin é fixo (`adminAtual()`). O conteúdo de ca
 - Tema escuro único; cores e rótulos de status vêm de `lib/rotulos.ts`.
 - Toda tela oferece tradução para Libras pelo widget VLibras: botão flutuante à direita que abre o
   avatar e traduz o texto clicado.
+- Responsivo para celular (o protótipo é aberto por QR code na apresentação):
+  - abaixo de 1024 px (`lg`) a barra lateral dá lugar a um topo com a marca e a uma barra inferior
+    com as 4 telas, respeitando as áreas seguras do iPhone (`viewport-fit=cover`);
+  - abaixo de 768 px (`md`) as tabelas de Dashboard, Histórico e Cadastro viram cartões; acima
+    disso a tabela volta dentro de rolagem horizontal própria;
+  - os filtros de Mapa e Histórico recolhem atrás de um botão "Filtros" (com contagem dos ativos)
+    abaixo de 1024 px;
+  - nenhuma rolagem horizontal da página a partir de 360 px; campos com 16 px abaixo de 1024 px
+    (evita zoom do iOS) e alvos de toque de 44 px em `pointer: coarse`;
+  - interações que eram só hover (rosca de status) também respondem a toque; o foco automático do
+    wizard só acontece com mouse, para não abrir o teclado do celular sozinho;
+  - o zoom do usuário continua liberado.
 
 ## Invariantes e regras de negócio
 
@@ -36,12 +48,13 @@ ESP32. Não há permissões: o admin é fixo (`adminAtual()`). O conteúdo de ca
 
 As quatro telas têm versão inicial; as evoluções marcadas em `docs/telas.md` seguem pendentes. O
 VLibras está implementado e foi conferido manualmente em 2026-10-07: botão presente, avatar Ícaro
-carregado e tradução iniciada em `/mapa`.
+carregado e tradução iniciada em `/mapa`. O layout responsivo foi conferido manualmente em
+2026-10-07 nas quatro rotas em 360×740, 375×812, 768×1024 e desktop (ver `testing.md`).
 
 ## Evidências de implementação e teste
 
-- Implementação: [`frontend/src/app/layout.tsx`](../../frontend/src/app/layout.tsx) e
-  `frontend/src/app/*/page.tsx`.
+- Implementação: [`frontend/src/app/layout.tsx`](../../frontend/src/app/layout.tsx),
+  `frontend/src/app/*/page.tsx` e, para o celular, `frontend/src/components/{NavMobile,PainelFiltros}.tsx`.
 - Gates: `npm run lint` e `npm run build` em `frontend/` (ver [`testing.md`](../testing.md)).
 
 ## Relações

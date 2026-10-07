@@ -4,13 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { adminAtual } from "@/lib/dados";
-
-const ITENS = [
-  { href: "/dashboard", rotulo: "Dashboard" },
-  { href: "/mapa", rotulo: "Mapa ao vivo" },
-  { href: "/historico", rotulo: "Histórico" },
-  { href: "/cadastro", rotulo: "Cadastro" },
-];
+import { ITENS } from "./navegacao";
 
 export function Sidebar() {
   const caminho = usePathname();
@@ -18,7 +12,8 @@ export function Sidebar() {
   const admin = adminAtual();
   return (
     // Fica presa na altura da tela para o bloco do admin não ir parar no fim da página.
-    <aside className="sticky top-0 flex h-screen w-56 shrink-0 flex-col border-r border-zinc-800 bg-zinc-950">
+    // Abaixo de lg some: o celular navega pelas abas de NavMobile.
+    <aside className="sticky top-0 hidden h-screen w-56 lg:flex shrink-0 flex-col border-r border-zinc-800 bg-zinc-950">
       {/* Só a marca (o guará), com "GUARÁ" em texto ao lado. O lockup completo
           (public/guara-logo-completo.png) tem o nome em tinta escura, que sumiria
           no tema preto, e a legenda ficaria ilegível nos 224 px da barra. */}

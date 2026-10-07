@@ -75,20 +75,20 @@ export function DashboardView() {
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <Card titulo="Pessoas com dispositivo ativo">
-          <p className="text-3xl font-semibold tabular-nums">{posicoes.length}</p>
+          <p className="text-2xl font-semibold tabular-nums sm:text-3xl">{posicoes.length}</p>
         </Card>
         <Card titulo="Alertas ativos">
-          <p className={`text-3xl font-semibold tabular-nums ${alertas.length > 0 ? "text-red-400" : "text-zinc-100"}`}>
+          <p className={`text-2xl font-semibold tabular-nums sm:text-3xl ${alertas.length > 0 ? "text-red-400" : "text-zinc-100"}`}>
             {alertas.length}
           </p>
         </Card>
         <Card titulo="Sem sinal">
-          <p className="text-3xl font-semibold tabular-nums">{porStatus("sem_sinal")}</p>
+          <p className="text-2xl font-semibold tabular-nums sm:text-3xl">{porStatus("sem_sinal")}</p>
         </Card>
         <Card titulo="Bateria abaixo de 20%">
-          <p className="text-3xl font-semibold tabular-nums">{bateriaBaixa}</p>
+          <p className="text-2xl font-semibold tabular-nums sm:text-3xl">{bateriaBaixa}</p>
         </Card>
       </div>
 
@@ -96,14 +96,14 @@ export function DashboardView() {
       <Card
         titulo={`Trabalhando agora · ${trabalhando.length} de ${emCampo.length}`}
         acao={
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
             <input
-              className="campo w-44"
+              className="campo min-w-0 basis-full sm:w-44 sm:basis-auto"
               placeholder="Nome ou matrícula"
               value={busca}
               onChange={(e) => setBusca(e.target.value)}
             />
-            <select className="campo" value={funcao} onChange={(e) => setFuncao(e.target.value as Funcao | "")}>
+            <select className="campo flex-1 sm:flex-none" value={funcao} onChange={(e) => setFuncao(e.target.value as Funcao | "")}>
               <option value="">Todas as funções</option>
               {Object.entries(ROTULO_FUNCAO).map(([v, r]) => (
                 <option key={v} value={v}>{r}</option>
@@ -112,13 +112,14 @@ export function DashboardView() {
           </div>
         }
       >
-        {/* Os status viram botões de filtro: clicar alterna, clicar de novo limpa. */}
-        <div className="mb-3 flex flex-wrap gap-2">
+        {/* Os status viram botões de filtro: clicar alterna, clicar de novo limpa.
+            No celular a fileira rola para o lado em vez de quebrar em três linhas. */}
+        <div className="sem-barra -mx-3 mb-3 flex gap-2 overflow-x-auto px-3 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
           <button
             type="button"
             onClick={() => setStatus("")}
             aria-pressed={status === ""}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+            className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
               status === "" ? "bg-zinc-100 text-zinc-900" : "bg-zinc-800 text-zinc-400 hover:text-zinc-100"
             }`}
           >
@@ -133,7 +134,7 @@ export function DashboardView() {
                 type="button"
                 onClick={() => setStatus(ativo ? "" : s)}
                 aria-pressed={ativo}
-                className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                   ativo ? "bg-zinc-100 text-zinc-900" : "bg-zinc-800 text-zinc-400 hover:text-zinc-100"
                 }`}
               >
@@ -147,7 +148,28 @@ export function DashboardView() {
           })}
         </div>
 
-        <div className="max-h-80 overflow-y-auto">
+        {/* Celular: um cartão por pessoa. Sem altura máxima aqui, para não criar uma
+            rolagem dentro da rolagem da página. */}
+        <ul className="grid gap-2 md:hidden">
+          {trabalhando.map((p) => (
+            <li key={p.pessoaId} className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2.5 text-sm">
+              <div className="flex items-start justify-between gap-2">
+                <span className="font-medium text-zinc-100">{p.pessoa.nome}</span>
+                <StatusBadge status={p.status} />
+              </div>
+              <p className="mt-1 text-xs text-zinc-400">
+                {ROTULO_FUNCAO[p.pessoa.funcao]} · Turno {p.pessoa.turno} ·{" "}
+                <span className="font-mono text-zinc-500">{p.pessoa.matricula}</span>
+              </p>
+              <p className="text-xs text-zinc-500">
+                {nomePessoa.get(p.trecho) ?? p.trecho} · <span className="tabular-nums">{p.velocidadeKmh} km/h</span>
+              </p>
+            </li>
+          ))}
+          {trabalhando.length === 0 && <li className="py-6 text-center text-zinc-500">Ninguém com esses filtros.</li>}
+        </ul>
+
+        <div className="hidden max-h-80 overflow-auto md:block">
           <table className="w-full text-left text-sm">
             <thead className="sticky top-0 bg-zinc-900 text-xs uppercase tracking-wide text-zinc-500">
               <tr>

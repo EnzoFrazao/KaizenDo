@@ -4,7 +4,7 @@
 // @/lib/dados, as mesmas que o cadastro usa no fim. Aqui elas só são chamadas mais cedo,
 // para o passo errado não deixar avançar.
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Card } from "@/components/Card";
 import {
   cadastrarDispositivo,
@@ -42,6 +42,13 @@ export function NovoCadastroWizard({
   const [escolhido, setEscolhido] = useState("");
   const [novoId, setNovoId] = useState("");
   const [novoMac, setNovoMac] = useState("");
+
+  // Foco automático no primeiro campo só com mouse. No celular, focar sozinho abre o
+  // teclado assim que a pessoa toca na aba Cadastro, cobrindo metade da tela.
+  // Estável (useCallback) para o React só chamar ao montar o campo, e não a cada render.
+  const focarComMouse = useCallback((campo: HTMLInputElement | null) => {
+    if (campo && window.matchMedia("(pointer: fine)").matches) campo.focus();
+  }, []);
 
   function limpar() {
     setPasso(0);
@@ -118,13 +125,13 @@ export function NovoCadastroWizard({
         )
       }
     >
-      {/* Trilha dos passos */}
-      <ol className="mb-5 flex flex-wrap items-center gap-x-2 gap-y-2">
+      {/* Trilha dos passos. No celular só o passo atual mostra o nome, para caber numa linha. */}
+      <ol className="mb-5 flex items-center gap-x-2 gap-y-2 sm:flex-wrap">
         {PASSOS.map((rotulo, i) => {
           const feito = i < passo;
           const atual = i === passo;
           return (
-            <li key={rotulo} className="flex items-center gap-2">
+            <li key={rotulo} className="flex shrink-0 items-center gap-2">
               <span
                 aria-current={atual ? "step" : undefined}
                 className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${
@@ -137,8 +144,12 @@ export function NovoCadastroWizard({
               >
                 {feito ? "✓" : i + 1}
               </span>
-              <span className={`text-sm ${atual ? "font-medium text-zinc-100" : "text-zinc-500"}`}>{rotulo}</span>
-              {i < PASSOS.length - 1 && <span className="mx-1 h-px w-6 bg-zinc-800" />}
+              <span
+                className={`text-sm ${atual ? "font-medium text-zinc-100" : "hidden text-zinc-500 sm:inline"}`}
+              >
+                {rotulo}
+              </span>
+              {i < PASSOS.length - 1 && <span className="mx-0.5 h-px w-4 bg-zinc-800 sm:mx-1 sm:w-6" />}
             </li>
           );
         })}
@@ -148,7 +159,7 @@ export function NovoCadastroWizard({
         <div className="grid max-w-md gap-3">
           <label className="grid gap-1 text-sm">
             <span className="text-zinc-400">Nome completo</span>
-            <input className="campo" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ana Ribeiro" autoFocus />
+            <input className="campo" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ana Ribeiro" ref={focarComMouse} />
           </label>
           <label className="grid gap-1 text-sm">
             <span className="text-zinc-400">Matrícula</span>
@@ -174,7 +185,7 @@ export function NovoCadastroWizard({
                   type="button"
                   onClick={() => setFuncao(f)}
                   aria-pressed={funcao === f}
-                  className={`rounded-md border px-3 py-2 text-sm transition-colors ${
+                  className={`min-h-11 rounded-md border px-3 py-2 text-sm transition-colors ${
                     funcao === f
                       ? "border-zinc-100 bg-zinc-100 font-medium text-zinc-900"
                       : "border-zinc-800 bg-zinc-950 text-zinc-300 hover:border-zinc-700"
@@ -217,7 +228,7 @@ export function NovoCadastroWizard({
                 }}
                 aria-pressed={modo === valor}
                 disabled={valor === "livre" && livres.length === 0}
-                className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-40 ${
+                className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-40 pointer-coarse:py-2.5 ${
                   modo === valor ? "bg-zinc-100 text-zinc-900" : "bg-zinc-800 text-zinc-400 hover:text-zinc-100"
                 }`}
               >
@@ -234,7 +245,7 @@ export function NovoCadastroWizard({
                     type="button"
                     onClick={() => setEscolhido(d.id)}
                     aria-pressed={escolhido === d.id}
-                    className={`flex w-full items-center gap-3 rounded-md border px-3 py-2 text-left text-sm transition-colors ${
+                    className={`flex min-h-11 w-full items-center gap-3 rounded-md border px-3 py-2 text-left text-sm transition-colors ${
                       escolhido === d.id
                         ? "border-emerald-500/50 bg-emerald-500/10"
                         : "border-zinc-800 bg-zinc-950 hover:border-zinc-700"
@@ -242,7 +253,7 @@ export function NovoCadastroWizard({
                   >
                     <span className="font-mono text-zinc-100">{d.id}</span>
                     <span className="text-xs text-zinc-500">bateria {d.bateriaPct}%</span>
-                    <span className="ml-auto font-mono text-xs text-zinc-600">{d.mac}</span>
+                    <span className="ml-auto hidden font-mono text-xs text-zinc-600 sm:inline">{d.mac}</span>
                   </button>
                 </li>
               ))}
@@ -302,7 +313,7 @@ export function NovoCadastroWizard({
         </p>
       )}
 
-      <div className="mt-5 flex items-center gap-2">
+      <div className="mt-5 flex flex-wrap items-center gap-2">
         <button
           type="button"
           className="botao-secundario"

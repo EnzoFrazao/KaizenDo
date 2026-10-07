@@ -11,7 +11,11 @@ unidade executável é o app Next.js em `frontend/`.
 ## Stack e entrypoints
 
 - Next.js 16 (App Router, Turbopack, `cacheComponents`), React 19, TypeScript, Tailwind 4, Leaflet;
-- `frontend/src/app/layout.tsx`: layout raiz (barra lateral, tema escuro, widget VLibras);
+- `frontend/src/app/layout.tsx`: layout raiz (viewport, barra lateral, navegação de celular, tema
+  escuro, widget VLibras);
+- `frontend/src/components/navegacao.ts`: lista única das telas, lida pela `Sidebar` (≥ 1024 px) e
+  por `TopoMobile`/`AbasMobile` em `NavMobile.tsx` (< 1024 px);
+- `frontend/src/components/PainelFiltros.tsx`: filtros em linha no desktop e recolhíveis no celular;
 - `frontend/src/app/{dashboard,mapa,historico,cadastro}/page.tsx`: as quatro telas;
 - `frontend/src/lib/dados.ts`: única porta de dados das telas (hoje lê `dados-mock.ts`).
 
@@ -31,6 +35,13 @@ de `@/lib/rotulos`. Não há backend, login nem conexão com ESP32 ou Raspberry 
   idempotente: navegar entre telas não duplica o botão.
 
 ## Restrições e lacunas
+
+- Responsividade é só CSS (Tailwind `md`/`lg`): as telas renderizam tabela e cartões juntos e o
+  breakpoint esconde um dos dois. Mudou a coluna de uma tabela, mude o cartão correspondente.
+- O mapa usa `isolate` para conter os z-index do Leaflet (controles chegam a 1000); assim topo e
+  abas do celular ficam por cima com `z-40`.
+- O VLibras guarda no `localStorage` (`@vlibras-widget`) se o painel ficou aberto; reabrir a página
+  com ele aberto não é bug do app.
 
 - Os dois recursos externos (tiles e VLibras) exigem internet; offline, o mapa fica sem fundo e o
   botão de Libras não aparece.

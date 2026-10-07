@@ -12,10 +12,17 @@
   --texto-suave: #a1a1aa;
 }
 
+html {
+  /* Sem isso o Safari do iPhone aumenta a fonte sozinho ao girar a tela. */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   background: var(--fundo);
   color: var(--texto);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Campos e botões. Ficam aqui para as 4 telas não repetirem a mesma receita. */
@@ -69,6 +76,30 @@ body {
 }
 .botao-secundario:disabled {
   opacity: 0.4;
+}
+
+/* Celular e tablet (abaixo de lg). Campo com fonte menor que 16 px faz o iOS dar zoom
+   na página ao focar, e a tela fica deslocada depois. */
+@media (max-width: 1023.98px) {
+  .campo {
+    font-size: 16px;
+  }
+}
+/* Dedo precisa de alvo maior que mouse: 44 px é o mínimo recomendado. */
+@media (pointer: coarse) {
+  .campo,
+  .botao,
+  .botao-secundario {
+    min-height: 44px;
+  }
+}
+
+/* Fileira de chips que rola para o lado no celular sem mostrar barra de rolagem. */
+.sem-barra {
+  scrollbar-width: none;
+}
+.sem-barra::-webkit-scrollbar {
+  display: none;
 }
 
 /* Leaflet: os popups, tooltips e controles vêm claros por padrão. */

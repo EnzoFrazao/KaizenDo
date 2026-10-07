@@ -4,6 +4,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/Card";
+import { PainelFiltros } from "@/components/PainelFiltros";
 import { StatusBadge } from "@/components/StatusBadge";
 import { historico, listarTrechos } from "@/lib/dados";
 import { DIA_BASE } from "@/lib/dados-mock";
@@ -44,8 +45,10 @@ export function HistoricoView() {
   return (
     <div className="grid gap-4">
       <Card titulo="Filtros">
-        <div className="flex flex-wrap gap-3">
-          <input className="campo" placeholder="Nome" onChange={(e) => mudar("nome", e.target.value)} />
+        <PainelFiltros
+          busca={<input className="campo" placeholder="Nome" onChange={(e) => mudar("nome", e.target.value)} />}
+          ativos={[filtros.turno, filtros.funcao, filtros.status, filtros.trecho].filter(Boolean).length}
+        >
           <select className="campo" onChange={(e) => mudar("turno", e.target.value)}>
             <option value="">Todos os turnos</option>
             {Object.entries(ROTULO_TURNO).map(([v, r]) => <option key={v} value={v}>{r}</option>)}
@@ -62,43 +65,71 @@ export function HistoricoView() {
             <option value="">Todos os trechos</option>
             {trechos.map((t) => <option key={t.id} value={t.id}>{t.nome}</option>)}
           </select>
-          <input type="date" className="campo" defaultValue={DIA_BASE} onChange={(e) => mudar("dia", e.target.value)} />
-        </div>
+          <input
+            type="date"
+            className="campo col-span-2 sm:col-span-1"
+            aria-label="Dia"
+            defaultValue={DIA_BASE}
+            onChange={(e) => mudar("dia", e.target.value)}
+          />
+        </PainelFiltros>
       </Card>
 
       <Card titulo={`${linhas.length.toLocaleString("pt-BR")} leituras no filtro`}>
-        <table className="w-full text-left text-sm">
-          <thead className="text-xs uppercase tracking-wide text-zinc-500">
-            <tr>
-              <th className="py-2">Horário</th>
-              <th>Nome</th>
-              <th>Função</th>
-              <th>Turno</th>
-              <th>Trecho</th>
-              <th>Velocidade</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visiveis.map((l) => (
-              <tr key={`${l.pessoaId}-${l.timestamp}`} className="border-t border-zinc-800">
-                <td className="py-2 font-mono text-xs tabular-nums text-zinc-400">{hora(l.timestamp)}</td>
-                <td>{l.pessoa.nome}</td>
-                <td className="text-zinc-400">{ROTULO_FUNCAO[l.pessoa.funcao]}</td>
-                <td className="text-zinc-400">{l.pessoa.turno}</td>
-                <td className="text-zinc-400">{nomeTrecho.get(l.trecho) ?? l.trecho}</td>
-                <td className="tabular-nums text-zinc-400">{l.velocidadeKmh} km/h</td>
-                <td><StatusBadge status={l.status} /></td>
-              </tr>
-            ))}
-            {visiveis.length === 0 && (
+        {/* Celular: uma leitura por cartão. */}
+        <ul className="grid gap-2 md:hidden">
+          {visiveis.map((l) => (
+            <li key={`${l.pessoaId}-${l.timestamp}`} className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2.5 text-sm">
+              <div className="flex items-start justify-between gap-2">
+                <span className="min-w-0">
+                  <span className="mr-2 font-mono text-xs tabular-nums text-zinc-500">{hora(l.timestamp)}</span>
+                  <span className="font-medium text-zinc-100">{l.pessoa.nome}</span>
+                </span>
+                <StatusBadge status={l.status} />
+              </div>
+              <p className="mt-1 text-xs text-zinc-400">
+                {ROTULO_FUNCAO[l.pessoa.funcao]} · Turno {l.pessoa.turno} · {nomeTrecho.get(l.trecho) ?? l.trecho} ·{" "}
+                <span className="tabular-nums">{l.velocidadeKmh} km/h</span>
+              </p>
+            </li>
+          ))}
+          {visiveis.length === 0 && <li className="py-6 text-center text-zinc-500">Nenhuma leitura com esses filtros.</li>}
+        </ul>
+
+        <div className="hidden overflow-x-auto md:block">
+          <table className="w-full text-left text-sm">
+            <thead className="text-xs uppercase tracking-wide text-zinc-500">
               <tr>
-                <td colSpan={7} className="py-6 text-center text-zinc-500">Nenhuma leitura com esses filtros.</td>
+                <th className="py-2">Horário</th>
+                <th>Nome</th>
+                <th>Função</th>
+                <th>Turno</th>
+                <th>Trecho</th>
+                <th>Velocidade</th>
+                <th>Status</th>
               </tr>
-            )}
-          </tbody>
-        </table>
-        <div className="mt-3 flex items-center gap-3 text-sm text-zinc-400">
+            </thead>
+            <tbody>
+              {visiveis.map((l) => (
+                <tr key={`${l.pessoaId}-${l.timestamp}`} className="border-t border-zinc-800">
+                  <td className="py-2 font-mono text-xs tabular-nums text-zinc-400">{hora(l.timestamp)}</td>
+                  <td>{l.pessoa.nome}</td>
+                  <td className="text-zinc-400">{ROTULO_FUNCAO[l.pessoa.funcao]}</td>
+                  <td className="text-zinc-400">{l.pessoa.turno}</td>
+                  <td className="text-zinc-400">{nomeTrecho.get(l.trecho) ?? l.trecho}</td>
+                  <td className="tabular-nums text-zinc-400">{l.velocidadeKmh} km/h</td>
+                  <td><StatusBadge status={l.status} /></td>
+                </tr>
+              ))}
+              {visiveis.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="py-6 text-center text-zinc-500">Nenhuma leitura com esses filtros.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        <div className="mt-3 flex items-center justify-between gap-3 text-sm text-zinc-400 md:justify-start">
           <button className="botao-secundario" disabled={pagina === 0} onClick={() => setPagina((p) => p - 1)}>
             Anterior
           </button>
