@@ -56,8 +56,11 @@ export default function MapaLeaflet({ posicoes }: { posicoes: PosicaoAtual[] }) 
     const m = L.map(elemento.current, { center: CENTRO_TFPM, zoom: 14 });
     L.tileLayer(TILES, { attribution: CREDITO, maxZoom: 19 }).addTo(m);
 
-    // Enquadra o pátio inteiro, em vez de confiar num zoom fixo.
-    m.fitBounds(L.latLngBounds(TRECHOS.map((t) => t.centro)), { padding: [48, 48] });
+    // Enquadra o pátio inteiro, em vez de confiar num zoom fixo. Sem animação: na
+    // primeira pintura não há o que animar, e um fitBounds animado deixa trabalho
+    // agendado para depois, que é justamente o que não queremos num componente que
+    // pode ser desmontado a qualquer momento.
+    m.fitBounds(L.latLngBounds(TRECHOS.map((t) => t.centro)), { padding: [48, 48], animate: false });
 
     // Trechos: círculos provisórios até termos os polígonos reais do pátio.
     for (const t of TRECHOS) {
@@ -85,7 +88,13 @@ export default function MapaLeaflet({ posicoes }: { posicoes: PosicaoAtual[] }) 
   // Redesenha os pontos a cada atualização de posição.
   useEffect(() => {
     const camada = camadaPessoas.current;
-    if (!camada) return;
+    const m = mapa.current;
+    // `map.remove()` faz `delete this._mapPane`, e aí qualquer conta de coordenada
+    // estoura com "Cannot read properties of undefined (reading '_leaflet_pos')".
+    // Como a tela recarrega as posições a cada 5 s e o Fast Refresh remonta o
+    // componente em desenvolvimento, dá para cair aqui com o mapa já destruído:
+    // `getPane` devolve undefined nesse caso, e é o sinal de que não há onde desenhar.
+    if (!camada || !m || !m.getPane("mapPane")) return;
     camada.clearLayers();
     for (const p of posicoes) {
       L.circleMarker([p.lat, p.lon], {
