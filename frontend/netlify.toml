@@ -1,0 +1,10 @@
+# Deploy no Netlify (site guaramonitoramento). O painel usa base directory = frontend,
+# então os caminhos abaixo são relativos a esta pasta.
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+# Sem o adaptador o Netlify serve o .next como arquivos estáticos e toda rota dá 404.
+# O painel mostrava "Runtime: Not set", então o plugin é declarado aqui explicitamente.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
