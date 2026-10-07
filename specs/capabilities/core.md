@@ -31,12 +31,16 @@ ESP32. Não há permissões: o admin é fixo (`adminAtual()`). O conteúdo de ca
 - As telas obtêm dados só por `@/lib/dados`.
 - "Em campo" exclui quem está sem sinal.
 - O widget VLibras aparece uma única vez por página, inclusive após navegação no cliente.
+- No mapa, a área de cobertura usa o menor raio que conecta todas as pessoas visíveis e forma
+  uma área única e translúcida (detalhe em `frontend/src/app/mapa/README.md`).
 
 ## Estado atual e lacunas
 
 As quatro telas têm versão inicial; as evoluções marcadas em `docs/telas.md` seguem pendentes. O
 VLibras está implementado e foi conferido manualmente em 2026-10-07: botão presente, avatar Ícaro
-carregado e tradução iniciada em `/mapa`.
+carregado e tradução iniciada em `/mapa`. A cobertura do mapa foi conferida manualmente em
+2026-10-07 (forma única, raio recalculado com filtro, popups clicáveis, sem erros no console). As
+coordenadas dos trechos divergem do diagrama oficial e seguem como aproximação.
 
 ## Evidências de implementação e teste
 
@@ -46,5 +50,5 @@ carregado e tradução iniciada em `/mapa`.
 
 ## Relações
 
-- Decisão aberta: nenhuma.
+- Decisão aberta: [topologia dos trechos X](../open-decisions.md#topologia-dos-trechos-x-diverge-do-diagrama-oficial-do-pátio).
 - ADR relacionado: nenhum.

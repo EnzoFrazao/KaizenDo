@@ -44,10 +44,40 @@ function popupDaPessoa(p: PosicaoAtual) {
   return raiz;
 }
 
-export default function MapaLeaflet({ posicoes }: { posicoes: PosicaoAtual[] }) {
+// Cobertura ("radar" em volta de cada pessoa). Os círculos são desenhados opacos num pane
+// próprio e o filtro SVG #guara-gosma, aplicado ao grupo inteiro (globals.css), borra e
+// recorta o conjunto: círculos próximos se fundem numa forma única, como uma gosma. A
+// transparência vem depois da fusão, então 50 círculos sobrepostos não escurecem.
+const COR_COBERTURA = "#3b82f6";
+
+/** Filtro da gosma: borra, aplica limiar no alfa (funde), separa a borda e clareia o miolo. */
+function FiltroGosma() {
+  return (
+    <svg aria-hidden="true" width="0" height="0" className="absolute">
+      <filter id="guara-gosma" x="-20%" y="-20%" width="140%" height="140%" colorInterpolationFilters="sRGB">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="borrao" />
+        <feColorMatrix in="borrao" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -9" result="gosma" />
+        <feMorphology in="gosma" operator="erode" radius="2" result="miolo" />
+        <feComposite in="gosma" in2="miolo" operator="out" result="borda" />
+        <feComponentTransfer in="gosma" result="preenchimento">
+          <feFuncA type="linear" slope="0.18" />
+        </feComponentTransfer>
+        <feMerge>
+          <feMergeNode in="preenchimento" />
+          <feMergeNode in="borda" />
+        </feMerge>
+      </filter>
+    </svg>
+  );
+}
+
+export default function MapaLeaflet({ posicoes, raioCoberturaM }: { posicoes: PosicaoAtual[]; raioCoberturaM: number }) {
   const elemento = useRef<HTMLDivElement>(null);
   const mapa = useRef<L.Map | null>(null);
   const camadaPessoas = useRef<L.LayerGroup | null>(null);
+  const camadaGosma = useRef<L.LayerGroup | null>(null);
+  const camadaPulso = useRef<L.LayerGroup | null>(null);
+  const renderers = useRef<{ gosma: L.Renderer; pulso: L.Renderer } | null>(null);
 
   // Cria o mapa uma única vez e o destrói no cleanup.
   useEffect(() => {
@@ -75,6 +105,18 @@ export default function MapaLeaflet({ posicoes }: { posicoes: PosicaoAtual[] }) 
         .addTo(m);
     }
 
+    // Panes da cobertura: acima dos tiles (200) e abaixo dos trechos e pessoas (400), sem
+    // capturar clique, para os popups continuarem funcionando por cima da gosma.
+    for (const [nome, z] of [["radar", "350"], ["radarPulso", "360"]] as const) {
+      const pane = m.createPane(nome);
+      pane.style.zIndex = z;
+      pane.style.pointerEvents = "none";
+    }
+    // Um renderer por pane, criado uma vez: cada um tem o próprio <svg>, e o filtro vale só
+    // para o da gosma. Criar renderer a cada redesenho deixaria um <svg> órfão a cada 5 s.
+    renderers.current = { gosma: L.svg({ pane: "radar" }), pulso: L.svg({ pane: "radarPulso" }) };
+    camadaGosma.current = L.layerGroup().addTo(m);
+    camadaPulso.current = L.layerGroup().addTo(m);
     camadaPessoas.current = L.layerGroup().addTo(m);
     mapa.current = m;
 
@@ -82,6 +124,9 @@ export default function MapaLeaflet({ posicoes }: { posicoes: PosicaoAtual[] }) 
       m.remove();
       mapa.current = null;
       camadaPessoas.current = null;
+      camadaGosma.current = null;
+      camadaPulso.current = null;
+      renderers.current = null;
     };
   }, []);
 
@@ -94,8 +139,36 @@ export default function MapaLeaflet({ posicoes }: { posicoes: PosicaoAtual[] }) 
     // Como a tela recarrega as posições a cada 5 s e o Fast Refresh remonta o
     // componente em desenvolvimento, dá para cair aqui com o mapa já destruído:
     // `getPane` devolve undefined nesse caso, e é o sinal de que não há onde desenhar.
-    if (!camada || !m || !m.getPane("mapPane")) return;
+    const gosma = camadaGosma.current;
+    const pulso = camadaPulso.current;
+    const r = renderers.current;
+    if (!camada || !gosma || !pulso || !r || !m || !m.getPane("mapPane")) return;
     camada.clearLayers();
+    gosma.clearLayers();
+    pulso.clearLayers();
+
+    if (raioCoberturaM > 0) {
+      for (const p of posicoes) {
+        L.circle([p.lat, p.lon], {
+          renderer: r.gosma,
+          radius: raioCoberturaM,
+          stroke: false,
+          fillColor: COR_COBERTURA,
+          fillOpacity: 1,
+          interactive: false,
+        }).addTo(gosma);
+        L.circle([p.lat, p.lon], {
+          renderer: r.pulso,
+          radius: raioCoberturaM,
+          color: COR_COBERTURA,
+          weight: 1.5,
+          fill: false,
+          interactive: false,
+          className: "guara-radar-pulso",
+        }).addTo(pulso);
+      }
+    }
+
     for (const p of posicoes) {
       L.circleMarker([p.lat, p.lon], {
         radius: p.pessoa.funcao === "maquinista" ? 8 : 6,
@@ -107,7 +180,12 @@ export default function MapaLeaflet({ posicoes }: { posicoes: PosicaoAtual[] }) 
         .bindPopup(popupDaPessoa(p))
         .addTo(camada);
     }
-  }, [posicoes]);
+  }, [posicoes, raioCoberturaM]);
 
-  return <div ref={elemento} className="h-[560px] w-full rounded-lg border border-zinc-800" />;
+  return (
+    <>
+      <FiltroGosma />
+      <div ref={elemento} className="h-[560px] w-full rounded-lg border border-zinc-800" />
+    </>
+  );
 }
