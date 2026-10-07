@@ -36,9 +36,13 @@ de `@/lib/rotulos`. Não há backend, login nem conexão com ESP32 ou Raspberry 
 
 ## Deploy
 
-- Netlify, site `guaramonitoramento` (`https://guaramonitoramento.netlify.app`), a partir da `main`.
-- Painel: base directory `frontend`; o resto vem de `frontend/netlify.toml` (`npm run build`,
-  publish `.next`, plugin `@netlify/plugin-nextjs`).
+- Netlify, site `guaramonitora` (`https://guaramonitora.netlify.app`), a partir da `main`. O site
+  antigo (`guaramonitoramento`) ficou na conta anterior e não é mais o oficial.
+- Toda a configuração está no `netlify.toml` da raiz: `base = "frontend"`, `npm run build`, publish
+  `.next`, Node 22 e plugin `@netlify/plugin-nextjs`. O painel não precisa de base directory.
+- O arquivo fica na raiz porque o Netlify procura o `netlify.toml` na base directory do painel e,
+  sem ela, na raiz. Quando ele morava em `frontend/`, o site novo (sem base no painel) buildou na
+  raiz, que não tem `package.json`, e toda rota deu 404.
 - O plugin é declarado explicitamente porque o Netlify não detectou o Next.js ("Runtime: Not set")
   e publicou o `.next` como estático: toda rota dava 404 e `/server/app/index.html` respondia 200.
 
