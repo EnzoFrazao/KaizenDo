@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { adminAtual } from "@/lib/dados";
@@ -18,10 +19,19 @@ export function Sidebar() {
   return (
     // Fica presa na altura da tela para o bloco do admin não ir parar no fim da página.
     <aside className="sticky top-0 flex h-screen w-56 shrink-0 flex-col border-r border-zinc-800 bg-zinc-950">
-      <div className="px-5 py-6">
-        <p className="text-lg font-bold tracking-tight text-zinc-50">GUARÁ</p>
-        <p className="text-xs text-zinc-500">Posicionamento Operacional · TFPM</p>
+      {/* Só a marca (o guará), com "GUARÁ" em texto ao lado. O lockup completo
+          (public/guara-logo-completo.png) tem o nome em tinta escura, que sumiria
+          no tema preto, e a legenda ficaria ilegível nos 224 px da barra. */}
+      <div className="flex items-center gap-3 px-5 py-6">
+        <Image src="/guara-marca.png" alt="" width={44} height={31} priority className="shrink-0" />
+        <div>
+          <p className="text-lg font-bold leading-none tracking-tight text-zinc-50">GUARÁ</p>
+          <p className="mt-1 text-[10px] leading-tight text-zinc-500">
+            Gestão Unificada de Alocação e Revezamento Ágil
+          </p>
+        </div>
       </div>
+      <p className="-mt-3 mb-3 px-5 text-xs text-zinc-600">Posicionamento Operacional · TFPM</p>
       <nav className="flex flex-col gap-1 px-3">
         {ITENS.map((item) => {
           const ativo = caminho.startsWith(item.href);

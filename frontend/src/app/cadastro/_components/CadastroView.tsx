@@ -10,6 +10,7 @@ import { Card } from "@/components/Card";
 import {
   listarDispositivos,
   listarPessoas,
+  removerPessoa,
   restaurarDados,
   vincularDispositivo,
 } from "@/lib/dados";
@@ -51,6 +52,8 @@ export function CadastroView() {
   const [busca, setBusca] = useState("");
   const [filtroFuncao, setFiltroFuncao] = useState<Funcao | "">("");
   const [filtroTurno, setFiltroTurno] = useState<Turno | "">("");
+  /** Id da pessoa esperando confirmação de exclusão. Excluir não é um clique só. */
+  const [confirmando, setConfirmando] = useState<string | null>(null);
 
   const buscar = useCallback(() => Promise.all([listarPessoas(), listarDispositivos()]), []);
 
@@ -174,6 +177,7 @@ export function CadastroView() {
                 <th>Turno</th>
                 <th>ESP32 vinculado</th>
                 <th>Bateria</th>
+                <th className="text-right">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -206,12 +210,50 @@ export function CadastroView() {
                       </select>
                     </td>
                     <td>{dispositivo ? <Bateria pct={dispositivo.bateriaPct} /> : <span className="text-zinc-600">—</span>}</td>
+                    <td className="py-1 text-right whitespace-nowrap">
+                      {confirmando === p.id ? (
+                        <span className="inline-flex items-center gap-2">
+                          <span className="text-xs text-zinc-400">Excluir?</span>
+                          <button
+                            type="button"
+                            className="rounded border border-red-500/40 bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-300 hover:bg-red-500/20"
+                            onClick={() => {
+                              setConfirmando(null);
+                              executar(async () => {
+                                const fora = await removerPessoa(p.id);
+                                return fora.dispositivoId
+                                  ? `${fora.nome} foi excluída. O ${fora.dispositivoId} voltou para o estoque.`
+                                  : `${fora.nome} foi excluída do cadastro.`;
+                              });
+                            }}
+                          >
+                            Sim
+                          </button>
+                          <button
+                            type="button"
+                            className="rounded border border-zinc-700 px-2 py-0.5 text-xs text-zinc-400 hover:text-zinc-100"
+                            onClick={() => setConfirmando(null)}
+                          >
+                            Não
+                          </button>
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          aria-label={`Excluir ${p.nome}`}
+                          className="rounded border border-zinc-800 px-2 py-0.5 text-xs text-zinc-500 hover:border-red-500/40 hover:text-red-300"
+                          onClick={() => setConfirmando(p.id)}
+                        >
+                          Excluir
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 );
               })}
               {filtradas.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="py-6 text-center text-zinc-500">
+                  <td colSpan={7} className="py-6 text-center text-zinc-500">
                     Nenhuma pessoa encontrada com esses filtros.
                   </td>
                 </tr>

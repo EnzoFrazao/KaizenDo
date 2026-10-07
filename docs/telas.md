@@ -47,7 +47,7 @@ Mapa do pátio com cada pessoa como um ponto colorido pelo status.
 - **Legenda** de cores e contador "N pessoas no mapa".
 - **Atualização:** a cada 5 s.
 - **Enquadramento:** o mapa se ajusta sozinho ao pátio (`fitBounds` nos trechos).
-- **Coordenadas:** os centros dos trechos são pontos reais da malha da Estrada de Ferro Carajás, tirados do OpenStreetMap. Os tiles ficam coloridos; o resto da interface é escuro.
+- **Coordenadas:** os centros dos trechos vêm de pontos levantados pela equipe (viradores, PIAL, centro da pera e os vértices do anel). Os tiles ficam coloridos; o resto da interface é escuro.
 - Evolução: rastro dos últimos minutos ao clicar numa pessoa; imagem do mapa oficial do TFPM como camada; polígonos reais no lugar dos círculos.
 
 ## 3. Histórico
@@ -68,6 +68,7 @@ Vincular cada pessoa ao ESP32 que ela carrega. Sem isso o sistema não sabe de q
 - **Vincular / trocar / desvincular** o ESP32 de uma pessoa (um dispositivo só pode estar com uma pessoa).
 - **Estoque de dispositivos livres** visível, com bateria e último sinal.
 - **Nova pessoa** (nome, matrícula, função, turno, ESP32 opcional) e **novo dispositivo** (id da etiqueta e MAC).
+- **Excluir pessoa**, com confirmação em dois passos. O ESP32 dela volta para o estoque.
 - **Validações** ficam em `lib/dados.ts`, não na tela: matrícula de 6 dígitos sem repetir, id no formato `ESP32-XXXX`, MAC válido e vínculo 1 para 1.
 - **Persistência:** o cadastro é guardado no `localStorage` para sobreviver ao F5 na demonstração. Continua tudo no front, sem servidor. O botão "Restaurar dados originais" volta ao estado de `dados-mock.ts` — use antes de apresentar.
 - Evolução: ler o id do ESP32 por QR code na etiqueta; histórico de trocas.
@@ -88,6 +89,7 @@ Vincular cada pessoa ao ESP32 que ela carrega. Sem isso o sistema não sabe de q
 - Campos e botões são `.campo`, `.botao` e `.botao-secundario`, definidos em `globals.css`.
 - Superfícies: fundo `zinc-950`, cartões `zinc-900`, bordas `zinc-800`, texto `zinc-100` e `zinc-400`.
 - Componentes comuns em `frontend/src/components/`: `PageHeader`, `Card`, `StatusBadge`, `Sidebar`, `AoVivo`.
+- A marca fica em `frontend/public/guara-marca.png` (só o pássaro, usada na barra lateral e no favicon) e `guara-logo-completo.png` (com o nome, para pitch).
 - Textos em português; horários no formato 24 h; ids técnicos (P001, ESP32-0A1B) em fonte monoespaçada.
 
 ## Sobre o mockup

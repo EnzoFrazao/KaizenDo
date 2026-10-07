@@ -54,12 +54,16 @@ src/
     mapa/               ← tela 2
     historico/          ← tela 3
     cadastro/           ← tela 4
+    icon.png            favicon: a marca do guará, sem o nome
   components/           Sidebar, PageHeader, Card, StatusBadge, AoVivo (compartilhado)
   lib/
     tipos.ts            tipos de dados (Admin, Pessoa, Dispositivo, Leitura, Alerta…)
     dados.ts            funções de dados e validações usadas pelas telas
     dados-mock.ts       dados ilustrativos: 50 pessoas, 51 ESP32, leituras de um dia
     rotulos.ts          textos e cores de status, função, turno, alerta, bateria
+public/
+  guara-marca.png       só o pássaro: barra lateral
+  guara-logo-completo.png  lockup com o nome: pitch e capa
 ```
 
 ## Decisões que valem para todas as telas
@@ -68,5 +72,6 @@ src/
 - **Sem `react-leaflet`.** O mapa usa Leaflet puro dentro de um `useEffect`, porque o `MapContainer` quebrava com o duplo-mount do StrictMode. Detalhes em [src/app/mapa/README.md](src/app/mapa/README.md).
 - **Cadastro guardado no `localStorage`**, só para sobreviver ao F5 na demonstração. Continua tudo no front. Há um botão para voltar aos dados originais.
 - **Nada de `setState` direto no corpo de um `useEffect`** — o lint barra. Carregue dados no callback da promessa.
+- **A marca na barra lateral é só o pássaro**, com "GUARÁ" em texto HTML ao lado. O lockup completo tem o nome em tinta escura, que sumiria no tema preto, e a legenda ficaria ilegível nos 224 px da barra. Ele está em `public/` para quem for montar o pitch.
 
 Atenção: esta versão do Next.js é mais nova que muitos tutoriais. Em dúvida, a documentação instalada está em `node_modules/next/dist/docs/`.

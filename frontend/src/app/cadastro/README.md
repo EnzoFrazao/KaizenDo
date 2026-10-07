@@ -30,6 +30,7 @@ Se mais pra frente o time quiser *mostrar* controle de acesso no pitch, a ideia 
 - `vincularDispositivo(pessoaId, dispositivoId)` · passe `null` para desvincular
 - `cadastrarPessoa({ nome, matricula, funcao, turno, dispositivoId })` · `dispositivoId` pode ser `null`
 - `cadastrarDispositivo(id, mac)`
+- `removerPessoa(pessoaId)` · exclui e devolve o ESP32 dela ao estoque
 - `restaurarDados()` · volta pessoas e dispositivos ao estado de `dados-mock.ts`
 
 As **validações ficam em `dados.ts`**, não na tela, porque é lá que um backend entraria depois:
@@ -61,6 +62,7 @@ Pessoas e dispositivos são guardados no **`localStorage`** do navegador (chave 
 - Cadastro de dispositivo novo dentro do próprio wizard
 - Tabela com busca (nome ou matrícula), filtro por função e turno
 - Vincular, trocar e desvincular pelo seletor da linha, com a bateria do dispositivo
+- Excluir pessoa, com confirmação em dois passos na própria linha
 - Estoque de ESP32 livres, com bateria e último sinal
 - Mensagens de erro e de confirmação
 
@@ -69,7 +71,7 @@ Pessoas e dispositivos são guardados no **`localStorage`** do navegador (chave 
 - [ ] Ajustar ao mockup, quando houver (`docs/mockups/cadastro.png`)
 - [ ] Ler o id do ESP32 por QR code na etiqueta (evolução da especificação)
 - [ ] Histórico de trocas de dispositivo
-- [ ] Ativar/desativar pessoa (o campo `ativo` existe em `Pessoa` e ainda não é usado por nenhuma tela)
+- [ ] Trocar a exclusão por inativação (o campo `ativo` existe em `Pessoa` e ainda não é usado). Hoje `removerPessoa` apaga de vez; num sistema real isso perderia o registro do turno, então o certo é inativar e esconder das telas operacionais
 
 ## Arquivos compartilhados que esta tela mexeu
 

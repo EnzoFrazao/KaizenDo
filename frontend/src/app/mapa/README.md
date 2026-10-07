@@ -49,6 +49,10 @@ Mapa OpenStreetMap, círculos dos trechos (viradores em vermelho), pontos colori
 
 ## Coordenadas
 
-Antes eram inventadas, e por isso as pessoas apareciam **no mar**. Agora cada centro de trecho em `dados-mock.ts` é um ponto real da malha: centroides de vias com `service=yard` da Estrada de Ferro Carajás, tirados do OpenStreetMap e escolhidos ao longo do feixe de linhas. O pátio é um corredor noroeste → sudeste, dos Viradores (ponta do terminal, ~-2.565/-44.370) ao Pátio de Recepção (~-2.605/-44.317).
+Os centros dos trechos em `dados-mock.ts` vêm de **pontos levantados pela equipe**: os viradores, o PIAL (Posto de Inspeção e Abastecimento de Locomotivas), o centro da pera e cinco vértices do anel. Os outros cinco trechos são o ponto médio entre vizinhos, para os 12 ficarem espaçados ao redor do laço.
 
-Continua sendo aproximação: a posição dentro do trecho é sorteada num raio de ~150 m, e o polígono de cada trecho só sai com a planta oficial da Vale.
+A pera cobre cerca de **1,2 x 1,9 km** e os trechos vizinhos ficam a ~200 m. Por isso os círculos têm raio de 90 m e a posição dentro do trecho é sorteada em ~50 m: dispersão maior misturaria um trecho com o outro.
+
+Continua sendo aproximação — o polígono de cada trecho só sai com a planta oficial da Vale.
+
+> Houve duas versões erradas antes desta: coordenadas inventadas (as pessoas apareciam **no mar**) e depois um corredor tirado do OpenStreetMap, longo demais e deslocado. Se precisar mexer, parta dos pontos levantados, não de estimativa.

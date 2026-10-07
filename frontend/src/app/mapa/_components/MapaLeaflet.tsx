@@ -62,7 +62,7 @@ export default function MapaLeaflet({ posicoes }: { posicoes: PosicaoAtual[] }) 
     // Trechos: círculos provisórios até termos os polígonos reais do pátio.
     for (const t of TRECHOS) {
       L.circle(t.centro, {
-        radius: t.areaDeRisco ? 220 : 260,
+        radius: t.areaDeRisco ? 80 : 90,
         color: t.areaDeRisco ? "#f87171" : "#52525b",
         weight: t.areaDeRisco ? 2 : 1,
         fillColor: t.areaDeRisco ? "#ef4444" : "#a1a1aa",

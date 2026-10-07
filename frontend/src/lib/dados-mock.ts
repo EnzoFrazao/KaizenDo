@@ -38,30 +38,31 @@ export const ADMIN_ATUAL: Admin = {
   cargo: "Coordenação de turno · CCO",
 };
 
-// Cada centro abaixo é um ponto REAL da malha, tirado do OpenStreetMap: centroides de
-// vias com service=yard da Estrada de Ferro Carajás em São Luís, escolhidos ao longo do
-// feixe de linhas. Por isso as pessoas caem sobre os trilhos, e não no mar como antes.
+// Coordenadas da pera do TFPM, levantadas pela equipe em campo/satélite.
+// Sete são pontos medidos (viradores, PIAL e cinco vértices do anel); os outros
+// cinco são o ponto médio entre vizinhos, para os 12 trechos ficarem espaçados
+// ao redor do laço. O conjunto cobre cerca de 1,2 x 1,9 km.
 //
-// A ordem é a da operação: o trem chega na Recepção (sudeste), é formado, sobe pelos
-// trechos X e termina nos Viradores, na ponta do terminal (noroeste).
-// Ainda é aproximação: o polígono de cada trecho só sai com a planta oficial da Vale.
+// A ordem é a da operação: o trem chega na Recepção (oeste), é formado, corre os
+// trechos X ao redor da pera, passa pelo PIAL e termina nos Viradores (norte).
+// Ainda é aproximação: o polígono de cada trecho só sai com a planta oficial.
 
-/** Centro aproximado do pátio. O mapa ajusta o enquadramento pelos trechos. */
-export const CENTRO_TFPM: [number, number] = [-2.5853, -44.3434];
+/** Centro da pera. O mapa ajusta o enquadramento pelos trechos. */
+export const CENTRO_TFPM: [number, number] = [-2.5729563, -44.3427728];
 
 export const TRECHOS: Trecho[] = [
-  { id: "VIRADORES", nome: "Pátio dos Viradores", areaDeRisco: true, centro: [-2.56540, -44.36972] },
-  { id: "OFICINA", nome: "Oficina Central", areaDeRisco: false, centro: [-2.56813, -44.36564] },
-  { id: "CTMR", nome: "CTMR", areaDeRisco: false, centro: [-2.57161, -44.35943] },
-  { id: "X07", nome: "Trecho X07", areaDeRisco: false, centro: [-2.57078, -44.35502] },
-  { id: "X06", nome: "Trecho X06", areaDeRisco: false, centro: [-2.57605, -44.35057] },
-  { id: "X05", nome: "Trecho X05", areaDeRisco: false, centro: [-2.57780, -44.34321] },
-  { id: "ESTACIONAMENTO", nome: "Estacionamento", areaDeRisco: false, centro: [-2.57908, -44.33884] },
-  { id: "X03", nome: "Trecho X03", areaDeRisco: false, centro: [-2.57883, -44.33414] },
-  { id: "X02", nome: "Trecho X02", areaDeRisco: false, centro: [-2.58517, -44.32853] },
-  { id: "X01", nome: "Trecho X01", areaDeRisco: false, centro: [-2.58844, -44.32363] },
-  { id: "FORMACAO", nome: "Formação", areaDeRisco: false, centro: [-2.59790, -44.32087] },
-  { id: "RECEPCAO", nome: "Pátio de Recepção", areaDeRisco: false, centro: [-2.60527, -44.31711] },
+  { id: "VIRADORES", nome: "Pátio dos Viradores", areaDeRisco: true, centro: [-2.5689360, -44.3447059] },
+  { id: "X07", nome: "Trecho X07", areaDeRisco: false, centro: [-2.5700551, -44.3398614] },
+  { id: "X06", nome: "Trecho X06", areaDeRisco: false, centro: [-2.5711742, -44.3350170] },
+  { id: "OFICINA", nome: "Oficina Central · PIAL", areaDeRisco: false, centro: [-2.5785906, -44.3371723] },
+  { id: "X05", nome: "Trecho X05", areaDeRisco: false, centro: [-2.5782117, -44.3394548] },
+  { id: "X03", nome: "Trecho X03", areaDeRisco: false, centro: [-2.5778328, -44.3417373] },
+  { id: "X02", nome: "Trecho X02", areaDeRisco: false, centro: [-2.5778071, -44.3436069] },
+  { id: "X01", nome: "Trecho X01", areaDeRisco: false, centro: [-2.5777815, -44.3454766] },
+  { id: "FORMACAO", nome: "Formação", areaDeRisco: false, centro: [-2.5740920, -44.3489024] },
+  { id: "RECEPCAO", nome: "Pátio de Recepção", areaDeRisco: false, centro: [-2.5704025, -44.3523283] },
+  { id: "ESTACIONAMENTO", nome: "Estacionamento", areaDeRisco: false, centro: [-2.5692592, -44.3496507] },
+  { id: "CTMR", nome: "CTMR", areaDeRisco: false, centro: [-2.5681159, -44.3469730] },
 ];
 
 const NOMES = [
@@ -122,10 +123,11 @@ function velocidadePara(status: StatusTrabalho, funcao: Funcao) {
   return rand() * 0.8;
 }
 
-/** Espalha a pessoa perto do centro do trecho, sem sair do feixe de linhas (~150 m). */
+/** Espalha a pessoa perto do centro do trecho (~50 m). Os trechos vizinhos ficam
+ *  a cerca de 200 m, entao uma dispersao maior misturaria um trecho com o outro. */
 function pontoPerto(trecho: TrechoId): [number, number] {
   const t = TRECHOS.find((x) => x.id === trecho)!;
-  return [t.centro[0] + (rand() - 0.5) * 0.0026, t.centro[1] + (rand() - 0.5) * 0.0026];
+  return [t.centro[0] + (rand() - 0.5) * 0.0009, t.centro[1] + (rand() - 0.5) * 0.0009];
 }
 
 /** Gera leituras a cada 10 min das 06h às 22h do dia base. */

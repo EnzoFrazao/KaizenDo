@@ -263,6 +263,25 @@ export async function cadastrarDispositivo(id: string, mac: string): Promise<Dis
   return atraso(dispositivo);
 }
 
+/**
+ * Remove uma pessoa do cadastro e solta o ESP32 dela de volta para o estoque.
+ *
+ * As leituras antigas dessa pessoa continuam em LEITURAS, mas `posicoesAtuais` e
+ * `historico` ignoram leitura sem pessoa correspondente, então ela some do mapa,
+ * do dashboard e do histórico. No sistema de verdade isso seria uma inativação
+ * (o campo `ativo` existe para isso), para não perder o registro do turno.
+ */
+export async function removerPessoa(pessoaId: string): Promise<Pessoa> {
+  hidratar();
+  const i = PESSOAS.findIndex((p) => p.id === pessoaId);
+  if (i === -1) throw new Error("Pessoa não encontrada.");
+  const pessoa = PESSOAS[i];
+  for (const d of DISPOSITIVOS) if (d.pessoaId === pessoaId) d.pessoaId = null;
+  PESSOAS.splice(i, 1);
+  persistir();
+  return atraso(pessoa);
+}
+
 /** Volta pessoas e dispositivos ao estado de dados-mock.ts e limpa o navegador. */
 export async function restaurarDados(): Promise<void> {
   repor(PESSOAS, SEMENTE.pessoas.map((p) => ({ ...p })));
