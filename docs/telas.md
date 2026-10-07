@@ -26,11 +26,9 @@ Visão do turno em uma tela, sem precisar abrir o mapa.
 | Bloco | O que mostra | Por que importa |
 |---|---|---|
 | Cartões de resumo | pessoas com dispositivo ativo, alertas ativos, sem sinal, bateria < 20% | Saber em 2 segundos se está tudo bem |
-| Pessoas por status | livre, em atividade, deslocando, pausa, sem sinal | Quantos estão disponíveis para acionar |
-| Pessoas por função | maquinistas e manobristas em campo | São equipes diferentes |
-| Alertas ativos | lista com tipo, pessoa, trecho e há quanto tempo | Segurança primeiro: área de risco e pessoa isolada no topo |
-| Ocupação por trecho | quantas pessoas em cada trecho (X01, X02, Viradores…) | Ver trechos descobertos e trechos lotados |
 | Trabalhando agora | tabela de quem está em campo, com busca e com os status como botões-filtro | É a pergunta direta de quem coordena: quem está aí e o que cada um está fazendo |
+| Pessoas por status | rosca: livre, em atividade, deslocando, pausa, sem sinal | Quantos estão disponíveis para acionar |
+| Alertas ativos | lista com tipo, pessoa, trecho e desde quando | Segurança primeiro: área de risco e pessoa isolada no topo |
 | Livres mais próximos | (evolução) para um trecho escolhido, quem está livre e mais perto | É o "acionar o mais próximo" do desafio |
 | Saúde dos dispositivos | (evolução) sem sinal, bateria baixa, sem vínculo | Manutenção dos ESP32 |
 
@@ -57,8 +55,6 @@ Mapa do pátio com cada pessoa como um ponto colorido pelo status.
 Consulta do que aconteceu, para análise e para o pitch (tempos de deslocamento, ociosidade).
 
 - **Filtros:** nome, turno, função, status de trabalho, trecho e dia (e, como evolução, faixa de horário).
-- **Reprodução do dia:** as leituras entrando em lote, no ritmo em que chegariam do receptor, com pausar e reiniciar. A mais nova fica destacada e as anteriores desbotam. É **reprodução**, não tempo real — os dados são de um dia fechado, e a tela diz isso.
-- **Leituras por hora** e **tempo em cada status**, em gráfico.
 - **Tabela:** horário, pessoa, função, turno, trecho, status, velocidade.
 - **Paginação** (50 por página), em ordem cronológica.
 - Evolução: exportar CSV; ver o percurso de uma pessoa no dia num mini-mapa.
@@ -70,7 +66,7 @@ Vincular cada pessoa ao ESP32 que ela carrega. Sem isso o sistema não sabe de q
 - **Cadastro em wizard de 4 passos:** pessoa → função e turno → dispositivo → conferir. Não avança com passo inválido.
 - **Lista de pessoas** com matrícula, função, turno e o dispositivo vinculado, com busca e filtro por função e turno.
 - **Vincular / trocar / desvincular** o ESP32 de uma pessoa (um dispositivo só pode estar com uma pessoa).
-- **Dispositivos livres** visíveis, com bateria e último sinal.
+- **Estoque de dispositivos livres** visível, com bateria e último sinal.
 - **Nova pessoa** (nome, matrícula, função, turno, ESP32 opcional) e **novo dispositivo** (id da etiqueta e MAC).
 - **Validações** ficam em `lib/dados.ts`, não na tela: matrícula de 6 dígitos sem repetir, id no formato `ESP32-XXXX`, MAC válido e vínculo 1 para 1.
 - **Persistência:** o cadastro é guardado no `localStorage` para sobreviver ao F5 na demonstração. Continua tudo no front, sem servidor. O botão "Restaurar dados originais" volta ao estado de `dados-mock.ts` — use antes de apresentar.

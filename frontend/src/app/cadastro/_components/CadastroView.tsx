@@ -174,7 +174,6 @@ export function CadastroView() {
                 <th>Turno</th>
                 <th>ESP32 vinculado</th>
                 <th>Bateria</th>
-                <th>Último sinal</th>
               </tr>
             </thead>
             <tbody>
@@ -207,13 +206,12 @@ export function CadastroView() {
                       </select>
                     </td>
                     <td>{dispositivo ? <Bateria pct={dispositivo.bateriaPct} /> : <span className="text-zinc-600">—</span>}</td>
-                    <td className="text-zinc-500">{dispositivo && agora ? desde(dispositivo.ultimoSinal, agora) : "—"}</td>
                   </tr>
                 );
               })}
               {filtradas.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="py-6 text-center text-zinc-500">
+                  <td colSpan={6} className="py-6 text-center text-zinc-500">
                     Nenhuma pessoa encontrada com esses filtros.
                   </td>
                 </tr>

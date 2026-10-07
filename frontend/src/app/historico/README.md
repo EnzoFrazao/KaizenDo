@@ -20,12 +20,8 @@ Os dados fictícios cobrem o dia **2026-10-07**, das 06h às 22h, uma leitura a 
 ## Já feito
 
 - Todos os filtros acima
-- **Reprodução do dia:** as leituras entrando em lote, como chegariam do receptor, com pausar e reiniciar. Cada passo avança um horário inteiro (os dados têm uma leitura por pessoa a cada 10 min, então andar de uma em uma deixaria o relógio parado por ~50 passos). A leitura mais nova fica destacada e as anteriores desbotam
-- Gráfico de leituras por hora
-- Barra de tempo em cada status, com percentual
-- Tabela com paginação de 50 em 50
-
-A reprodução é **reprodução mesmo**, não tempo real: os dados são de um dia fechado. O rótulo na tela diz isso.
+- Tabela com horário, pessoa, função, turno, trecho, velocidade e status, em ordem cronológica
+- Paginação de 50 em 50
 
 ## A fazer
 

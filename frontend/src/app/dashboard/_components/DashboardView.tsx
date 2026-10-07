@@ -9,6 +9,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { listarAlertas, listarTrechos, posicoesAtuais } from "@/lib/dados";
 import { COR_STATUS_MAPA, ROTULO_ALERTA, ROTULO_FUNCAO, ROTULO_STATUS } from "@/lib/rotulos";
 import type { Alerta, Funcao, PosicaoAtual, StatusTrabalho, Trecho } from "@/lib/tipos";
+import { PizzaStatus } from "./PizzaStatus";
 
 const ORDEM_STATUS: StatusTrabalho[] = ["livre", "em_atividade", "deslocando", "pausa", "sem_sinal"];
 
@@ -63,8 +64,6 @@ export function DashboardView() {
       )
       .sort((a, b) => ORDEM_STATUS.indexOf(a.status) - ORDEM_STATUS.indexOf(b.status) || a.pessoa.nome.localeCompare(b.pessoa.nome));
   }, [emCampo, status, funcao, busca]);
-
-  const maiorTrecho = Math.max(1, ...trechos.map((t) => posicoes.filter((p) => p.trecho === t.id).length));
 
   return (
     <div className="grid gap-4">
@@ -186,49 +185,9 @@ export function DashboardView() {
         </div>
       </Card>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card titulo="Pessoas por status">
-          <ul className="space-y-2">
-            {ORDEM_STATUS.map((s) => (
-              <li key={s} className="flex items-center justify-between gap-3">
-                <StatusBadge status={s} />
-                <div className="flex flex-1 items-center gap-3">
-                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-800">
-                    <div
-                      className="h-full rounded-full transition-[width] duration-500"
-                      style={{
-                        width: `${posicoes.length ? (porStatus(s) / posicoes.length) * 100 : 0}%`,
-                        background: COR_STATUS_MAPA[s],
-                      }}
-                    />
-                  </div>
-                  <span className="w-6 text-right font-medium tabular-nums">{porStatus(s)}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </Card>
-
-        <Card titulo="Pessoas por função">
-          <ul className="space-y-3">
-            {(Object.keys(ROTULO_FUNCAO) as Funcao[]).map((f) => {
-              const doTipo = emCampo.filter((p) => p.pessoa.funcao === f);
-              const livresDoTipo = doTipo.filter((p) => p.status === "livre").length;
-              return (
-                <li key={f} className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2">
-                  <div className="flex items-baseline justify-between">
-                    <span className="text-sm text-zinc-300">{ROTULO_FUNCAO[f]}</span>
-                    <span className="text-2xl font-semibold tabular-nums">{doTipo.length}</span>
-                  </div>
-                  <p className="text-xs text-zinc-500">
-                    {livresDoTipo} {livresDoTipo === 1 ? "livre" : "livres"} para acionar
-                  </p>
-                </li>
-              );
-            })}
-          </ul>
-        </Card>
-      </div>
+      <Card titulo="Pessoas por status">
+        <PizzaStatus fatias={ORDEM_STATUS.map((s) => ({ status: s, n: porStatus(s) }))} />
+      </Card>
 
       <Card titulo="Alertas ativos">
         {alertas.length === 0 ? (
@@ -257,28 +216,6 @@ export function DashboardView() {
         )}
       </Card>
 
-      <Card titulo="Ocupação por trecho">
-        <ul className="grid gap-2 md:grid-cols-2">
-          {trechos.map((t) => {
-            const n = posicoes.filter((p) => p.trecho === t.id).length;
-            return (
-              <li key={t.id} className="flex items-center gap-3 text-sm">
-                <span className="w-40 shrink-0 truncate text-zinc-300">
-                  {t.nome}
-                  {t.areaDeRisco && <span className="ml-1 text-xs text-red-400">risco</span>}
-                </span>
-                <div className="h-5 flex-1 overflow-hidden rounded bg-zinc-950">
-                  <div
-                    className={`h-full rounded transition-[width] duration-500 ${t.areaDeRisco ? "bg-red-500/50" : "bg-sky-500/40"}`}
-                    style={{ width: `${(n / maiorTrecho) * 100}%` }}
-                  />
-                </div>
-                <span className="w-5 text-right font-medium tabular-nums">{n}</span>
-              </li>
-            );
-          })}
-        </ul>
-      </Card>
     </div>
   );
 }

@@ -60,7 +60,7 @@ Pessoas e dispositivos são guardados no **`localStorage`** do navegador (chave 
 - Wizard de 4 passos, com validação por passo
 - Cadastro de dispositivo novo dentro do próprio wizard
 - Tabela com busca (nome ou matrícula), filtro por função e turno
-- Vincular, trocar e desvincular pelo seletor da linha, com bateria e último sinal
+- Vincular, trocar e desvincular pelo seletor da linha, com a bateria do dispositivo
 - Estoque de ESP32 livres, com bateria e último sinal
 - Mensagens de erro e de confirmação
 
