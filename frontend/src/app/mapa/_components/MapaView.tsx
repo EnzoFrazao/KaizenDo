@@ -124,7 +124,10 @@ export function MapaView() {
           {mostrarCobertura && (
             <span className="flex items-center gap-1.5">
               <span className="inline-block h-2.5 w-2.5 rounded-full border border-blue-400 bg-blue-500/25" />
-              Cobertura · raio <span className="tabular-nums">{raioCobertura}</span> m
+              {/* Um span só: soltos, texto e número viram itens do flex e o gap separa demais. */}
+              <span>
+                Cobertura · raio <span className="tabular-nums">{raioCobertura}</span> m
+              </span>
             </span>
           )}
           <span className="w-full text-zinc-600 sm:ml-auto sm:w-auto">Ponto maior = maquinista</span>

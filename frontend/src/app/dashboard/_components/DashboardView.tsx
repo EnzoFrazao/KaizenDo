@@ -92,6 +92,36 @@ export function DashboardView() {
         </Card>
       </div>
 
+      {/* No celular a lista "Trabalhando agora" tem ~47 cartões; com os alertas depois dela, eles
+          ficavam a uns 4.000 px do topo. Vêm logo depois do resumo; do md em diante (tabela com
+          altura máxima) voltam para o fim. */}
+      <Card titulo="Alertas ativos" className="md:order-last">
+        {alertas.length === 0 ? (
+          <p className="text-sm text-zinc-500">Nenhum alerta ativo.</p>
+        ) : (
+          <ul className="space-y-2 text-sm">
+            {alertas.map((a) => {
+              const pessoa = posicoes.find((p) => p.pessoaId === a.pessoaId)?.pessoa;
+              const risco = a.tipo === "area_de_risco" || a.tipo === "pessoa_isolada";
+              return (
+                <li
+                  key={a.id}
+                  className={`flex flex-wrap items-center gap-x-2 rounded-md border px-3 py-2 ${
+                    risco ? "border-red-500/30 bg-red-500/10" : "border-amber-500/30 bg-amber-500/10"
+                  }`}
+                >
+                  {risco && <span className="pulso inline-block h-1.5 w-1.5 rounded-full bg-red-400" />}
+                  <strong className={risco ? "text-red-200" : "text-amber-200"}>{ROTULO_ALERTA[a.tipo]}</strong>
+                  <span className="text-zinc-400">
+                    {pessoa?.nome ?? a.pessoaId} · {nomePessoa.get(a.trecho) ?? a.trecho} · desde {a.inicio.slice(11, 16)}
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </Card>
+
       {/* Quem está trabalhando agora, com filtro pelos status que já existem. */}
       <Card
         titulo={`Trabalhando agora · ${trabalhando.length} de ${emCampo.length}`}
@@ -119,7 +149,7 @@ export function DashboardView() {
             type="button"
             onClick={() => setStatus("")}
             aria-pressed={status === ""}
-            className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+            className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition-colors pointer-coarse:py-2.5 ${
               status === "" ? "bg-zinc-100 text-zinc-900" : "bg-zinc-800 text-zinc-400 hover:text-zinc-100"
             }`}
           >
@@ -134,7 +164,7 @@ export function DashboardView() {
                 type="button"
                 onClick={() => setStatus(ativo ? "" : s)}
                 aria-pressed={ativo}
-                className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-medium transition-colors pointer-coarse:py-2.5 ${
                   ativo ? "bg-zinc-100 text-zinc-900" : "bg-zinc-800 text-zinc-400 hover:text-zinc-100"
                 }`}
               >
@@ -210,34 +240,6 @@ export function DashboardView() {
       <Card titulo="Pessoas por status">
         <PizzaStatus fatias={ORDEM_STATUS.map((s) => ({ status: s, n: porStatus(s) }))} />
       </Card>
-
-      <Card titulo="Alertas ativos">
-        {alertas.length === 0 ? (
-          <p className="text-sm text-zinc-500">Nenhum alerta ativo.</p>
-        ) : (
-          <ul className="space-y-2 text-sm">
-            {alertas.map((a) => {
-              const pessoa = posicoes.find((p) => p.pessoaId === a.pessoaId)?.pessoa;
-              const risco = a.tipo === "area_de_risco" || a.tipo === "pessoa_isolada";
-              return (
-                <li
-                  key={a.id}
-                  className={`flex flex-wrap items-center gap-x-2 rounded-md border px-3 py-2 ${
-                    risco ? "border-red-500/30 bg-red-500/10" : "border-amber-500/30 bg-amber-500/10"
-                  }`}
-                >
-                  {risco && <span className="pulso inline-block h-1.5 w-1.5 rounded-full bg-red-400" />}
-                  <strong className={risco ? "text-red-200" : "text-amber-200"}>{ROTULO_ALERTA[a.tipo]}</strong>
-                  <span className="text-zinc-400">
-                    {pessoa?.nome ?? a.pessoaId} · {nomePessoa.get(a.trecho) ?? a.trecho} · desde {a.inicio.slice(11, 16)}
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </Card>
-
     </div>
   );
 }

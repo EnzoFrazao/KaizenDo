@@ -67,7 +67,7 @@ export function HistoricoView() {
           </select>
           <input
             type="date"
-            className="campo col-span-2 sm:col-span-1"
+            className="campo"
             aria-label="Dia"
             defaultValue={DIA_BASE}
             onChange={(e) => mudar("dia", e.target.value)}

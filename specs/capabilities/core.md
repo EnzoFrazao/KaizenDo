@@ -25,8 +25,7 @@ ESP32. Não há permissões: o admin é fixo (`adminAtual()`). O conteúdo de ca
 - Tema escuro único; cores e rótulos de status vêm de `lib/rotulos.ts`.
 - Status de trabalho: manobrando, almoçando, aguardando programação (disponível para acionar),
   descansando e sem sinal.
-- Todas as telas funcionam no celular (375 px) sem rolagem lateral da página; abaixo de `md` a
-  navegação vira uma barra no topo.
+- Todas as telas funcionam no celular (375 px) sem rolagem lateral da página.
 - Toda tela oferece tradução para Libras pelo widget VLibras: botão flutuante à direita que abre o
   avatar e traduz o texto clicado.
 - Responsivo para celular (o protótipo é aberto por QR code na apresentação):
@@ -35,7 +34,10 @@ ESP32. Não há permissões: o admin é fixo (`adminAtual()`). O conteúdo de ca
   - abaixo de 768 px (`md`) as tabelas de Dashboard, Histórico e Cadastro viram cartões; acima
     disso a tabela volta dentro de rolagem horizontal própria;
   - os filtros de Mapa e Histórico recolhem atrás de um botão "Filtros" (com contagem dos ativos)
-    abaixo de 1024 px;
+    abaixo de 1024 px; abertos, ficam um por linha abaixo de 640 px (`sm`), senão o texto dos
+    selects é cortado;
+  - no Dashboard, abaixo de `md`, os alertas ativos vêm logo depois do resumo, antes da lista de
+    quem está trabalhando (que no celular não tem altura máxima);
   - nenhuma rolagem horizontal da página a partir de 360 px; campos com 16 px abaixo de 1024 px
     (evita zoom do iOS) e alvos de toque de 44 px em `pointer: coarse`;
   - interações que eram só hover (rosca de status) também respondem a toque; o foco automático do
@@ -46,6 +48,8 @@ ESP32. Não há permissões: o admin é fixo (`adminAtual()`). O conteúdo de ca
 
 - As telas obtêm dados só por `@/lib/dados`.
 - "Em campo" exclui quem está sem sinal.
+- Mapa e Dashboard mostram exatamente quem tem ESP32 vinculado agora no cadastro: cadastrar com
+  ESP32 põe a pessoa no mapa na hora (posição inicial no pátio, fixa pelo id) e desvincular a tira.
 - O widget VLibras aparece uma única vez por página, inclusive após navegação no cliente.
 - No mapa, a área de cobertura usa o menor raio que conecta todas as pessoas visíveis no pátio e
   forma uma área única e translúcida; locais `foraDoPatio` (restaurante) não entram no cálculo
@@ -63,7 +67,9 @@ carregado e tradução iniciada em `/mapa`. A cobertura do mapa foi conferida ma
 novos status, o restaurante e a ausência de sobreposição (medida: 0 pares em 1280 px e em 375 px)
 foram conferidos no mesmo dia. O layout responsivo (abas embaixo, tabelas em cartões, filtros
 recolhíveis) foi conferido manualmente em 2026-10-07 nas quatro rotas em 360×740, 375×812,
-768×1024 e desktop (ver `testing.md`), e de novo depois de juntado às mudanças do mapa. As
+768×1024 e desktop (ver `testing.md`), e de novo depois de juntado às mudanças do mapa. O site
+publicado foi auditado tela a tela no mesmo dia, o que corrigiu o vínculo cadastro → mapa (antes,
+quem era cadastrado com ESP32 não aparecia e quem era desvinculado continuava no mapa). As
 coordenadas dos trechos divergem do diagrama oficial e seguem como aproximação.
 
 ## Evidências de implementação e teste

@@ -45,7 +45,8 @@ de `@/lib/rotulos`. Não há backend, login nem conexão com ESP32 ou Raspberry 
   raiz, que não tem `package.json`, e toda rota deu 404.
 - O Netlify injeta o selo "Powered by Netlify" (`iframe#nl-badge-frame`, fixo embaixo à direita).
   No celular ele cobria as abas Histórico e Cadastro; `globals.css` sobe o selo para cima da barra
-  abaixo de `lg`. O "Hide this badge" do selo só vale para quem clicou (fica no navegador).
+  abaixo de `lg`, e o `pb` do `<main>` (8rem) reserva abas + selo para o fim da página não ficar
+  atrás dele. O "Hide this badge" do selo só vale para quem clicou (fica no navegador).
 - O plugin é declarado explicitamente porque o Netlify não detectou o Next.js ("Runtime: Not set")
   e publicou o `.next` como estático: toda rota dava 404 e `/server/app/index.html` respondia 200.
 

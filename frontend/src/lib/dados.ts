@@ -8,7 +8,7 @@
 // As validações abaixo (formato de matrícula, de id ESP32 e de MAC, duplicidade, vínculo
 // 1 para 1) ficam aqui e não na tela, para quando a fonte virar o backend de verdade.
 
-import { ADMIN_ATUAL, ALERTAS, DISPOSITIVOS, LEITURAS, PESSOAS, TRECHOS } from "./dados-mock";
+import { ADMIN_ATUAL, ALERTAS, DISPOSITIVOS, LEITURAS, PESSOAS, TRECHOS, leituraInicial } from "./dados-mock";
 import type {
   Admin,
   Alerta,
@@ -93,18 +93,21 @@ export async function listarDispositivos(): Promise<Dispositivo[]> {
   return atraso(DISPOSITIVOS);
 }
 
-/** Última leitura de cada pessoa com dispositivo. */
+/**
+ * Última posição de cada pessoa com ESP32 vinculado agora. Quem manda é o vínculo do
+ * cadastro, não as leituras: desvinculou, sai do mapa; cadastrou com ESP32, entra (com
+ * `leituraInicial`, porque o histórico gerado não tem leitura dela).
+ */
 export async function posicoesAtuais(): Promise<PosicaoAtual[]> {
   hidratar();
   const ultima = new Map<string, Leitura>();
   for (const l of LEITURAS) ultima.set(l.pessoaId, l);
   const posicoes: PosicaoAtual[] = [];
-  for (const [pessoaId, leitura] of ultima) {
-    const pessoa = PESSOAS.find((p) => p.id === pessoaId);
-    const dispositivo = DISPOSITIVOS.find((d) => d.id === leitura.dispositivoId);
-    // Pessoa ou dispositivo alterado no cadastro: a leitura antiga é ignorada.
-    if (!pessoa || !dispositivo) continue;
-    posicoes.push({ ...leitura, pessoa, dispositivo });
+  for (const pessoa of PESSOAS) {
+    const dispositivo = pessoa.dispositivoId ? DISPOSITIVOS.find((d) => d.id === pessoa.dispositivoId) : undefined;
+    if (!dispositivo) continue;
+    const leitura = ultima.get(pessoa.id) ?? leituraInicial(pessoa, dispositivo.id);
+    posicoes.push({ ...leitura, dispositivoId: dispositivo.id, pessoa, dispositivo });
   }
   return atraso(posicoes);
 }
