@@ -14,7 +14,7 @@ import type { Funcao, PosicaoAtual, StatusTrabalho, Trecho, TrechoId, Turno } fr
 
 const MapaLeaflet = dynamic(() => import("./MapaLeaflet"), {
   ssr: false,
-  loading: () => <div className="h-[560px] animate-pulse rounded-lg border border-zinc-800 bg-zinc-900" />,
+  loading: () => <div className="h-[65vh] min-h-[360px] animate-pulse rounded-lg border border-zinc-800 bg-zinc-900 md:h-[560px]" />,
 });
 
 const INTERVALO_MS = 5000;
@@ -58,14 +58,24 @@ export function MapaView() {
     [posicoes, funcao, status, turno, trecho, busca],
   );
 
-  // Recalcula com o filtro: a malha mostrada é a de quem está no mapa.
-  const raioCobertura = useMemo(() => raioDeCobertura(filtradas.map((p): [number, number] => [p.lat, p.lon])), [filtradas]);
+  const foraDoPatio = useMemo(() => new Set(trechos.filter((t) => t.foraDoPatio).map((t) => t.id)), [trechos]);
+
+  // Recalcula com o filtro: a malha mostrada é a de quem está no mapa. Quem está fora da pera
+  // (restaurante, ~2,6 km) não entra na conta, senão o raio iria a ~1,4 km e a malha do pátio
+  // viraria uma mancha só. Essas pessoas ganham a própria gosma, com o mesmo raio.
+  const raioCobertura = useMemo(() => {
+    const doPatio = filtradas.filter((p) => !foraDoPatio.has(p.trecho));
+    return raioDeCobertura((doPatio.length > 0 ? doPatio : filtradas).map((p): [number, number] => [p.lat, p.lon]));
+  }, [filtradas, foraDoPatio]);
+  // Sem os trechos ainda não dá para saber quem está fora do pátio: espera para não piscar a mancha.
+  const mostrarCobertura = cobertura && trechos.length > 0;
 
   return (
     <div className="grid gap-4">
       <Card>
-        <div className="flex flex-wrap items-center gap-3">
-          <input className="campo" placeholder="Buscar pessoa" value={busca} onChange={(e) => setBusca(e.target.value)} />
+        {/* No celular os filtros viram uma grade de duas colunas; do sm para cima, uma linha só. */}
+        <div className="grid grid-cols-2 items-center gap-2 sm:flex sm:flex-wrap sm:gap-3">
+          <input className="campo col-span-2" placeholder="Buscar pessoa" value={busca} onChange={(e) => setBusca(e.target.value)} />
           <select className="campo" value={funcao} onChange={(e) => setFuncao(e.target.value as Funcao | "")}>
             <option value="">Todas as funções</option>
             {Object.entries(ROTULO_FUNCAO).map(([v, r]) => <option key={v} value={v}>{r}</option>)}
@@ -89,7 +99,7 @@ export function MapaView() {
           <span className="text-sm text-zinc-400">
             <strong className="font-semibold text-zinc-100 tabular-nums">{filtradas.length}</strong> no mapa
           </span>
-          <div className="ml-auto">
+          <div className="col-span-2 sm:ml-auto">
             <AoVivo atualizadoEm={atualizadoEm} rotulo="Posições a cada 5 s" />
           </div>
         </div>
@@ -105,17 +115,17 @@ export function MapaView() {
             <span className="inline-block h-2.5 w-2.5 rounded-full border border-red-400/60 bg-red-500/20" />
             Área de risco (viradores)
           </span>
-          {cobertura && (
+          {mostrarCobertura && (
             <span className="flex items-center gap-1.5">
               <span className="inline-block h-2.5 w-2.5 rounded-full border border-blue-400 bg-blue-500/25" />
               Cobertura · raio <span className="tabular-nums">{raioCobertura}</span> m
             </span>
           )}
-          <span className="ml-auto text-zinc-600">Ponto maior = maquinista</span>
+          <span className="text-zinc-600 sm:ml-auto">Ponto maior = maquinista</span>
         </div>
       </Card>
 
-      <MapaLeaflet posicoes={filtradas} raioCoberturaM={cobertura ? raioCobertura : 0} />
+      <MapaLeaflet posicoes={filtradas} raioCoberturaM={mostrarCobertura ? raioCobertura : 0} />
     </div>
   );
 }

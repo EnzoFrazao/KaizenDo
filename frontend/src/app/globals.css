@@ -74,6 +74,9 @@ body {
 /* Leaflet: os popups, tooltips e controles vêm claros por padrão. */
 .leaflet-container {
   background: #0b0b0d;
+  /* Os panes do Leaflet usam z-index 200–1000; isolando o mapa, eles não passam por cima
+     da barra fixa do topo no celular quando a página rola. */
+  isolation: isolate;
 }
 /* Os tiles ficam coloridos de propósito: no mapa, a cor do terreno, da água e dos
    trilhos ajuda a situar quem olha. O escuro vale para o resto da interface. */

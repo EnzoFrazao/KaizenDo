@@ -15,7 +15,7 @@ export function Card({
   return (
     <section className={`rounded-lg border border-zinc-800 bg-zinc-900 p-4 ${className}`}>
       {(titulo || acao) && (
-        <div className="mb-3 flex items-center justify-between gap-3">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           {titulo && <h2 className="text-sm font-medium text-zinc-400">{titulo}</h2>}
           {acao}
         </div>

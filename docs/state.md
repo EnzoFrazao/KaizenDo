@@ -19,8 +19,16 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
   cobriria tudo e a malha sumiria. Filtro SVG (`#guara-gosma`) em vez de círculos translúcidos,
   para sobreposição não escurecer. Detalhe em `frontend/src/app/mapa/README.md`.
 
+- Pontos sem sobreposição por afastamento na tela (`espalharNaTela`), e não por agrupamento: o
+  coordenador precisa ver cada pessoa. O restaurante fica fora do cálculo do raio, senão o raio
+  iria a ~1,4 km.
+- O status "aguardando programação" é o antigo "livre": é quem está disponível para acionar.
+
 ## Última sessão (2026-10-07, Claude)
-- Área de cobertura fundida com pulso de radar em `/mapa` (`lib/cobertura.ts`, `MapaLeaflet.tsx`,
-  `MapaView.tsx`, `globals.css`); conferida no navegador. Lint, build e tsc passam.
-- Coordenadas conferidas contra o diagrama oficial; divergências registradas, não corrigidas.
-- Popups ainda fecham no redesenho de 5 s (comportamento anterior, não mexido).
+- Status novos, restaurante do Porto Vale com 3 pessoas (2 almoçando, 1 descansando), pessoas do
+  pátio espalhadas por toda a área, pontos sem sobreposição, lat/lon no popup (que agora fica
+  aberto nas atualizações de 5 s) e layout de celular em todas as telas. Lint, tsc e build passam;
+  conferido no navegador em 1280 px e em 375 px.
+- Armadilha: com o painel do navegador oculto, a página carrega com largura ~0 e o Leaflet enquadra
+  no zoom 10. Para conferir, fixe o tamanho com `resize_window` antes de recarregar.
+- A cobertura (`6f32acb`) já está na `main` local e remota; o trabalho desta sessão está sem commit.

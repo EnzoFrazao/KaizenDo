@@ -31,10 +31,17 @@ Dois efeitos: um cria e destrói o mapa (roda uma vez), outro redesenha as camad
 
 Em volta de cada pessoa há um círculo azul; os círculos se fundem numa forma única, translúcida e com contorno, mostrando a malha que liga todo mundo. Um pulso de radar sai de cada pessoa (desligado com `prefers-reduced-motion`). O checkbox "Cobertura" liga e desliga; a legenda mostra o raio.
 
-- **Raio calculado, não fixo.** O pedido inicial era 3 km, mas a pera mede ~1,2 x 1,9 km: cada círculo cobriria o pátio todo. `raioDeCobertura()` usa o menor raio que ainda conecta todos os pontos visíveis (metade da maior aresta da árvore geradora mínima, +15 % de folga, mínimo de 150 m, arredondado a 10 m). Recalcula com os filtros. Com os dados atuais dá ~310 m.
+- **Raio calculado, não fixo.** O pedido inicial era 3 km, mas a pera mede ~1,2 x 1,9 km: cada círculo cobriria o pátio todo. `raioDeCobertura()` usa o menor raio que ainda conecta todos os pontos visíveis (metade da maior aresta da árvore geradora mínima, +15 % de folga, mínimo de 150 m, arredondado a 10 m). Recalcula com os filtros. Com os dados atuais dá ~230 m.
+- **Só o pátio entra na conta.** Quem está num trecho com `foraDoPatio` (o restaurante, a ~2,6 km) fica fora do cálculo: senão o raio subiria para ~1,4 km e a malha do pátio viraria uma mancha só. Essas pessoas ganham a própria gosma, com o mesmo raio. A cobertura só aparece depois que os trechos carregam, para a mancha não piscar.
 - **Por que filtro SVG.** Círculos translúcidos empilhados escurecem onde se sobrepõem. Por isso os círculos são opacos, num pane próprio (`radar`), e o filtro `#guara-gosma` (declarado no JSX do `MapaLeaflet`, aplicado em `globals.css`) borra, aplica limiar no alfa (funde), recorta a borda e só então deixa o miolo translúcido.
 - **Renderers criados uma vez**, junto com o mapa. Criar `L.svg()` a cada redesenho deixaria um `<svg>` órfão no pane a cada 5 s.
 - Os panes da cobertura ficam entre os tiles e os trechos e não capturam clique: os popups continuam funcionando.
+
+## Pontos sem sobreposição
+
+- **Espalhamento na tela, não nos dados.** `espalharNaTela()` empurra os pares de pontos que se encostam até ficarem a 1,5 px um do outro, e roda de novo a cada `zoomend`. No zoom alto quase ninguém sai do lugar. O popup mostra sempre a lat/lon lida do ESP32, nunca a do ponto desenhado.
+- **Ponto encolhe nos zooms afastados** (`escalaDoZoom`: 100 % do zoom 15 para cima, 80 % no 14, 60 % no 13 ou menos). No celular o enquadramento cai para o zoom 13; com o ponto cheio, o espalhamento empurrava gente para fora da gosma.
+- **Popup sobrevive ao redesenho de 5 s.** O `clearLayers` fecha o popup; guardamos quem estava aberto antes e reabrimos sem `autoPan`, para não puxar o mapa de volta se a pessoa o arrastou.
 
 ## Tiles
 
@@ -48,7 +55,7 @@ Em volta de cada pessoa há um círculo azul; os círculos se fundem numa forma 
 
 ## Já feito
 
-Mapa OpenStreetMap, círculos dos trechos (viradores em vermelho), pontos coloridos por status, área de cobertura fundida com pulso de radar, popup com detalhes, filtros de nome, função, status, turno e trecho, legenda, selo "ao vivo" com hora da última leitura, enquadramento automático no pátio (`fitBounds`) e atualização a cada 5 s.
+Mapa OpenStreetMap, círculos dos trechos (viradores em vermelho) e do restaurante, pontos coloridos por status e sem sobreposição, área de cobertura fundida com pulso de radar, popup com detalhes e lat/lon (fica aberto nas atualizações), layout de celular, filtros de nome, função, status, turno e trecho, legenda, selo "ao vivo" com hora da última leitura, enquadramento automático no pátio (`fitBounds`) e atualização a cada 5 s.
 
 ## A fazer
 
@@ -62,7 +69,9 @@ Mapa OpenStreetMap, círculos dos trechos (viradores em vermelho), pontos colori
 
 Os centros dos trechos em `dados-mock.ts` vêm de **pontos levantados pela equipe**: os viradores, o PIAL (Posto de Inspeção e Abastecimento de Locomotivas), o centro da pera e cinco vértices do anel. Os outros cinco trechos são o ponto médio entre vizinhos, para os 12 ficarem espaçados ao redor do laço.
 
-A pera cobre cerca de **1,2 x 1,9 km** e os trechos vizinhos ficam a ~200 m. Por isso os círculos têm raio de 90 m e a posição dentro do trecho é sorteada em ~50 m: dispersão maior misturaria um trecho com o outro.
+A pera cobre cerca de **1,2 x 1,9 km** e os trechos vizinhos ficam a ~200 m; os círculos dos trechos têm raio de 90 m. As pessoas do pátio são sorteadas por igual em todo o retângulo dos trechos, e o trecho de cada uma é o mais próximo do ponto sorteado. Antes ficavam a ~50 m do centro de um trecho, e como os trechos formam duas fileiras o mapa mostrava dois montinhos.
+
+O **restaurante (Porto Vale)** fica fora da pera, em `-2.5569236, -44.3600747` (ponto informado pela equipe). Só três pessoas aparecem lá, no fim do dia: duas almoçando e uma descansando. "Almoçando" e "descansando" só existem para quem está no restaurante; no pátio o status é manobrando, aguardando programação ou sem sinal.
 
 Continua sendo aproximação — o polígono de cada trecho só sai com a planta oficial da Vale.
 

@@ -1,5 +1,11 @@
 # Marcos do projeto
 
+## 2026-10-07 — novos status, restaurante e layout de celular
+
+- Status trocados para manobrando, almoçando, aguardando programação, descansando e sem sinal.
+- Restaurante do Porto Vale no mapa, como local fora do pátio, com três pessoas.
+- Pontos do mapa sem sobreposição e com lat/lon no popup; todas as telas adaptadas ao celular.
+
 ## 2026-10-07 — cobertura no mapa ao vivo
 
 - Área de cobertura fundida ("gosma" azul) com raio calculado pela árvore geradora mínima.

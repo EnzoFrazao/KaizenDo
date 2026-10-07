@@ -22,6 +22,8 @@ import type { PosicaoAtual } from "@/lib/tipos";
 const TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 const CREDITO = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
 
+const NOME_TRECHO = new Map(TRECHOS.map((t) => [t.id, t.nome]));
+
 /** Monta o popup com DOM, e não com string, para nome digitado no cadastro não virar HTML. */
 function popupDaPessoa(p: PosicaoAtual) {
   const raiz = document.createElement("div");
@@ -33,7 +35,9 @@ function popupDaPessoa(p: PosicaoAtual) {
 
   const linhas = [
     `${ROTULO_FUNCAO[p.pessoa.funcao]} · Turno ${p.pessoa.turno}`,
-    `${ROTULO_STATUS[p.status]} · ${p.trecho} · ${p.velocidadeKmh} km/h`,
+    `${ROTULO_STATUS[p.status]} · ${NOME_TRECHO.get(p.trecho) ?? p.trecho} · ${p.velocidadeKmh} km/h`,
+    // Sempre a posição lida do ESP32, nunca a do ponto desenhado (que pode ter sido afastado).
+    `Lat ${p.lat.toFixed(6)} · Lon ${p.lon.toFixed(6)}`,
     `${p.dispositivo.id} · bateria ${p.dispositivo.bateriaPct}%`,
   ];
   for (const texto of linhas) {
@@ -42,6 +46,74 @@ function popupDaPessoa(p: PosicaoAtual) {
     raiz.append(linha);
   }
   return raiz;
+}
+
+// Pontos das pessoas. Várias pessoas no mesmo trecho ficam a poucos metros umas das outras,
+// e no zoom de enquadramento isso dá menos de um pixel: os pontos se empilhavam. Em vez de
+// agrupar (o que esconderia gente), afastamos os pontos na tela só o bastante para não se
+// sobreporem, e refazemos a cada zoom. Com zoom alto ninguém sai do lugar.
+const RAIO_MAQUINISTA_PX = 6;
+const RAIO_MANOBRISTA_PX = 4.5;
+const FOLGA_PX = 1.5;
+
+type PontoDesenhado = { pessoaId: string; marcador: L.CircleMarker; real: L.LatLng; raioBase: number; raio: number };
+
+/**
+ * Tamanho do ponto conforme o zoom. No celular o enquadramento cai para o zoom 13, onde o
+ * pátio inteiro tem ~150 px: com o ponto cheio, o espalhamento empurraria gente para fora
+ * da área do radar. Encolhendo, todo mundo cabe sem encostar e sem sair do lugar.
+ */
+function escalaDoZoom(zoom: number) {
+  if (zoom >= 15) return 1;
+  if (zoom >= 14) return 0.8;
+  return 0.6;
+}
+
+/** Empurra para fora os pares que se sobrepõem na tela, até ninguém encostar (ou 60 voltas). */
+function espalharNaTela(m: L.Map, pontos: PontoDesenhado[]) {
+  if (!m.getPane("mapPane")) return;
+  const escala = escalaDoZoom(m.getZoom());
+  for (const p of pontos) {
+    p.raio = p.raioBase * escala;
+    p.marcador.setRadius(p.raio);
+  }
+  const xs: number[] = [];
+  const ys: number[] = [];
+  for (const p of pontos) {
+    const xy = m.latLngToLayerPoint(p.real);
+    xs.push(xy.x);
+    ys.push(xy.y);
+  }
+
+  for (let volta = 0; volta < 60; volta++) {
+    let mexeu = false;
+    for (let i = 0; i < pontos.length; i++) {
+      for (let j = i + 1; j < pontos.length; j++) {
+        const minimo = pontos[i].raio + pontos[j].raio + FOLGA_PX;
+        const dx = xs[j] - xs[i];
+        const dy = ys[j] - ys[i];
+        const d = Math.hypot(dx, dy);
+        if (d >= minimo) continue;
+        // Pontos idênticos não têm direção: usa o ângulo áureo para abrir em leque, sempre igual.
+        const angulo = (i * 137.5 + j * 47) * (Math.PI / 180);
+        const ux = d > 0.01 ? dx / d : Math.cos(angulo);
+        const uy = d > 0.01 ? dy / d : Math.sin(angulo);
+        const metade = (minimo - d) / 2;
+        xs[i] -= ux * metade;
+        ys[i] -= uy * metade;
+        xs[j] += ux * metade;
+        ys[j] += uy * metade;
+        mexeu = true;
+      }
+    }
+    if (!mexeu) break;
+  }
+
+  pontos.forEach((p, k) => {
+    const destino = m.layerPointToLatLng(L.point(xs[k], ys[k]));
+    p.marcador.setLatLng(destino);
+    if (p.marcador.isPopupOpen()) p.marcador.getPopup()?.setLatLng(destino);
+  });
 }
 
 // Cobertura ("radar" em volta de cada pessoa). Os círculos são desenhados opacos num pane
@@ -78,6 +150,9 @@ export default function MapaLeaflet({ posicoes, raioCoberturaM }: { posicoes: Po
   const camadaGosma = useRef<L.LayerGroup | null>(null);
   const camadaPulso = useRef<L.LayerGroup | null>(null);
   const renderers = useRef<{ gosma: L.Renderer; pulso: L.Renderer } | null>(null);
+  const pontos = useRef<PontoDesenhado[]>([]);
+  /** Pessoa com o popup aberto, para reabri-lo depois do redesenho de 5 s. */
+  const popupAberto = useRef<string | null>(null);
 
   // Cria o mapa uma única vez e o destrói no cleanup.
   useEffect(() => {
@@ -118,6 +193,7 @@ export default function MapaLeaflet({ posicoes, raioCoberturaM }: { posicoes: Po
     camadaGosma.current = L.layerGroup().addTo(m);
     camadaPulso.current = L.layerGroup().addTo(m);
     camadaPessoas.current = L.layerGroup().addTo(m);
+    m.on("zoomend", () => espalharNaTela(m, pontos.current));
     mapa.current = m;
 
     return () => {
@@ -127,6 +203,7 @@ export default function MapaLeaflet({ posicoes, raioCoberturaM }: { posicoes: Po
       camadaGosma.current = null;
       camadaPulso.current = null;
       renderers.current = null;
+      pontos.current = [];
     };
   }, []);
 
@@ -143,6 +220,8 @@ export default function MapaLeaflet({ posicoes, raioCoberturaM }: { posicoes: Po
     const pulso = camadaPulso.current;
     const r = renderers.current;
     if (!camada || !gosma || !pulso || !r || !m || !m.getPane("mapPane")) return;
+    // O clearLayers fecha o popup (e dispara popupclose), então guardamos antes quem estava aberto.
+    const reabrir = popupAberto.current;
     camada.clearLayers();
     gosma.clearLayers();
     pulso.clearLayers();
@@ -169,23 +248,39 @@ export default function MapaLeaflet({ posicoes, raioCoberturaM }: { posicoes: Po
       }
     }
 
-    for (const p of posicoes) {
-      L.circleMarker([p.lat, p.lon], {
-        radius: p.pessoa.funcao === "maquinista" ? 8 : 6,
+    pontos.current = posicoes.map((p) => {
+      const raio = p.pessoa.funcao === "maquinista" ? RAIO_MAQUINISTA_PX : RAIO_MANOBRISTA_PX;
+      const marcador = L.circleMarker([p.lat, p.lon], {
+        radius: raio,
         color: "#09090b",
-        weight: 2,
+        weight: 1.5,
         fillColor: COR_STATUS_MAPA[p.status],
         fillOpacity: 1,
       })
         .bindPopup(popupDaPessoa(p))
+        .on("popupopen", () => (popupAberto.current = p.pessoaId))
+        .on("popupclose", () => {
+          if (popupAberto.current === p.pessoaId) popupAberto.current = null;
+        })
         .addTo(camada);
+      return { pessoaId: p.pessoaId, marcador, real: L.latLng(p.lat, p.lon), raioBase: raio, raio };
+    });
+    espalharNaTela(m, pontos.current);
+
+    // Reabre sem autoPan: se a pessoa arrastou o mapa, não queremos puxá-lo de volta a cada 5 s.
+    const alvo = pontos.current.find((p) => p.pessoaId === reabrir)?.marcador;
+    const popup = alvo?.getPopup();
+    if (alvo && popup) {
+      popup.options.autoPan = false;
+      alvo.openPopup();
+      popup.options.autoPan = true;
     }
   }, [posicoes, raioCoberturaM]);
 
   return (
     <>
       <FiltroGosma />
-      <div ref={elemento} className="h-[560px] w-full rounded-lg border border-zinc-800" />
+      <div ref={elemento} className="h-[65vh] min-h-[360px] w-full rounded-lg border border-zinc-800 md:h-[560px]" />
     </>
   );
 }

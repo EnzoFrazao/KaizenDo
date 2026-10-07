@@ -67,37 +67,39 @@ export function HistoricoView() {
       </Card>
 
       <Card titulo={`${linhas.length.toLocaleString("pt-BR")} leituras no filtro`}>
-        <table className="w-full text-left text-sm">
-          <thead className="text-xs uppercase tracking-wide text-zinc-500">
-            <tr>
-              <th className="py-2">Horário</th>
-              <th>Nome</th>
-              <th>Função</th>
-              <th>Turno</th>
-              <th>Trecho</th>
-              <th>Velocidade</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {visiveis.map((l) => (
-              <tr key={`${l.pessoaId}-${l.timestamp}`} className="border-t border-zinc-800">
-                <td className="py-2 font-mono text-xs tabular-nums text-zinc-400">{hora(l.timestamp)}</td>
-                <td>{l.pessoa.nome}</td>
-                <td className="text-zinc-400">{ROTULO_FUNCAO[l.pessoa.funcao]}</td>
-                <td className="text-zinc-400">{l.pessoa.turno}</td>
-                <td className="text-zinc-400">{nomeTrecho.get(l.trecho) ?? l.trecho}</td>
-                <td className="tabular-nums text-zinc-400">{l.velocidadeKmh} km/h</td>
-                <td><StatusBadge status={l.status} /></td>
-              </tr>
-            ))}
-            {visiveis.length === 0 && (
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[40rem] text-left text-sm">
+            <thead className="text-xs uppercase tracking-wide text-zinc-500">
               <tr>
-                <td colSpan={7} className="py-6 text-center text-zinc-500">Nenhuma leitura com esses filtros.</td>
+                <th className="py-2">Horário</th>
+                <th>Nome</th>
+                <th>Função</th>
+                <th>Turno</th>
+                <th>Trecho</th>
+                <th>Velocidade</th>
+                <th>Status</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {visiveis.map((l) => (
+                <tr key={`${l.pessoaId}-${l.timestamp}`} className="border-t border-zinc-800">
+                  <td className="py-2 font-mono text-xs tabular-nums text-zinc-400">{hora(l.timestamp)}</td>
+                  <td>{l.pessoa.nome}</td>
+                  <td className="text-zinc-400">{ROTULO_FUNCAO[l.pessoa.funcao]}</td>
+                  <td className="text-zinc-400">{l.pessoa.turno}</td>
+                  <td className="text-zinc-400">{nomeTrecho.get(l.trecho) ?? l.trecho}</td>
+                  <td className="tabular-nums text-zinc-400">{l.velocidadeKmh} km/h</td>
+                  <td><StatusBadge status={l.status} /></td>
+                </tr>
+              ))}
+              {visiveis.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="py-6 text-center text-zinc-500">Nenhuma leitura com esses filtros.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
         <div className="mt-3 flex items-center gap-3 text-sm text-zinc-400">
           <button className="botao-secundario" disabled={pagina === 0} onClick={() => setPagina((p) => p - 1)}>
             Anterior

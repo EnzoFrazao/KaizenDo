@@ -6,12 +6,15 @@ export type Funcao = "maquinista" | "manobrista";
 /** Turnos de trabalho. Horários provisórios até a Vale confirmar a escala real. */
 export type Turno = "A" | "B" | "C";
 
-/** Situação de trabalho de uma pessoa, inferida pela posição e pela velocidade. */
+/**
+ * Situação de trabalho de uma pessoa, inferida pela posição e pela velocidade.
+ * "aguardando_programacao" é quem está disponível para ser acionado.
+ */
 export type StatusTrabalho =
-  | "livre"
-  | "em_atividade"
-  | "deslocando"
-  | "pausa"
+  | "manobrando"
+  | "almocando"
+  | "aguardando_programacao"
+  | "descansando"
   | "sem_sinal";
 
 /** Trechos entre os "X" do mapa oficial e as áreas nomeadas do terminal. */
@@ -27,7 +30,8 @@ export type TrechoId =
   | "FORMACAO"
   | "ESTACIONAMENTO"
   | "OFICINA"
-  | "CTMR";
+  | "CTMR"
+  | "RESTAURANTE";
 
 export interface Trecho {
   id: TrechoId;
@@ -36,6 +40,8 @@ export interface Trecho {
   areaDeRisco: boolean;
   /** Centro aproximado, usado no mapa até termos o polígono real. */
   centro: [number, number];
+  /** Local de apoio fora da pera (ex.: restaurante). Não entra na malha de cobertura do pátio. */
+  foraDoPatio?: boolean;
 }
 
 /**
