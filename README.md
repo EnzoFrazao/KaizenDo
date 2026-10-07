@@ -8,27 +8,41 @@ Cerca de 50 maquinistas e manobristas por turno trabalham em 13 km de pátio, e 
 
 ## A solução em uma frase
 
-Usar a posição GPS que já circula pelo rádio do sistema de alerta de aproximação de trens, captada por um **Raspberry Pi**, para mostrar onde está cada pessoa, recomendar quem chega mais rápido a cada frente, planejar o revezamento e, como extra de segurança, bloquear o virador quando houver alguém na área de basculamento.
+Cada pessoa leva um **ESP32** (GPS + rádio) e um **Raspberry Pi** no pátio recebe a latitude, a longitude e a velocidade de todos. Com isso o sistema mostra onde está cada um, recomenda quem chega mais rápido a cada frente, guarda o histórico e, como extra de segurança, bloqueia o virador quando há alguém na área de basculamento. Nome de trabalho: **GUARÁ**.
 
 ## Documentos
 
 | Documento | Conteúdo |
 |---|---|
 | [docs/problema.md](docs/problema.md) | Contexto completo: terminal, operação, ficha oficial, descobertas da visita de campo, glossário, perguntas abertas e hipóteses |
-| [docs/solucao.md](docs/solucao.md) | Solução explicada passo a passo, opções, arquitetura, protótipo, pitch, impacto das respostas pendentes e o módulo de segurança |
+| [docs/solucao.md](docs/solucao.md) | Solução explicada passo a passo, opções, protótipo, pitch e o módulo de segurança |
+| [docs/arquitetura.md](docs/arquitetura.md) | ESP32 → Raspberry → API → telas: pacote de rádio, API, modelo de dados, regras de status e alertas |
+| [docs/telas.md](docs/telas.md) | Especificação das 4 telas e divisão por membro da equipe |
 | [docs/slides/](docs/slides/) | Fotos dos slides da apresentação e do mapa oficial do terminal |
 
-## Estrutura planejada do protótipo
+## Estrutura do repositório
 
 ```
-prototipo/
-  simulador/   simula 20 trens/dia, 60 lotes, 50 pessoas e 2 carros, gerando posições no formato do sistema de alerta
-  receptor/    código do Raspberry Pi: recebe posições, cercas virtuais, relé de bloqueio
-  motor/       zonas por trecho entre os "X", tempos de deslocamento, recomendação e revezamento (Python + FastAPI)
-  painel/      mapa do pátio para quem coordena (Leaflet ou MapLibre)
+docs/                 problema, solução, arquitetura, telas, slides
+web/                  telas (Next.js), uma pasta por tela  → veja web/README.md
+  src/app/dashboard/    Dashboard de monitoramento
+  src/app/mapa/         Mapa ao vivo
+  src/app/historico/    Histórico com filtros
+  src/app/cadastro/     Cadastro pessoa ↔ ESP32
+firmware/esp32/       transmissor (GPS + LoRa)
+receptor/raspberry/   receptor, envio para a API e relé de segurança
+api/                  backend (FastAPI + PostgreSQL/PostGIS)
 ```
 
-Stack sugerida: Python, FastAPI, PostgreSQL com PostGIS e um painel web com mapa.
+## Rodar as telas
+
+```bash
+cd web
+npm install
+npm run dev
+```
+
+Abra http://localhost:3000. As telas usam dados fictícios até o backend existir.
 
 ## Time
 

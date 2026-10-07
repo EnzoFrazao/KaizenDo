@@ -1,6 +1,6 @@
 # KaizenDO · A solução
 
-> Proposta de solução para o desafio **Posicionamento Operacional Inteligente**. **Atualizada em 05/10 com a visita de campo:** o rádio de voz não tem GPS, então a captura passou a usar o sistema de alerta de aproximação de trens, que já existe (ver seção 1.4, passo 1, e a seção 4). O contexto, os dados e as perguntas abertas estão em [problema.md](problema.md). Esta proposta parte das hipóteses H1 a H6 daquele documento. Quando uma pergunta for respondida, confira a seção 7 deste arquivo para ver o que muda.
+> Proposta de solução para o desafio **Posicionamento Operacional Inteligente**. **Atualizada em 05/10 com a visita de campo:** o rádio de voz não tem GPS, então a captura passou a usar o sistema de alerta de aproximação de trens, que já existe (ver seção 1.4, passo 1, e a seção 4). **Atualizada em 07/10 com a decisão de hardware:** cada pessoa leva um **ESP32** (GPS + rádio) como transmissor e o **Raspberry Pi** é o receptor, que pega latitude, longitude e velocidade (ver a seção 4.1 e [arquitetura.md](arquitetura.md)). O contexto, os dados e as perguntas abertas estão em [problema.md](problema.md). Esta proposta parte das hipóteses H1 a H6 daquele documento. Quando uma pergunta for respondida, confira a seção 7 deste arquivo para ver o que muda.
 
 ## 1. A solução explicada
 
@@ -138,6 +138,15 @@ Isso responde aos quatro elos do slide 08 e à frase do slide 06: *"planejar o r
 
 - Ligar a coordenada a um **trecho entre "X"** ou área nomeada, e não a uma linha individual (H2).
 - Inferir o estado do operador pela sequência de posições: parado numa frente, deslocando, embarcado em locomotiva (velocidade alta), em pausa (no ponto de apoio).
+
+### 4.1 Decisão de hardware (07/10)
+
+O time fechou a alternativa do **rastreador de baixo custo**:
+- **Transmissor:** um **ESP32** com GPS e rádio LoRa por pessoa, que envia latitude, longitude, velocidade e bateria a cada poucos segundos.
+- **Receptor:** um **Raspberry Pi** no pátio, que escuta a frequência, decodifica os pacotes, envia para o backend e aciona o relé de segurança da seção 8.
+- O vínculo entre pessoa e ESP32 é feito na tela de Cadastro.
+
+O formato do pacote, a API e o modelo de dados estão em [arquitetura.md](arquitetura.md). As telas estão em [telas.md](telas.md).
 
 **Camada 2 · Tempo de deslocamento**
 - Para cada par de pátios, medir no histórico quanto os operadores levam para ir de um ao outro: mediana e percentil 90.
