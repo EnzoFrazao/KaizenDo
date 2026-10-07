@@ -8,22 +8,22 @@ export const ROTULO_STATUS: Record<StatusTrabalho, string> = {
   sem_sinal: "Sem sinal",
 };
 
-/** Classes Tailwind de cada status. Use sempre estas para manter as telas consistentes. */
+/** Classes Tailwind de cada status, no tema escuro. Use sempre estas nas telas. */
 export const COR_STATUS: Record<StatusTrabalho, string> = {
-  livre: "bg-emerald-100 text-emerald-800",
-  em_atividade: "bg-blue-100 text-blue-800",
-  deslocando: "bg-amber-100 text-amber-800",
-  pausa: "bg-slate-200 text-slate-700",
-  sem_sinal: "bg-red-100 text-red-800",
+  livre: "bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500/30",
+  em_atividade: "bg-sky-500/15 text-sky-300 ring-1 ring-sky-500/30",
+  deslocando: "bg-amber-500/15 text-amber-300 ring-1 ring-amber-500/30",
+  pausa: "bg-zinc-500/15 text-zinc-300 ring-1 ring-zinc-500/30",
+  sem_sinal: "bg-red-500/15 text-red-300 ring-1 ring-red-500/30",
 };
 
-/** Cor dos pontos no mapa. */
+/** Cor dos pontos no mapa e das barras. Tons claros, para contrastar no escuro. */
 export const COR_STATUS_MAPA: Record<StatusTrabalho, string> = {
-  livre: "#059669",
-  em_atividade: "#2563eb",
-  deslocando: "#d97706",
-  pausa: "#64748b",
-  sem_sinal: "#dc2626",
+  livre: "#34d399",
+  em_atividade: "#38bdf8",
+  deslocando: "#fbbf24",
+  pausa: "#a1a1aa",
+  sem_sinal: "#f87171",
 };
 
 export const ROTULO_FUNCAO: Record<Funcao, string> = {
@@ -35,6 +35,21 @@ export const ROTULO_TURNO: Record<Turno, string> = {
   A: "Turno A (07h–15h)",
   B: "Turno B (15h–23h)",
   C: "Turno C (23h–07h)",
+};
+
+/** Faixas de bateria do ESP32. Usadas no cadastro e no dashboard. */
+export type FaixaBateria = "critica" | "baixa" | "ok";
+
+export function faixaBateria(pct: number): FaixaBateria {
+  if (pct < 20) return "critica";
+  if (pct < 50) return "baixa";
+  return "ok";
+}
+
+export const COR_BATERIA: Record<FaixaBateria, string> = {
+  critica: "bg-red-500/15 text-red-300 ring-1 ring-red-500/30",
+  baixa: "bg-amber-500/15 text-amber-300 ring-1 ring-amber-500/30",
+  ok: "bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500/30",
 };
 
 export const ROTULO_ALERTA: Record<TipoAlerta, string> = {

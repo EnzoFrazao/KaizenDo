@@ -1,49 +1,104 @@
 "use client";
 
+// Leaflet puro, sem react-leaflet.
+//
+// Por quê: o MapContainer do react-leaflet cria o mapa num callback de ref, e não num
+// efeito. Com o duplo-mount do StrictMode (React 19) o mesmo <div> era reaproveitado por
+// uma segunda instância, o que gerava os erros "Map container is being reused by another
+// instance", "Cannot read properties of null (reading '_targets')" e o appendChild de
+// undefined no TileLayer. Criando o mapa dentro de um useEffect, o cleanup chama
+// map.remove() e devolve o <div> limpo antes da remontagem.
+
 import "leaflet/dist/leaflet.css";
-import { Circle, CircleMarker, MapContainer, Popup, TileLayer, Tooltip } from "react-leaflet";
+import L from "leaflet";
+import { useEffect, useRef } from "react";
 import { CENTRO_TFPM, TRECHOS } from "@/lib/dados-mock";
 import { COR_STATUS_MAPA, ROTULO_FUNCAO, ROTULO_STATUS } from "@/lib/rotulos";
 import type { PosicaoAtual } from "@/lib/tipos";
 
+// Tiles do OpenStreetMap, escurecidos por CSS (.leaflet-tile-pane em globals.css).
+// Os basemaps escuros prontos (CARTO, Stadia) passaram a exigir chave de API; inverter
+// o tile claro resolve sem depender de cadastro nem de chave em produção.
+const TILES = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+const CREDITO = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+
+/** Monta o popup com DOM, e não com string, para nome digitado no cadastro não virar HTML. */
+function popupDaPessoa(p: PosicaoAtual) {
+  const raiz = document.createElement("div");
+  raiz.className = "guara-popup";
+
+  const nome = document.createElement("strong");
+  nome.textContent = p.pessoa.nome;
+  raiz.append(nome);
+
+  const linhas = [
+    `${ROTULO_FUNCAO[p.pessoa.funcao]} · Turno ${p.pessoa.turno}`,
+    `${ROTULO_STATUS[p.status]} · ${p.trecho} · ${p.velocidadeKmh} km/h`,
+    `${p.dispositivo.id} · bateria ${p.dispositivo.bateriaPct}%`,
+  ];
+  for (const texto of linhas) {
+    const linha = document.createElement("p");
+    linha.textContent = texto;
+    raiz.append(linha);
+  }
+  return raiz;
+}
+
 export default function MapaLeaflet({ posicoes }: { posicoes: PosicaoAtual[] }) {
-  return (
-    <MapContainer center={CENTRO_TFPM} zoom={14} className="h-[560px] w-full rounded-lg border border-slate-200">
-      <TileLayer
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
+  const elemento = useRef<HTMLDivElement>(null);
+  const mapa = useRef<L.Map | null>(null);
+  const camadaPessoas = useRef<L.LayerGroup | null>(null);
 
-      {/* Trechos: círculos provisórios até termos os polígonos reais. Áreas de risco em vermelho. */}
-      {TRECHOS.map((t) => (
-        <Circle
-          key={t.id}
-          center={t.centro}
-          radius={300}
-          pathOptions={{ color: t.areaDeRisco ? "#dc2626" : "#94a3b8", weight: 1, fillOpacity: 0.05 }}
-        >
-          <Tooltip>{t.nome}</Tooltip>
-        </Circle>
-      ))}
+  // Cria o mapa uma única vez e o destrói no cleanup.
+  useEffect(() => {
+    if (!elemento.current) return;
 
-      {posicoes.map((p) => (
-        <CircleMarker
-          key={p.pessoaId}
-          center={[p.lat, p.lon]}
-          radius={p.pessoa.funcao === "maquinista" ? 8 : 6}
-          pathOptions={{ color: "#ffffff", weight: 2, fillColor: COR_STATUS_MAPA[p.status], fillOpacity: 1 }}
-        >
-          <Popup>
-            <strong>{p.pessoa.nome}</strong>
-            <br />
-            {ROTULO_FUNCAO[p.pessoa.funcao]} · Turno {p.pessoa.turno}
-            <br />
-            {ROTULO_STATUS[p.status]} · {p.trecho} · {p.velocidadeKmh} km/h
-            <br />
-            {p.dispositivo.id} · bateria {p.dispositivo.bateriaPct}%
-          </Popup>
-        </CircleMarker>
-      ))}
-    </MapContainer>
-  );
+    const m = L.map(elemento.current, { center: CENTRO_TFPM, zoom: 14 });
+    L.tileLayer(TILES, { attribution: CREDITO, maxZoom: 19 }).addTo(m);
+
+    // Enquadra o pátio inteiro, em vez de confiar num zoom fixo.
+    m.fitBounds(L.latLngBounds(TRECHOS.map((t) => t.centro)), { padding: [48, 48] });
+
+    // Trechos: círculos provisórios até termos os polígonos reais do pátio.
+    for (const t of TRECHOS) {
+      L.circle(t.centro, {
+        radius: t.areaDeRisco ? 220 : 260,
+        color: t.areaDeRisco ? "#f87171" : "#52525b",
+        weight: t.areaDeRisco ? 2 : 1,
+        fillColor: t.areaDeRisco ? "#ef4444" : "#a1a1aa",
+        fillOpacity: t.areaDeRisco ? 0.12 : 0.05,
+      })
+        .bindTooltip(t.nome)
+        .addTo(m);
+    }
+
+    camadaPessoas.current = L.layerGroup().addTo(m);
+    mapa.current = m;
+
+    return () => {
+      m.remove();
+      mapa.current = null;
+      camadaPessoas.current = null;
+    };
+  }, []);
+
+  // Redesenha os pontos a cada atualização de posição.
+  useEffect(() => {
+    const camada = camadaPessoas.current;
+    if (!camada) return;
+    camada.clearLayers();
+    for (const p of posicoes) {
+      L.circleMarker([p.lat, p.lon], {
+        radius: p.pessoa.funcao === "maquinista" ? 8 : 6,
+        color: "#09090b",
+        weight: 2,
+        fillColor: COR_STATUS_MAPA[p.status],
+        fillOpacity: 1,
+      })
+        .bindPopup(popupDaPessoa(p))
+        .addTo(camada);
+    }
+  }, [posicoes]);
+
+  return <div ref={elemento} className="h-[560px] w-full rounded-lg border border-zinc-800" />;
 }

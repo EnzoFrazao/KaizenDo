@@ -1,88 +1,263 @@
 "use client";
 
-// Ponto de partida da página. Veja o que construir em ../README.md.
+// Tela do administrador: cadastra operários e ESP32 e vincula um ao outro.
+// O operário não acessa o sistema — ele só é identificado pela tag que carrega.
+// O cadastro em si é o wizard (NovoCadastroWizard); aqui ficam o resumo, a gestão dos
+// vínculos e o estoque. Veja o que falta em ../README.md.
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Card } from "@/components/Card";
-import { listarDispositivos, listarPessoas, vincularDispositivo } from "@/lib/dados";
-import { ROTULO_FUNCAO } from "@/lib/rotulos";
-import type { Dispositivo, Pessoa } from "@/lib/tipos";
+import {
+  listarDispositivos,
+  listarPessoas,
+  restaurarDados,
+  vincularDispositivo,
+} from "@/lib/dados";
+import { COR_BATERIA, ROTULO_FUNCAO, ROTULO_TURNO, faixaBateria } from "@/lib/rotulos";
+import type { Dispositivo, Funcao, Pessoa, Turno } from "@/lib/tipos";
+import { NovoCadastroWizard } from "./NovoCadastroWizard";
+
+function Bateria({ pct }: { pct: number }) {
+  return (
+    <span className={`inline-block rounded-full px-2 py-0.5 text-xs font-medium ${COR_BATERIA[faixaBateria(pct)]}`}>
+      {pct}%
+    </span>
+  );
+}
+
+/**
+ * "agora" ou "há 12 min" quando o sinal é recente; senão a hora (10:23), com a data junto
+ * se for de outro dia. O relativo só vale para a última hora: os dados ilustrativos têm
+ * horário fixo e, fora dessa janela, "há N h" passaria a mentir.
+ */
+function desde(iso: string, agora: number) {
+  const data = new Date(iso);
+  const minutos = Math.floor((agora - data.getTime()) / 60_000);
+  if (minutos >= 0 && minutos < 60) return minutos < 1 ? "agora" : `há ${minutos} min`;
+  const hora = data.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  const mesmoDia = data.toDateString() === new Date(agora).toDateString();
+  return mesmoDia ? hora : `${data.toLocaleDateString("pt-BR")} ${hora}`;
+}
 
 export function CadastroView() {
   const [pessoas, setPessoas] = useState<Pessoa[]>([]);
   const [dispositivos, setDispositivos] = useState<Dispositivo[]>([]);
   const [erro, setErro] = useState<string | null>(null);
+  const [sucesso, setSucesso] = useState<string | null>(null);
+  // Fica em estado, e não em Date.now() no render, para o servidor e o navegador
+  // renderizarem a mesma coisa na primeira passada.
+  const [agora, setAgora] = useState(0);
 
-  const carregar = useCallback(async () => {
-    const [ps, ds] = await Promise.all([listarPessoas(), listarDispositivos()]);
+  const [busca, setBusca] = useState("");
+  const [filtroFuncao, setFiltroFuncao] = useState<Funcao | "">("");
+  const [filtroTurno, setFiltroTurno] = useState<Turno | "">("");
+
+  const buscar = useCallback(() => Promise.all([listarPessoas(), listarDispositivos()]), []);
+
+  // O lint não deixa chamar setState direto no corpo de um efeito, então a carga
+  // inicial e as recargas passam por aqui, sempre dentro de um callback.
+  const aplicar = useCallback(([ps, ds]: [Pessoa[], Dispositivo[]]) => {
     setPessoas([...ps]);
     setDispositivos([...ds]);
+    setAgora(Date.now());
   }, []);
 
   useEffect(() => {
-    Promise.all([listarPessoas(), listarDispositivos()]).then(([ps, ds]) => {
-      setPessoas([...ps]);
-      setDispositivos([...ds]);
-    });
-  }, []);
+    buscar().then(aplicar);
+  }, [buscar, aplicar]);
 
-  const livres = dispositivos.filter((d) => !d.pessoaId);
+  /** Roda uma ação de cadastro, recarrega a tela e mostra o erro ou a confirmação. */
+  const executar = useCallback(
+    async (acao: () => Promise<string>) => {
+      setErro(null);
+      setSucesso(null);
+      try {
+        const mensagem = await acao();
+        aplicar(await buscar());
+        setSucesso(mensagem);
+      } catch (e) {
+        setErro((e as Error).message);
+      }
+    },
+    [buscar, aplicar],
+  );
 
-  async function trocar(pessoaId: string, dispositivoId: string) {
-    setErro(null);
-    try {
-      await vincularDispositivo(pessoaId, dispositivoId || null);
-      await carregar();
-    } catch (e) {
-      setErro((e as Error).message);
-    }
-  }
+  const recarregarCom = useCallback(
+    async (mensagem: string) => {
+      setErro(null);
+      aplicar(await buscar());
+      setSucesso(mensagem);
+    },
+    [buscar, aplicar],
+  );
+
+  const livres = useMemo(() => dispositivos.filter((d) => !d.pessoaId), [dispositivos]);
+  const porId = useMemo(() => new Map(dispositivos.map((d) => [d.id, d])), [dispositivos]);
+  const semDispositivo = pessoas.filter((p) => !p.dispositivoId).length;
+
+  const filtradas = useMemo(() => {
+    const termo = busca.toLowerCase().trim();
+    return pessoas.filter(
+      (p) =>
+        (!filtroFuncao || p.funcao === filtroFuncao) &&
+        (!filtroTurno || p.turno === filtroTurno) &&
+        (!termo || p.nome.toLowerCase().includes(termo) || p.matricula.includes(termo)),
+    );
+  }, [pessoas, busca, filtroFuncao, filtroTurno]);
 
   return (
     <div className="grid gap-4">
-      {/* TODO: formulários "Nova pessoa" e "Novo dispositivo" (api.cadastrarPessoa / api.cadastrarDispositivo). */}
-      <Card titulo={`Dispositivos livres: ${livres.length}`}>
-        <p className="text-sm text-slate-600">{livres.map((d) => d.id).join(", ") || "Nenhum"}</p>
-      </Card>
+      <p className="rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-zinc-400">
+        Esta é a área do administrador. O operário <strong className="font-medium text-zinc-100">não acessa o
+        sistema</strong>: ele é identificado automaticamente pelo ESP32 que carrega, e é esse vínculo que faz o nome
+        dele aparecer no mapa, no dashboard e no histórico.
+      </p>
 
-      {erro && <p className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">{erro}</p>}
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <Card titulo="Pessoas cadastradas">
+          <p className="text-3xl font-semibold tabular-nums">{pessoas.length}</p>
+        </Card>
+        <Card titulo="Com ESP32 vinculado">
+          <p className="text-3xl font-semibold tabular-nums">{pessoas.length - semDispositivo}</p>
+        </Card>
+        <Card titulo="Sem ESP32">
+          <p className={`text-3xl font-semibold tabular-nums ${semDispositivo > 0 ? "text-amber-400" : ""}`}>
+            {semDispositivo}
+          </p>
+        </Card>
+        <Card titulo="ESP32 livres no estoque">
+          <p className="text-3xl font-semibold tabular-nums">{livres.length}</p>
+        </Card>
+      </div>
 
-      <Card titulo="Pessoas e dispositivos vinculados">
-        <table className="w-full text-left text-sm">
-          <thead className="text-slate-500">
-            <tr>
-              <th className="py-2">Nome</th>
-              <th>Matrícula</th>
-              <th>Função</th>
-              <th>Turno</th>
-              <th>ESP32 vinculado</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pessoas.map((p) => (
-              <tr key={p.id} className="border-t border-slate-100">
-                <td className="py-2">{p.nome}</td>
-                <td>{p.matricula}</td>
-                <td>{ROTULO_FUNCAO[p.funcao]}</td>
-                <td>{p.turno}</td>
-                <td>
-                  <select
-                    className="rounded border border-slate-300 px-2 py-1"
-                    value={p.dispositivoId ?? ""}
-                    onChange={(e) => trocar(p.id, e.target.value)}
-                  >
-                    <option value="">Sem dispositivo</option>
-                    {p.dispositivoId && <option value={p.dispositivoId}>{p.dispositivoId}</option>}
-                    {livres.map((d) => (
-                      <option key={d.id} value={d.id}>{d.id}</option>
-                    ))}
-                  </select>
-                </td>
+      {erro && (
+        <p role="alert" className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+          {erro}
+        </p>
+      )}
+      {sucesso && (
+        <p role="status" className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
+          {sucesso}
+        </p>
+      )}
+
+      <NovoCadastroWizard livres={livres} aoConcluir={recarregarCom} />
+
+      <Card
+        titulo="Pessoas e dispositivos vinculados"
+        acao={<span className="text-sm text-zinc-500 tabular-nums">{filtradas.length} de {pessoas.length}</span>}
+      >
+        <div className="mb-3 flex flex-wrap items-center gap-3">
+          <input
+            className="campo"
+            placeholder="Buscar por nome ou matrícula"
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+          />
+          <select className="campo" value={filtroFuncao} onChange={(e) => setFiltroFuncao(e.target.value as Funcao | "")}>
+            <option value="">Todas as funções</option>
+            {Object.entries(ROTULO_FUNCAO).map(([v, r]) => <option key={v} value={v}>{r}</option>)}
+          </select>
+          <select className="campo" value={filtroTurno} onChange={(e) => setFiltroTurno(e.target.value as Turno | "")}>
+            <option value="">Todos os turnos</option>
+            {Object.entries(ROTULO_TURNO).map(([v, r]) => <option key={v} value={v}>{r}</option>)}
+          </select>
+        </div>
+
+        <div className="max-h-[32rem] overflow-y-auto">
+          <table className="w-full text-left text-sm">
+            <thead className="sticky top-0 bg-zinc-900 text-xs uppercase tracking-wide text-zinc-500">
+              <tr>
+                <th className="py-2">Nome</th>
+                <th>Matrícula</th>
+                <th>Função</th>
+                <th>Turno</th>
+                <th>ESP32 vinculado</th>
+                <th>Bateria</th>
+                <th>Último sinal</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filtradas.map((p) => {
+                const dispositivo = p.dispositivoId ? porId.get(p.dispositivoId) : undefined;
+                return (
+                  <tr key={p.id} className="border-t border-zinc-800">
+                    <td className="py-2">{p.nome}</td>
+                    <td className="font-mono text-xs text-zinc-400">{p.matricula}</td>
+                    <td className="text-zinc-400">{ROTULO_FUNCAO[p.funcao]}</td>
+                    <td className="text-zinc-400">{p.turno}</td>
+                    <td>
+                      <select
+                        className="campo font-mono"
+                        aria-label={`ESP32 de ${p.nome}`}
+                        value={p.dispositivoId ?? ""}
+                        onChange={(e) => {
+                          const escolhido = e.target.value || null;
+                          executar(async () => {
+                            await vincularDispositivo(p.id, escolhido);
+                            return escolhido
+                              ? `${escolhido} vinculado a ${p.nome}.`
+                              : `${p.nome} ficou sem dispositivo e sai do mapa.`;
+                          });
+                        }}
+                      >
+                        <option value="">Sem dispositivo</option>
+                        {p.dispositivoId && <option value={p.dispositivoId}>{p.dispositivoId}</option>}
+                        {livres.map((d) => <option key={d.id} value={d.id}>{d.id}</option>)}
+                      </select>
+                    </td>
+                    <td>{dispositivo ? <Bateria pct={dispositivo.bateriaPct} /> : <span className="text-zinc-600">—</span>}</td>
+                    <td className="text-zinc-500">{dispositivo && agora ? desde(dispositivo.ultimoSinal, agora) : "—"}</td>
+                  </tr>
+                );
+              })}
+              {filtradas.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="py-6 text-center text-zinc-500">
+                    Nenhuma pessoa encontrada com esses filtros.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </Card>
+
+      <Card titulo={`Estoque de ESP32 livres: ${livres.length}`}>
+        {livres.length === 0 ? (
+          <p className="text-sm text-zinc-500">Nenhum. Cadastre um novo pelo wizard ou desvincule algum em uso.</p>
+        ) : (
+          <ul className="grid gap-1.5 md:grid-cols-2">
+            {livres.map((d) => (
+              <li key={d.id} className="flex items-center gap-2 rounded-md border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-sm">
+                <span className="font-mono text-zinc-100">{d.id}</span>
+                <Bateria pct={d.bateriaPct} />
+                <span className="ml-auto text-xs text-zinc-600">
+                  {agora ? `último sinal: ${desde(d.ultimoSinal, agora)}` : ""}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Card>
+
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm">
+        <p className="text-zinc-500">
+          Os cadastros ficam guardados neste navegador, sem servidor. Antes de apresentar, volte aos dados originais.
+        </p>
+        <button
+          type="button"
+          className="botao-secundario"
+          onClick={() =>
+            executar(async () => {
+              await restaurarDados();
+              return "Dados voltaram ao estado original.";
+            })
+          }
+        >
+          Restaurar dados originais
+        </button>
+      </div>
     </div>
   );
 }

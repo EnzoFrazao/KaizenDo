@@ -20,13 +20,17 @@ dashboard/
 
 ## Já feito
 
-Cartões de resumo, pessoas por status, alertas ativos e ocupação por trecho (em lista).
+- Cartões de resumo (dispositivo ativo, alertas, sem sinal, bateria baixa)
+- **Trabalhando agora:** tabela de quem está em campo, com busca por nome ou matrícula, filtro por função e os status como botões-filtro com contagem. "Em campo" exclui quem está sem sinal, porque não dá para acionar quem o sistema não enxerga
+- Pessoas por status, com barra proporcional
+- Pessoas por função, com quantos estão livres para acionar em cada uma
+- Alertas ativos com nome da pessoa, nome do trecho e hora de início; os de segurança piscam
+- Ocupação por trecho em barras
+- Atualização automática a cada 5 s, com selo "ao vivo"
 
 ## A fazer
 
 - [ ] Ajustar ao mockup
-- [ ] Gráfico de ocupação por trecho (barras ou mapa de calor)
-- [ ] Pessoas por função (maquinista × manobrista)
-- [ ] Atualização automática a cada 5 s
-- [ ] "Livres mais próximos" de um trecho escolhido
+- [ ] "Livres mais próximos" de um trecho escolhido (o "acionar o mais próximo" do desafio)
 - [ ] Bloco de saúde dos dispositivos (sem sinal, bateria baixa, sem vínculo)
+- [ ] Clicar numa pessoa da tabela e abrir ela no mapa

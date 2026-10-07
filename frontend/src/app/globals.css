@@ -1,7 +1,126 @@
 @import "tailwindcss";
 
+/* Tema escuro único: o painel fica num CCO, muitas vezes em sala de pouca luz,
+   e o mapa usa tiles escuros. Não há alternância de tema. */
+
+:root {
+  --fundo: #09090b;
+  --superficie: #141417;
+  --superficie-alta: #1c1c20;
+  --borda: #27272a;
+  --texto: #fafafa;
+  --texto-suave: #a1a1aa;
+}
+
 body {
-  background: #f8fafc;
-  color: #0f172a;
+  background: var(--fundo);
+  color: var(--texto);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Campos e botões. Ficam aqui para as 4 telas não repetirem a mesma receita. */
+.campo {
+  border-radius: 0.375rem;
+  border: 1px solid var(--borda);
+  background: var(--superficie-alta);
+  color: var(--texto);
+  padding: 0.375rem 0.625rem;
+  font-size: 0.875rem;
+}
+.campo::placeholder {
+  color: #52525b;
+}
+.campo:focus-visible {
+  outline: 2px solid #34d399;
+  outline-offset: 1px;
+}
+/* O seletor de data do Chrome desenha o ícone preto sobre fundo escuro. */
+.campo::-webkit-calendar-picker-indicator {
+  filter: invert(1) opacity(0.6);
+}
+
+.botao {
+  border-radius: 0.375rem;
+  background: #fafafa;
+  color: #09090b;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.botao:hover {
+  background: #d4d4d8;
+}
+.botao:disabled {
+  opacity: 0.4;
+}
+
+.botao-secundario {
+  border-radius: 0.375rem;
+  border: 1px solid var(--borda);
+  background: transparent;
+  color: var(--texto-suave);
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.botao-secundario:hover:not(:disabled) {
+  background: var(--superficie-alta);
+  color: var(--texto);
+}
+.botao-secundario:disabled {
+  opacity: 0.4;
+}
+
+/* Leaflet: os popups, tooltips e controles vêm claros por padrão. */
+.leaflet-container {
+  background: #0b0b0d;
+}
+/* Os tiles ficam coloridos de propósito: no mapa, a cor do terreno, da água e dos
+   trilhos ajuda a situar quem olha. O escuro vale para o resto da interface. */
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip,
+.leaflet-tooltip {
+  background: var(--superficie-alta);
+  color: var(--texto);
+  border: 1px solid var(--borda);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.5);
+}
+.leaflet-tooltip::before {
+  display: none;
+}
+.guara-popup strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+.guara-popup p {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+.leaflet-bar a,
+.leaflet-control-attribution {
+  background: var(--superficie-alta) !important;
+  color: var(--texto-suave) !important;
+  border-color: var(--borda) !important;
+}
+.leaflet-bar a:hover {
+  background: #2a2a2f !important;
+}
+.leaflet-control-attribution a {
+  color: #71717a !important;
+}
+
+/* O ponto que pulsa no mapa e nos indicadores "ao vivo". */
+@keyframes guara-pulso {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+.pulso {
+  animation: guara-pulso 1.6s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pulso {
+    animation: none;
+  }
 }

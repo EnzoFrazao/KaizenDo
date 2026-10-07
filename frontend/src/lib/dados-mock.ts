@@ -3,6 +3,7 @@
 // Tudo é gerado com semente fixa, para servidor e navegador produzirem os mesmos dados.
 
 import type {
+  Admin,
   Alerta,
   Dispositivo,
   Funcao,
@@ -26,22 +27,41 @@ function criarAleatorio(semente: number) {
   };
 }
 
-/** Centro aproximado do terminal. Trocar pelo mapa georreferenciado quando houver. */
-export const CENTRO_TFPM: [number, number] = [-2.585, -44.355];
+/**
+ * Único usuário do sistema, fixo. O protótipo não tem login de propósito: quem avalia
+ * abre a URL e o sistema já está funcionando. Ver src/app/cadastro/README.md.
+ */
+export const ADMIN_ATUAL: Admin = {
+  id: "A001",
+  nome: "Helena Marques",
+  matricula: "800147",
+  cargo: "Coordenação de turno · CCO",
+};
+
+// Cada centro abaixo é um ponto REAL da malha, tirado do OpenStreetMap: centroides de
+// vias com service=yard da Estrada de Ferro Carajás em São Luís, escolhidos ao longo do
+// feixe de linhas. Por isso as pessoas caem sobre os trilhos, e não no mar como antes.
+//
+// A ordem é a da operação: o trem chega na Recepção (sudeste), é formado, sobe pelos
+// trechos X e termina nos Viradores, na ponta do terminal (noroeste).
+// Ainda é aproximação: o polígono de cada trecho só sai com a planta oficial da Vale.
+
+/** Centro aproximado do pátio. O mapa ajusta o enquadramento pelos trechos. */
+export const CENTRO_TFPM: [number, number] = [-2.5853, -44.3434];
 
 export const TRECHOS: Trecho[] = [
-  { id: "RECEPCAO", nome: "Pátio de Recepção", areaDeRisco: false, centro: [-2.598, -44.372] },
-  { id: "X01", nome: "Trecho X01", areaDeRisco: false, centro: [-2.596, -44.362] },
-  { id: "X02", nome: "Trecho X02", areaDeRisco: false, centro: [-2.594, -44.351] },
-  { id: "X03", nome: "Trecho X03", areaDeRisco: false, centro: [-2.588, -44.342] },
-  { id: "VIRADORES", nome: "Pátio dos Viradores", areaDeRisco: true, centro: [-2.579, -44.338] },
-  { id: "X05", nome: "Trecho X05", areaDeRisco: false, centro: [-2.582, -44.347] },
-  { id: "X06", nome: "Trecho X06", areaDeRisco: false, centro: [-2.588, -44.356] },
-  { id: "X07", nome: "Trecho X07", areaDeRisco: false, centro: [-2.589, -44.366] },
-  { id: "FORMACAO", nome: "Formação", areaDeRisco: false, centro: [-2.590, -44.372] },
-  { id: "ESTACIONAMENTO", nome: "Estacionamento", areaDeRisco: false, centro: [-2.586, -44.378] },
-  { id: "OFICINA", nome: "Oficina Central", areaDeRisco: false, centro: [-2.580, -44.366] },
-  { id: "CTMR", nome: "CTMR", areaDeRisco: false, centro: [-2.584, -44.360] },
+  { id: "VIRADORES", nome: "Pátio dos Viradores", areaDeRisco: true, centro: [-2.56540, -44.36972] },
+  { id: "OFICINA", nome: "Oficina Central", areaDeRisco: false, centro: [-2.56813, -44.36564] },
+  { id: "CTMR", nome: "CTMR", areaDeRisco: false, centro: [-2.57161, -44.35943] },
+  { id: "X07", nome: "Trecho X07", areaDeRisco: false, centro: [-2.57078, -44.35502] },
+  { id: "X06", nome: "Trecho X06", areaDeRisco: false, centro: [-2.57605, -44.35057] },
+  { id: "X05", nome: "Trecho X05", areaDeRisco: false, centro: [-2.57780, -44.34321] },
+  { id: "ESTACIONAMENTO", nome: "Estacionamento", areaDeRisco: false, centro: [-2.57908, -44.33884] },
+  { id: "X03", nome: "Trecho X03", areaDeRisco: false, centro: [-2.57883, -44.33414] },
+  { id: "X02", nome: "Trecho X02", areaDeRisco: false, centro: [-2.58517, -44.32853] },
+  { id: "X01", nome: "Trecho X01", areaDeRisco: false, centro: [-2.58844, -44.32363] },
+  { id: "FORMACAO", nome: "Formação", areaDeRisco: false, centro: [-2.59790, -44.32087] },
+  { id: "RECEPCAO", nome: "Pátio de Recepção", areaDeRisco: false, centro: [-2.60527, -44.31711] },
 ];
 
 const NOMES = [
@@ -68,7 +88,8 @@ export const PESSOAS: Pessoa[] = Array.from({ length: 50 }, (_, i) => {
     funcao,
     turno,
     // As duas últimas pessoas ficam sem dispositivo, para a tela de cadastro ter o que vincular.
-    dispositivoId: i < 48 ? `ESP32-${(0x0a00 + i).toString(16).toUpperCase()}` : null,
+    // 4 dígitos hexadecimais, como na etiqueta real e no exemplo do tipo Dispositivo.
+    dispositivoId: i < 48 ? `ESP32-${(0x0a00 + i).toString(16).toUpperCase().padStart(4, "0")}` : null,
     ativo: true,
   };
 });
@@ -101,9 +122,10 @@ function velocidadePara(status: StatusTrabalho, funcao: Funcao) {
   return rand() * 0.8;
 }
 
+/** Espalha a pessoa perto do centro do trecho, sem sair do feixe de linhas (~150 m). */
 function pontoPerto(trecho: TrechoId): [number, number] {
   const t = TRECHOS.find((x) => x.id === trecho)!;
-  return [t.centro[0] + (rand() - 0.5) * 0.004, t.centro[1] + (rand() - 0.5) * 0.004];
+  return [t.centro[0] + (rand() - 0.5) * 0.0026, t.centro[1] + (rand() - 0.5) * 0.0026];
 }
 
 /** Gera leituras a cada 10 min das 06h às 22h do dia base. */
@@ -130,9 +152,12 @@ function gerarHistorico(): Leitura[] {
       });
     }
   }
-  return leituras;
+  // Gerado pessoa por pessoa, mas o histórico é cronológico: sem ordenar por horário,
+  // a tabela e a reprodução mostrariam uma pessoa de cada vez, e não o turno acontecendo.
+  return leituras.sort((a, b) => a.timestamp.localeCompare(b.timestamp));
 }
 
+/** Leituras do dia, da mais antiga para a mais recente. */
 export const LEITURAS: Leitura[] = gerarHistorico();
 
 export const ALERTAS: Alerta[] = [

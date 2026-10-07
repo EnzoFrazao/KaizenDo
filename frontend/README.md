@@ -2,6 +2,8 @@
 
 Next.js 16 (App Router) + React 19 + TypeScript + Tailwind 4 + Leaflet. Protótipo **só visual, com dados ilustrativos**. Não há backend nem conexão com ESP32 ou Raspberry.
 
+**Tema escuro único**, sem alternância: o painel fica num CCO, muitas vezes em sala de pouca luz. O mapa é a exceção — os tiles ficam coloridos, porque a cor do terreno e da água ajuda a situar quem olha. Cores, campos e botões vêm de `globals.css` (`.campo`, `.botao`, `.botao-secundario`) e de `lib/rotulos.ts`; **não invente cor nova na página.**
+
 ## Rodar
 
 Precisa de Node.js 20 ou mais novo.
@@ -52,12 +54,19 @@ src/
     mapa/               ← tela 2
     historico/          ← tela 3
     cadastro/           ← tela 4
-  components/           Sidebar, PageHeader, Card, StatusBadge (compartilhado)
+  components/           Sidebar, PageHeader, Card, StatusBadge, AoVivo (compartilhado)
   lib/
-    tipos.ts            tipos de dados (Pessoa, Dispositivo, Leitura, Alerta…)
-    dados.ts            funções de dados usadas pelas telas
+    tipos.ts            tipos de dados (Admin, Pessoa, Dispositivo, Leitura, Alerta…)
+    dados.ts            funções de dados e validações usadas pelas telas
     dados-mock.ts       dados ilustrativos: 50 pessoas, 51 ESP32, leituras de um dia
-    rotulos.ts          textos e cores de status, função, turno, alerta
+    rotulos.ts          textos e cores de status, função, turno, alerta, bateria
 ```
+
+## Decisões que valem para todas as telas
+
+- **Sem login.** O operário não é usuário do sistema: entra como dado, pela tag ESP32. O admin é fixo (`adminAtual()`), mostrado no rodapé da barra lateral. O porquê está em [docs/telas.md](../docs/telas.md#quem-usa).
+- **Sem `react-leaflet`.** O mapa usa Leaflet puro dentro de um `useEffect`, porque o `MapContainer` quebrava com o duplo-mount do StrictMode. Detalhes em [src/app/mapa/README.md](src/app/mapa/README.md).
+- **Cadastro guardado no `localStorage`**, só para sobreviver ao F5 na demonstração. Continua tudo no front. Há um botão para voltar aos dados originais.
+- **Nada de `setState` direto no corpo de um `useEffect`** — o lint barra. Carregue dados no callback da promessa.
 
 Atenção: esta versão do Next.js é mais nova que muitos tutoriais. Em dúvida, a documentação instalada está em `node_modules/next/dist/docs/`.

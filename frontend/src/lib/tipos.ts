@@ -38,6 +38,19 @@ export interface Trecho {
   centro: [number, number];
 }
 
+/**
+ * Quem usa o sistema: a coordenação do turno.
+ * Não há login no protótipo — o admin é fixo, só para identificar o papel na tela.
+ * O operário nunca entra no sistema: ele é identificado pela tag ESP32 que carrega.
+ */
+export interface Admin {
+  id: string;
+  nome: string;
+  matricula: string;
+  cargo: string;
+}
+
+/** Operário rastreado (maquinista ou manobrista). Não é usuário do sistema. */
 export interface Pessoa {
   id: string;
   nome: string;

@@ -21,7 +21,7 @@ Cada pessoa leva um **ESP32** (GPS + rádio) e um **Raspberry Pi** no pátio rec
 
 ## Estrutura do repositório
 
-O protótipo é **só visual, com dados ilustrativos**. Não há conexão com ESP32 nem com Raspberry.
+O protótipo é **só visual, com dados ilustrativos**, em tema escuro. Não há conexão com ESP32 nem com Raspberry, e não há login: o operário não acessa o sistema, só é identificado pela tag.
 
 ```
 docs/                    problema, solução, especificação das telas, slides
