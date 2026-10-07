@@ -34,6 +34,8 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
 - O status "aguardando programação" é o antigo "livre": é quem está disponível para acionar.
 
 ## Última sessão (2026-10-07, Claude)
+- Site novo no ar e conferido em 375 px: abas embaixo, cartões, 0 pontos sobrepostos, sem rolagem
+  lateral. O selo do Netlify cobria duas abas; agora fica acima da barra (`globals.css`).
 - Conta do Netlify trocada: o site oficial passou a ser `guaramonitora` e deu 404 em tudo, porque
   o `netlify.toml` estava em `frontend/` e o site novo não tem base directory no painel. Movido
   para a raiz com `base = "frontend"`; detalhe em `specs/system.md` (Deploy).
