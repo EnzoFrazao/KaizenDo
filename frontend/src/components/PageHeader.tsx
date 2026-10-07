@@ -11,9 +11,9 @@ export function PageHeader({
   acao?: ReactNode;
 }) {
   return (
-    <header className="mb-6 flex flex-wrap items-start justify-between gap-4">
+    <header className="mb-4 flex flex-wrap items-start justify-between gap-3 lg:mb-6 lg:gap-4">
       <div>
-        <h1 className="text-2xl font-semibold text-zinc-50">{titulo}</h1>
+        <h1 className="text-xl font-semibold text-zinc-50 lg:text-2xl">{titulo}</h1>
         {descricao && <p className="mt-1 text-sm text-zinc-400">{descricao}</p>}
       </div>
       {acao}

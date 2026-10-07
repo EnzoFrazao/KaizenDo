@@ -8,13 +8,14 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { AoVivo } from "@/components/AoVivo";
 import { Card } from "@/components/Card";
 import { raioDeCobertura } from "@/lib/cobertura";
+import { PainelFiltros } from "@/components/PainelFiltros";
 import { listarTrechos, posicoesAtuais } from "@/lib/dados";
 import { COR_STATUS_MAPA, ROTULO_FUNCAO, ROTULO_STATUS, ROTULO_TURNO } from "@/lib/rotulos";
 import type { Funcao, PosicaoAtual, StatusTrabalho, Trecho, TrechoId, Turno } from "@/lib/tipos";
 
 const MapaLeaflet = dynamic(() => import("./MapaLeaflet"), {
   ssr: false,
-  loading: () => <div className="h-[65vh] min-h-[360px] animate-pulse rounded-lg border border-zinc-800 bg-zinc-900 md:h-[560px]" />,
+  loading: () => <div className="h-[60svh] min-h-80 animate-pulse lg:h-[560px] rounded-lg border border-zinc-800 bg-zinc-900" />,
 });
 
 const INTERVALO_MS = 5000;
@@ -73,9 +74,20 @@ export function MapaView() {
   return (
     <div className="grid gap-4">
       <Card>
-        {/* No celular os filtros viram uma grade de duas colunas; do sm para cima, uma linha só. */}
-        <div className="grid grid-cols-2 items-center gap-2 sm:flex sm:flex-wrap sm:gap-3">
-          <input className="campo col-span-2" placeholder="Buscar pessoa" value={busca} onChange={(e) => setBusca(e.target.value)} />
+        <PainelFiltros
+          busca={<input className="campo" placeholder="Buscar pessoa" value={busca} onChange={(e) => setBusca(e.target.value)} />}
+          ativos={[funcao, status, turno, trecho].filter(Boolean).length}
+          depois={
+            <div className="flex items-center justify-between gap-3 lg:contents">
+              <span className="text-sm text-zinc-400">
+                <strong className="font-semibold text-zinc-100 tabular-nums">{filtradas.length}</strong> no mapa
+              </span>
+              <div className="lg:ml-auto">
+                <AoVivo atualizadoEm={atualizadoEm} rotulo="Posições a cada 5 s" />
+              </div>
+            </div>
+          }
+        >
           <select className="campo" value={funcao} onChange={(e) => setFuncao(e.target.value as Funcao | "")}>
             <option value="">Todas as funções</option>
             {Object.entries(ROTULO_FUNCAO).map(([v, r]) => <option key={v} value={v}>{r}</option>)}
@@ -96,15 +108,9 @@ export function MapaView() {
             <input type="checkbox" checked={cobertura} onChange={(e) => setCobertura(e.target.checked)} />
             Cobertura
           </label>
-          <span className="text-sm text-zinc-400">
-            <strong className="font-semibold text-zinc-100 tabular-nums">{filtradas.length}</strong> no mapa
-          </span>
-          <div className="col-span-2 sm:ml-auto">
-            <AoVivo atualizadoEm={atualizadoEm} rotulo="Posições a cada 5 s" />
-          </div>
-        </div>
+        </PainelFiltros>
 
-        <div className="mt-3 flex flex-wrap gap-3 border-t border-zinc-800 pt-3 text-xs text-zinc-400">
+        <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1.5 border-t border-zinc-800 pt-3 text-xs text-zinc-400">
           {Object.entries(COR_STATUS_MAPA).map(([s, cor]) => (
             <span key={s} className="flex items-center gap-1.5">
               <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: cor }} />
@@ -121,7 +127,7 @@ export function MapaView() {
               Cobertura · raio <span className="tabular-nums">{raioCobertura}</span> m
             </span>
           )}
-          <span className="text-zinc-600 sm:ml-auto">Ponto maior = maquinista</span>
+          <span className="w-full text-zinc-600 sm:ml-auto sm:w-auto">Ponto maior = maquinista</span>
         </div>
       </Card>
 

@@ -108,6 +108,66 @@ export function CadastroView() {
     );
   }, [pessoas, busca, filtroFuncao, filtroTurno]);
 
+  // A troca de ESP32 e a exclusão aparecem na tabela (desktop) e nos cartões (celular).
+  const seletorDispositivo = (p: Pessoa, className = "") => (
+    <select
+      className={`campo font-mono ${className}`}
+      aria-label={`ESP32 de ${p.nome}`}
+      value={p.dispositivoId ?? ""}
+      onChange={(e) => {
+        const escolhido = e.target.value || null;
+        executar(async () => {
+          await vincularDispositivo(p.id, escolhido);
+          return escolhido
+            ? `${escolhido} vinculado a ${p.nome}.`
+            : `${p.nome} ficou sem dispositivo e sai do mapa.`;
+        });
+      }}
+    >
+      <option value="">Sem dispositivo</option>
+      {p.dispositivoId && <option value={p.dispositivoId}>{p.dispositivoId}</option>}
+      {livres.map((d) => <option key={d.id} value={d.id}>{d.id}</option>)}
+    </select>
+  );
+
+  const acoesExcluir = (p: Pessoa) =>
+    confirmando === p.id ? (
+      <span className="inline-flex items-center gap-2">
+        <span className="text-xs text-zinc-400">Excluir?</span>
+        <button
+          type="button"
+          className="rounded border border-red-500/40 bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-300 pointer-coarse:px-3 pointer-coarse:py-2 hover:bg-red-500/20"
+          onClick={() => {
+            setConfirmando(null);
+            executar(async () => {
+              const fora = await removerPessoa(p.id);
+              return fora.dispositivoId
+                ? `${fora.nome} foi excluída. O ${fora.dispositivoId} voltou para o estoque.`
+                : `${fora.nome} foi excluída do cadastro.`;
+            });
+          }}
+        >
+          Sim
+        </button>
+        <button
+          type="button"
+          className="rounded border border-zinc-700 px-2 py-0.5 text-xs pointer-coarse:px-3 pointer-coarse:py-2 text-zinc-400 hover:text-zinc-100"
+          onClick={() => setConfirmando(null)}
+        >
+          Não
+        </button>
+      </span>
+    ) : (
+      <button
+        type="button"
+        aria-label={`Excluir ${p.nome}`}
+        className="rounded border border-zinc-800 px-2 py-0.5 text-xs pointer-coarse:px-3 pointer-coarse:py-2 text-zinc-500 hover:border-red-500/40 hover:text-red-300"
+        onClick={() => setConfirmando(p.id)}
+      >
+        Excluir
+      </button>
+    );
+
   return (
     <div className="grid gap-4">
       <p className="rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-zinc-400">
@@ -116,20 +176,20 @@ export function CadastroView() {
         dele aparecer no mapa, no dashboard e no histórico.
       </p>
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         <Card titulo="Pessoas cadastradas">
-          <p className="text-3xl font-semibold tabular-nums">{pessoas.length}</p>
+          <p className="text-2xl font-semibold tabular-nums sm:text-3xl">{pessoas.length}</p>
         </Card>
         <Card titulo="Com ESP32 vinculado">
-          <p className="text-3xl font-semibold tabular-nums">{pessoas.length - semDispositivo}</p>
+          <p className="text-2xl font-semibold tabular-nums sm:text-3xl">{pessoas.length - semDispositivo}</p>
         </Card>
         <Card titulo="Sem ESP32">
-          <p className={`text-3xl font-semibold tabular-nums ${semDispositivo > 0 ? "text-amber-400" : ""}`}>
+          <p className={`text-2xl font-semibold tabular-nums sm:text-3xl ${semDispositivo > 0 ? "text-amber-400" : ""}`}>
             {semDispositivo}
           </p>
         </Card>
         <Card titulo="ESP32 livres no estoque">
-          <p className="text-3xl font-semibold tabular-nums">{livres.length}</p>
+          <p className="text-2xl font-semibold tabular-nums sm:text-3xl">{livres.length}</p>
         </Card>
       </div>
 
@@ -150,25 +210,52 @@ export function CadastroView() {
         titulo="Pessoas e dispositivos vinculados"
         acao={<span className="text-sm text-zinc-500 tabular-nums">{filtradas.length} de {pessoas.length}</span>}
       >
-        <div className="mb-3 flex flex-wrap items-center gap-3">
+        <div className="mb-3 flex flex-wrap items-center gap-2 sm:gap-3">
           <input
-            className="campo"
+            className="campo w-full sm:w-auto"
             placeholder="Buscar por nome ou matrícula"
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
           />
-          <select className="campo" value={filtroFuncao} onChange={(e) => setFiltroFuncao(e.target.value as Funcao | "")}>
+          <select className="campo min-w-0 flex-1 sm:flex-none" value={filtroFuncao} onChange={(e) => setFiltroFuncao(e.target.value as Funcao | "")}>
             <option value="">Todas as funções</option>
             {Object.entries(ROTULO_FUNCAO).map(([v, r]) => <option key={v} value={v}>{r}</option>)}
           </select>
-          <select className="campo" value={filtroTurno} onChange={(e) => setFiltroTurno(e.target.value as Turno | "")}>
+          <select className="campo min-w-0 flex-1 sm:flex-none" value={filtroTurno} onChange={(e) => setFiltroTurno(e.target.value as Turno | "")}>
             <option value="">Todos os turnos</option>
             {Object.entries(ROTULO_TURNO).map(([v, r]) => <option key={v} value={v}>{r}</option>)}
           </select>
         </div>
 
-        <div className="max-h-[32rem] overflow-auto">
-          <table className="w-full min-w-[40rem] text-left text-sm">
+        {/* Celular: um cartão por pessoa, com o mesmo seletor de ESP32 e a mesma exclusão. */}
+        <ul className="grid gap-2 md:hidden">
+          {filtradas.map((p) => {
+            const dispositivo = p.dispositivoId ? porId.get(p.dispositivoId) : undefined;
+            return (
+              <li key={p.id} className="grid gap-2 rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2.5 text-sm">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="font-medium text-zinc-100">{p.nome}</p>
+                    <p className="text-xs text-zinc-400">
+                      <span className="font-mono">{p.matricula}</span> · {ROTULO_FUNCAO[p.funcao]} · Turno {p.turno}
+                    </p>
+                  </div>
+                  {dispositivo && <Bateria pct={dispositivo.bateriaPct} />}
+                </div>
+                <div className="flex items-center gap-2">
+                  {seletorDispositivo(p, "min-w-0 flex-1")}
+                  <span className="shrink-0">{acoesExcluir(p)}</span>
+                </div>
+              </li>
+            );
+          })}
+          {filtradas.length === 0 && (
+            <li className="py-6 text-center text-zinc-500">Nenhuma pessoa encontrada com esses filtros.</li>
+          )}
+        </ul>
+
+        <div className="hidden max-h-[32rem] overflow-auto md:block">
+          <table className="w-full text-left text-sm">
             <thead className="sticky top-0 bg-zinc-900 text-xs uppercase tracking-wide text-zinc-500">
               <tr>
                 <th className="py-2">Nome</th>
@@ -190,63 +277,11 @@ export function CadastroView() {
                     <td className="text-zinc-400">{ROTULO_FUNCAO[p.funcao]}</td>
                     <td className="text-zinc-400">{p.turno}</td>
                     <td>
-                      <select
-                        className="campo font-mono"
-                        aria-label={`ESP32 de ${p.nome}`}
-                        value={p.dispositivoId ?? ""}
-                        onChange={(e) => {
-                          const escolhido = e.target.value || null;
-                          executar(async () => {
-                            await vincularDispositivo(p.id, escolhido);
-                            return escolhido
-                              ? `${escolhido} vinculado a ${p.nome}.`
-                              : `${p.nome} ficou sem dispositivo e sai do mapa.`;
-                          });
-                        }}
-                      >
-                        <option value="">Sem dispositivo</option>
-                        {p.dispositivoId && <option value={p.dispositivoId}>{p.dispositivoId}</option>}
-                        {livres.map((d) => <option key={d.id} value={d.id}>{d.id}</option>)}
-                      </select>
+                      {seletorDispositivo(p)}
                     </td>
                     <td>{dispositivo ? <Bateria pct={dispositivo.bateriaPct} /> : <span className="text-zinc-600">—</span>}</td>
                     <td className="py-1 text-right whitespace-nowrap">
-                      {confirmando === p.id ? (
-                        <span className="inline-flex items-center gap-2">
-                          <span className="text-xs text-zinc-400">Excluir?</span>
-                          <button
-                            type="button"
-                            className="rounded border border-red-500/40 bg-red-500/10 px-2 py-0.5 text-xs font-medium text-red-300 hover:bg-red-500/20"
-                            onClick={() => {
-                              setConfirmando(null);
-                              executar(async () => {
-                                const fora = await removerPessoa(p.id);
-                                return fora.dispositivoId
-                                  ? `${fora.nome} foi excluída. O ${fora.dispositivoId} voltou para o estoque.`
-                                  : `${fora.nome} foi excluída do cadastro.`;
-                              });
-                            }}
-                          >
-                            Sim
-                          </button>
-                          <button
-                            type="button"
-                            className="rounded border border-zinc-700 px-2 py-0.5 text-xs text-zinc-400 hover:text-zinc-100"
-                            onClick={() => setConfirmando(null)}
-                          >
-                            Não
-                          </button>
-                        </span>
-                      ) : (
-                        <button
-                          type="button"
-                          aria-label={`Excluir ${p.nome}`}
-                          className="rounded border border-zinc-800 px-2 py-0.5 text-xs text-zinc-500 hover:border-red-500/40 hover:text-red-300"
-                          onClick={() => setConfirmando(p.id)}
-                        >
-                          Excluir
-                        </button>
-                      )}
+                      {acoesExcluir(p)}
                     </td>
                   </tr>
                 );
@@ -269,7 +304,7 @@ export function CadastroView() {
         ) : (
           <ul className="grid gap-1.5 md:grid-cols-2">
             {livres.map((d) => (
-              <li key={d.id} className="flex items-center gap-2 rounded-md border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-sm">
+              <li key={d.id} className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-md border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-sm">
                 <span className="font-mono text-zinc-100">{d.id}</span>
                 <Bateria pct={d.bateriaPct} />
                 <span className="ml-auto text-xs text-zinc-600">

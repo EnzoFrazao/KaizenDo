@@ -6,9 +6,9 @@
 // As cores são a escala de STATUS do projeto (rotulos.ts), não uma paleta
 // categórica: têm significado reservado e são as mesmas do mapa e dos badges.
 // Por isso a identidade nunca depende só da cor — a legenda ao lado traz
-// rótulo, contagem e percentual, e passar o mouse escreve o valor no centro.
+// rótulo, contagem e percentual, e passar o mouse (ou tocar) escreve o valor no centro.
 
-import { useState } from "react";
+import { useState, type PointerEvent } from "react";
 import { COR_STATUS_MAPA, ROTULO_STATUS } from "@/lib/rotulos";
 import type { StatusTrabalho } from "@/lib/tipos";
 
@@ -39,6 +39,21 @@ export function PizzaStatus({ fatias }: { fatias: FatiaStatus[] }) {
   }));
 
   const foco = emFoco ? fatias.find((f) => f.status === emFoco) : undefined;
+
+  // Mouse destaca ao passar por cima; no celular não existe hover, então o toque alterna.
+  // Os eventos de mouse "de compatibilidade" que o celular dispara depois do toque não
+  // entram aqui porque só ouvimos pointer events, filtrando pelo tipo.
+  const interacao = (s: StatusTrabalho) => ({
+    onPointerEnter: (e: PointerEvent) => {
+      if (e.pointerType === "mouse") setEmFoco(s);
+    },
+    onPointerLeave: (e: PointerEvent) => {
+      if (e.pointerType === "mouse") setEmFoco(null);
+    },
+    onPointerUp: (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") setEmFoco((atual) => (atual === s ? null : s));
+    },
+  });
 
   return (
     <div className="flex flex-wrap items-center justify-center gap-6">
@@ -76,8 +91,7 @@ export function PizzaStatus({ fatias }: { fatias: FatiaStatus[] }) {
                 strokeDashoffset={-a.inicio}
                 opacity={apagado ? 0.25 : 1}
                 className="transition-opacity duration-150"
-                onMouseEnter={() => setEmFoco(a.status)}
-                onMouseLeave={() => setEmFoco(null)}
+                {...interacao(a.status)}
               />
             );
           })}
@@ -102,15 +116,14 @@ export function PizzaStatus({ fatias }: { fatias: FatiaStatus[] }) {
         </text>
       </svg>
 
-      <ul className="grid min-w-50 flex-1 gap-1.5 text-sm">
+      <ul className="grid w-full gap-1.5 text-sm sm:w-auto sm:min-w-50 sm:flex-1">
         {fatias.map((f) => {
           const apagado = emFoco !== null && emFoco !== f.status;
           return (
             <li
               key={f.status}
-              onMouseEnter={() => setEmFoco(f.status)}
-              onMouseLeave={() => setEmFoco(null)}
-              className={`flex items-center gap-2 rounded px-2 py-1 transition-colors ${
+              {...interacao(f.status)}
+              className={`flex cursor-default items-center gap-2 rounded px-2 py-1.5 transition-colors ${
                 emFoco === f.status ? "bg-zinc-800" : ""
               } ${apagado ? "opacity-50" : ""}`}
             >
