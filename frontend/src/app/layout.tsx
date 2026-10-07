@@ -11,9 +11,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="pt-BR" className="h-full antialiased dark" style={{ colorScheme: "dark" }}>
-      <body className="flex min-h-full bg-zinc-950 text-zinc-100">
+      <body className="flex min-h-full flex-col bg-zinc-950 text-zinc-100 md:flex-row">
         <Sidebar />
-        <main className="flex-1 overflow-x-hidden p-8">{children}</main>
+        <main className="min-w-0 flex-1 overflow-x-hidden p-4 md:p-8">{children}</main>
         {/* VLibras (tradução para Libras do governo federal). O loader se inicializa
             sozinho: cria o botão flutuante à direita, fora da árvore do React, e só
             baixa o app do avatar quando alguém clica. */}

@@ -27,7 +27,7 @@ Visão do turno em uma tela, sem precisar abrir o mapa.
 |---|---|---|
 | Cartões de resumo | pessoas com dispositivo ativo, alertas ativos, sem sinal, bateria < 20% | Saber em 2 segundos se está tudo bem |
 | Trabalhando agora | tabela de quem está em campo, com busca e com os status como botões-filtro | É a pergunta direta de quem coordena: quem está aí e o que cada um está fazendo |
-| Pessoas por status | rosca: livre, em atividade, deslocando, pausa, sem sinal | Quantos estão disponíveis para acionar |
+| Pessoas por status | rosca: manobrando, almoçando, aguardando programação, descansando, sem sinal | Quantos estão disponíveis para acionar (aguardando programação) |
 | Alertas ativos | lista com tipo, pessoa, trecho e desde quando | Segurança primeiro: área de risco e pessoa isolada no topo |
 | Livres mais próximos | (evolução) para um trecho escolhido, quem está livre e mais perto | É o "acionar o mais próximo" do desafio |
 | Saúde dos dispositivos | (evolução) sem sinal, bateria baixa, sem vínculo | Manutenção dos ESP32 |
@@ -41,9 +41,9 @@ Atualiza sozinho a cada 5 s, com selo "ao vivo" mostrando a hora da última leit
 Mapa do pátio com cada pessoa como um ponto colorido pelo status.
 
 - **Filtros:** busca por nome, função, status, turno e trecho.
-- **Ponto:** cor = status; tamanho ou ícone = função (maquinista maior).
-- **Ao clicar:** nome, matrícula, função, status, trecho, velocidade, bateria e horário da última leitura.
-- **Trechos:** desenhados no mapa; área de risco (viradores) em vermelho.
+- **Ponto:** cor = status; tamanho ou ícone = função (maquinista maior). Pontos próximos são afastados na tela para nunca ficarem um em cima do outro; a posição real fica no popup.
+- **Ao clicar:** nome, função, turno, status, trecho, velocidade, latitude e longitude, dispositivo e bateria. O popup continua aberto nas atualizações de 5 s.
+- **Trechos:** desenhados no mapa; área de risco (viradores) em vermelho. O restaurante (Porto Vale, fora da pera) também aparece, como local de apoio.
 - **Legenda** de cores e contador "N pessoas no mapa".
 - **Atualização:** a cada 5 s.
 - **Enquadramento:** o mapa se ajusta sozinho ao pátio (`fitBounds` nos trechos).
@@ -79,11 +79,13 @@ Vincular cada pessoa ao ESP32 que ela carrega. Sem isso o sistema não sabe de q
 
 | Status | Cor | Paleta Tailwind |
 |---|---|---|
-| Livre | verde | `emerald` |
-| Em atividade | azul | `sky` |
-| Deslocando | âmbar | `amber` |
-| Em pausa | cinza | `zinc` |
+| Manobrando | azul | `sky` |
+| Almoçando | âmbar | `amber` |
+| Aguardando programação (disponível para acionar) | verde | `emerald` |
+| Descansando | cinza | `zinc` |
 | Sem sinal | vermelho | `red` |
+
+**Celular:** abaixo de 768 px (`md`) a barra lateral vira uma barra no topo com as telas numa linha que rola de lado; os filtros do mapa ficam em duas colunas, o mapa ocupa 65% da altura e as tabelas rolam de lado em vez de espremer as colunas.
 
 - Cores e rótulos ficam em [`frontend/src/lib/rotulos.ts`](../frontend/src/lib/rotulos.ts). **Não repita cores na página**, importe de lá.
 - Campos e botões são `.campo`, `.botao` e `.botao-secundario`, definidos em `globals.css`.

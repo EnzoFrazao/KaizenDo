@@ -14,6 +14,7 @@ import type {
   TrechoId,
   Turno,
 } from "./tipos";
+import { distanciaM } from "./cobertura";
 
 /** Gerador pseudoaleatório determinístico (mulberry32). */
 function criarAleatorio(semente: number) {
@@ -63,7 +64,18 @@ export const TRECHOS: Trecho[] = [
   { id: "RECEPCAO", nome: "Pátio de Recepção", areaDeRisco: false, centro: [-2.5704025, -44.3523283] },
   { id: "ESTACIONAMENTO", nome: "Estacionamento", areaDeRisco: false, centro: [-2.5692592, -44.3496507] },
   { id: "CTMR", nome: "CTMR", areaDeRisco: false, centro: [-2.5681159, -44.3469730] },
+  // Fora da pera, ~2,6 km a noroeste: onde fica o restaurante. Ponto informado pela equipe.
+  {
+    id: "RESTAURANTE",
+    nome: "Restaurante · Porto Vale",
+    areaDeRisco: false,
+    centro: [-2.5569236, -44.3600747],
+    foraDoPatio: true,
+  },
 ];
+
+/** Trechos da operação, sem os locais de apoio. É onde o gerador espalha quem está trabalhando. */
+const TRECHOS_PATIO = TRECHOS.filter((t) => !t.foraDoPatio);
 
 const NOMES = [
   "Ana", "Bruno", "Carla", "Diego", "Elaine", "Fábio", "Gabriela", "Hugo", "Iara", "João",
@@ -115,31 +127,92 @@ export const DISPOSITIVOS: Dispositivo[] = [
   })),
 ];
 
-const STATUS: StatusTrabalho[] = ["livre", "em_atividade", "em_atividade", "deslocando", "pausa"];
+/**
+ * Status sorteados no pátio. "Almoçando" e "Descansando" ficam de fora: só valem para
+ * quem está no restaurante.
+ */
+const STATUS_NO_PATIO: StatusTrabalho[] = ["manobrando", "manobrando", "aguardando_programacao"];
+
+/** As únicas pessoas no restaurante no fim do dia (a "posição atual" do mapa), e o que fazem lá. */
+const NO_RESTAURANTE = new Map<string, StatusTrabalho>([
+  ["P004", "almocando"],
+  ["P018", "almocando"],
+  ["P031", "descansando"],
+]);
+const INICIO_ALMOCO_MIN = 21 * 60 + 30;
 
 function velocidadePara(status: StatusTrabalho, funcao: Funcao) {
-  if (status === "deslocando") return funcao === "maquinista" ? 10 + rand() * 20 : 3 + rand() * 3;
-  if (status === "em_atividade" && funcao === "maquinista") return rand() * 10;
+  if (status === "manobrando") return funcao === "maquinista" ? 5 + rand() * 25 : rand() * 6;
   return rand() * 0.8;
 }
 
-/** Espalha a pessoa perto do centro do trecho (~50 m). Os trechos vizinhos ficam
- *  a cerca de 200 m, entao uma dispersao maior misturaria um trecho com o outro. */
-function pontoPerto(trecho: TrechoId): [number, number] {
-  const t = TRECHOS.find((x) => x.id === trecho)!;
-  return [t.centro[0] + (rand() - 0.5) * 0.0009, t.centro[1] + (rand() - 0.5) * 0.0009];
+// Onde ficam as pessoas no pátio. Antes cada uma ficava a ~50 m do centro de um trecho, e
+// como os trechos formam duas fileiras, o mapa mostrava dois montinhos. Agora cada pessoa
+// cai num ponto sorteado por igual em toda a área da pera (o retângulo dos trechos), e o
+// trecho dela é o mais próximo desse ponto. Assim a área do radar fica toda ocupada.
+const LATS = TRECHOS_PATIO.map((t) => t.centro[0]);
+const LONS = TRECHOS_PATIO.map((t) => t.centro[1]);
+const LIMITES_PATIO = {
+  latMin: Math.min(...LATS),
+  latMax: Math.max(...LATS),
+  lonMin: Math.min(...LONS),
+  lonMax: Math.max(...LONS),
+};
+
+function pontoNoPatio(): [number, number] {
+  const { latMin, latMax, lonMin, lonMax } = LIMITES_PATIO;
+  return [latMin + rand() * (latMax - latMin), lonMin + rand() * (lonMax - lonMin)];
 }
+
+function trechoMaisPerto(ponto: [number, number]): TrechoId {
+  let melhor = TRECHOS_PATIO[0];
+  for (const t of TRECHOS_PATIO) {
+    if (distanciaM(ponto, t.centro) < distanciaM(ponto, melhor.centro)) melhor = t;
+  }
+  return melhor.id;
+}
+
+const METROS_POR_GRAU = 111_320;
+
+/** Ponto sorteado por igual num disco de `raioM` metros em volta de `centro`. */
+function pontoPerto(centro: [number, number], raioM: number): [number, number] {
+  // sqrt: sem ela os pontos se acumulariam no centro do disco.
+  const r = raioM * Math.sqrt(rand());
+  const angulo = rand() * 2 * Math.PI;
+  const dLat = (r * Math.sin(angulo)) / METROS_POR_GRAU;
+  const dLon = (r * Math.cos(angulo)) / (METROS_POR_GRAU * Math.cos((centro[0] * Math.PI) / 180));
+  return [centro[0] + dLat, centro[1] + dLon];
+}
+
+/** Restaurante é um prédio só: lá as pessoas ficam juntas, a poucos metros umas das outras. */
+const RAIO_RESTAURANTE_M = 40;
+/** Quanto a leitura varia em volta de onde a pessoa está, de 10 em 10 min. */
+const OSCILACAO_M = 20;
+const RESTAURANTE = TRECHOS.find((t) => t.id === "RESTAURANTE")!;
 
 /** Gera leituras a cada 10 min das 06h às 22h do dia base. */
 function gerarHistorico(): Leitura[] {
   const leituras: Leitura[] = [];
   for (const p of PESSOAS) {
     if (!p.dispositivoId) continue;
-    let trecho = escolher(TRECHOS).id;
+    let base = pontoNoPatio();
     for (let min = 6 * 60; min <= 22 * 60; min += 10) {
-      if (rand() < 0.2) trecho = escolher(TRECHOS).id;
-      const status = rand() < 0.03 ? "sem_sinal" : escolher(STATUS);
-      const [lat, lon] = pontoPerto(trecho);
+      let status: StatusTrabalho;
+      let trecho: TrechoId;
+      let lat: number;
+      let lon: number;
+      const noRestaurante = NO_RESTAURANTE.get(p.id);
+      if (noRestaurante && min >= INICIO_ALMOCO_MIN) {
+        trecho = "RESTAURANTE";
+        status = noRestaurante;
+        [lat, lon] = pontoPerto(RESTAURANTE.centro, RAIO_RESTAURANTE_M);
+      } else {
+        // 20% de chance de ter ido para outro canto do pátio desde a última leitura.
+        if (rand() < 0.2) base = pontoNoPatio();
+        status = rand() < 0.03 ? "sem_sinal" : escolher(STATUS_NO_PATIO);
+        [lat, lon] = pontoPerto(base, OSCILACAO_M);
+        trecho = trechoMaisPerto([lat, lon]);
+      }
       const hh = String(Math.floor(min / 60)).padStart(2, "0");
       const mm = String(min % 60).padStart(2, "0");
       leituras.push({

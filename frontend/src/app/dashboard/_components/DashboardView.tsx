@@ -11,10 +11,10 @@ import { COR_STATUS_MAPA, ROTULO_ALERTA, ROTULO_FUNCAO, ROTULO_STATUS } from "@/
 import type { Alerta, Funcao, PosicaoAtual, StatusTrabalho, Trecho } from "@/lib/tipos";
 import { PizzaStatus } from "./PizzaStatus";
 
-const ORDEM_STATUS: StatusTrabalho[] = ["livre", "em_atividade", "deslocando", "pausa", "sem_sinal"];
+const ORDEM_STATUS: StatusTrabalho[] = ["manobrando", "almocando", "aguardando_programacao", "descansando", "sem_sinal"];
 
 /** Status que contam como "em campo agora". Quem está sem sinal não dá para acionar. */
-const EM_CAMPO: StatusTrabalho[] = ["livre", "em_atividade", "deslocando", "pausa"];
+const EM_CAMPO: StatusTrabalho[] = ["manobrando", "almocando", "aguardando_programacao", "descansando"];
 
 const INTERVALO_MS = 5000;
 
@@ -49,7 +49,7 @@ export function DashboardView() {
   const porStatus = useCallback((s: StatusTrabalho) => posicoes.filter((p) => p.status === s).length, [posicoes]);
   const bateriaBaixa = posicoes.filter((p) => p.dispositivo.bateriaPct < 20).length;
   const emCampo = posicoes.filter((p) => EM_CAMPO.includes(p.status));
-  const livres = porStatus("livre");
+  const aguardando = porStatus("aguardando_programacao");
 
   const nomePessoa = useMemo(() => new Map(trechos.map((t) => [t.id, t.nome])), [trechos]);
 
@@ -71,7 +71,7 @@ export function DashboardView() {
         <AoVivo atualizadoEm={atualizadoEm} rotulo="Atualizando a cada 5 s" />
         <p className="text-sm text-zinc-500">
           <strong className="font-semibold text-zinc-200">{emCampo.length}</strong> em campo agora ·{" "}
-          <strong className="font-semibold text-emerald-400">{livres}</strong> livres para acionar
+          <strong className="font-semibold text-emerald-400">{aguardando}</strong> aguardando programação
         </p>
       </div>
 
@@ -147,8 +147,8 @@ export function DashboardView() {
           })}
         </div>
 
-        <div className="max-h-80 overflow-y-auto">
-          <table className="w-full text-left text-sm">
+        <div className="max-h-80 overflow-auto">
+          <table className="w-full min-w-[40rem] text-left text-sm">
             <thead className="sticky top-0 bg-zinc-900 text-xs uppercase tracking-wide text-zinc-500">
               <tr>
                 <th className="py-2">Nome</th>

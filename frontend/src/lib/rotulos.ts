@@ -1,28 +1,29 @@
 import type { Funcao, StatusTrabalho, TipoAlerta, Turno } from "./tipos";
 
+// A ordem das chaves é a ordem da lista de status nos filtros e nas legendas.
 export const ROTULO_STATUS: Record<StatusTrabalho, string> = {
-  livre: "Livre",
-  em_atividade: "Em atividade",
-  deslocando: "Deslocando",
-  pausa: "Em pausa",
+  manobrando: "Manobrando",
+  almocando: "Almoçando",
+  aguardando_programacao: "Aguardando programação",
+  descansando: "Descansando",
   sem_sinal: "Sem sinal",
 };
 
 /** Classes Tailwind de cada status, no tema escuro. Use sempre estas nas telas. */
 export const COR_STATUS: Record<StatusTrabalho, string> = {
-  livre: "bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500/30",
-  em_atividade: "bg-sky-500/15 text-sky-300 ring-1 ring-sky-500/30",
-  deslocando: "bg-amber-500/15 text-amber-300 ring-1 ring-amber-500/30",
-  pausa: "bg-zinc-500/15 text-zinc-300 ring-1 ring-zinc-500/30",
+  manobrando: "bg-sky-500/15 text-sky-300 ring-1 ring-sky-500/30",
+  almocando: "bg-amber-500/15 text-amber-300 ring-1 ring-amber-500/30",
+  aguardando_programacao: "bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500/30",
+  descansando: "bg-zinc-500/15 text-zinc-300 ring-1 ring-zinc-500/30",
   sem_sinal: "bg-red-500/15 text-red-300 ring-1 ring-red-500/30",
 };
 
 /** Cor dos pontos no mapa e das barras. Tons claros, para contrastar no escuro. */
 export const COR_STATUS_MAPA: Record<StatusTrabalho, string> = {
-  livre: "#34d399",
-  em_atividade: "#38bdf8",
-  deslocando: "#fbbf24",
-  pausa: "#a1a1aa",
+  manobrando: "#38bdf8",
+  almocando: "#fbbf24",
+  aguardando_programacao: "#34d399",
+  descansando: "#a1a1aa",
   sem_sinal: "#f87171",
 };
 

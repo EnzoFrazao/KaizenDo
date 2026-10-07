@@ -23,6 +23,10 @@ ESP32. Não há permissões: o admin é fixo (`adminAtual()`). O conteúdo de ca
 
 - As rotas `/dashboard`, `/mapa`, `/historico` e `/cadastro` existem e `/` leva ao dashboard.
 - Tema escuro único; cores e rótulos de status vêm de `lib/rotulos.ts`.
+- Status de trabalho: manobrando, almoçando, aguardando programação (disponível para acionar),
+  descansando e sem sinal.
+- Todas as telas funcionam no celular (375 px) sem rolagem lateral da página; abaixo de `md` a
+  navegação vira uma barra no topo.
 - Toda tela oferece tradução para Libras pelo widget VLibras: botão flutuante à direita que abre o
   avatar e traduz o texto clicado.
 
@@ -31,15 +35,21 @@ ESP32. Não há permissões: o admin é fixo (`adminAtual()`). O conteúdo de ca
 - As telas obtêm dados só por `@/lib/dados`.
 - "Em campo" exclui quem está sem sinal.
 - O widget VLibras aparece uma única vez por página, inclusive após navegação no cliente.
-- No mapa, a área de cobertura usa o menor raio que conecta todas as pessoas visíveis e forma
-  uma área única e translúcida (detalhe em `frontend/src/app/mapa/README.md`).
+- No mapa, a área de cobertura usa o menor raio que conecta todas as pessoas visíveis no pátio e
+  forma uma área única e translúcida; locais `foraDoPatio` (restaurante) não entram no cálculo
+  (detalhe em `frontend/src/app/mapa/README.md`).
+- No mapa, nenhum ponto fica sobre outro em nenhum zoom; o popup mostra a lat/lon real.
+- Nos dados ilustrativos, "almoçando" e "descansando" só valem para as três pessoas do
+  restaurante.
 
 ## Estado atual e lacunas
 
 As quatro telas têm versão inicial; as evoluções marcadas em `docs/telas.md` seguem pendentes. O
 VLibras está implementado e foi conferido manualmente em 2026-10-07: botão presente, avatar Ícaro
 carregado e tradução iniciada em `/mapa`. A cobertura do mapa foi conferida manualmente em
-2026-10-07 (forma única, raio recalculado com filtro, popups clicáveis, sem erros no console). As
+2026-10-07 (forma única, raio recalculado com filtro, popups clicáveis, sem erros no console). Os
+novos status, o restaurante, a ausência de sobreposição (medida: 0 pares em 1280 px e em 375 px)
+e o layout de celular das quatro telas foram conferidos no mesmo dia. As
 coordenadas dos trechos divergem do diagrama oficial e seguem como aproximação.
 
 ## Evidências de implementação e teste

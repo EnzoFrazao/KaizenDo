@@ -167,8 +167,8 @@ export function CadastroView() {
           </select>
         </div>
 
-        <div className="max-h-[32rem] overflow-y-auto">
-          <table className="w-full text-left text-sm">
+        <div className="max-h-[32rem] overflow-auto">
+          <table className="w-full min-w-[40rem] text-left text-sm">
             <thead className="sticky top-0 bg-zinc-900 text-xs uppercase tracking-wide text-zinc-500">
               <tr>
                 <th className="py-2">Nome</th>
