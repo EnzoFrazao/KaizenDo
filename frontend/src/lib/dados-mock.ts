@@ -235,6 +235,27 @@ function gerarHistorico(): Leitura[] {
 /** Leituras do dia, da mais antiga para a mais recente. */
 export const LEITURAS: Leitura[] = gerarHistorico();
 
+/**
+ * Posição de quem ganhou ESP32 no cadastro e ainda não tem leitura no dia: um ponto do pátio
+ * sorteado a partir do id da pessoa, para não pular de lugar a cada atualização de 5 s.
+ * Acabou de receber o transmissor, então entra como "aguardando programação" e parado.
+ */
+export function leituraInicial(pessoa: Pessoa, dispositivoId: string): Leitura {
+  const sorteio = criarAleatorio([...pessoa.id].reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 7));
+  const { latMin, latMax, lonMin, lonMax } = LIMITES_PATIO;
+  const ponto: [number, number] = [latMin + sorteio() * (latMax - latMin), lonMin + sorteio() * (lonMax - lonMin)];
+  return {
+    dispositivoId,
+    pessoaId: pessoa.id,
+    timestamp: LEITURAS[LEITURAS.length - 1].timestamp,
+    lat: ponto[0],
+    lon: ponto[1],
+    velocidadeKmh: 0,
+    trecho: trechoMaisPerto(ponto),
+    status: "aguardando_programacao",
+  };
+}
+
 export const ALERTAS: Alerta[] = [
   { id: "AL1", tipo: "area_de_risco", pessoaId: "P021", trecho: "VIRADORES", inicio: `${DIA_BASE}T10:12:00-03:00`, fim: null },
   { id: "AL2", tipo: "pessoa_isolada", pessoaId: "P033", trecho: "X03", inicio: `${DIA_BASE}T09:58:00-03:00`, fim: null },

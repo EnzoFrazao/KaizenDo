@@ -1,5 +1,13 @@
 # Marcos do projeto
 
+## 2026-10-07 — site novo no Netlify e auditoria
+
+- Conta do Netlify trocada; `netlify.toml` movido para a raiz (`base = "frontend"`) e selo do
+  Netlify afastado das abas do celular.
+- Auditoria do site publicado: mapa e dashboard passaram a seguir o vínculo ESP32 do cadastro;
+  alertas sobem no dashboard do celular; filtros em uma coluna; prévia de link (Open Graph) e
+  ícone de tela inicial do iPhone.
+
 ## 2026-10-07 — novos status, restaurante e layout de celular
 
 - Status trocados para manobrando, almoçando, aguardando programação, descansando e sem sinal.

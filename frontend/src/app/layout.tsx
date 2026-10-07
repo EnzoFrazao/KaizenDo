@@ -4,9 +4,15 @@ import { AbasMobile, TopoMobile } from "@/components/NavMobile";
 import { Sidebar } from "@/components/Sidebar";
 import "./globals.css";
 
+const TITULO = "GUARÁ · Posicionamento Operacional";
+const DESCRICAO = "Localização em tempo real de maquinistas e manobristas no TFPM";
+
+// openGraph dá título e descrição à prévia quando o link é colado no WhatsApp ou no Teams.
+// O ícone de tela inicial do iPhone vem de app/apple-icon.png (convenção de arquivo do Next).
 export const metadata: Metadata = {
-  title: "GUARÁ · Posicionamento Operacional",
-  description: "Localização em tempo real de maquinistas e manobristas no TFPM",
+  title: TITULO,
+  description: DESCRICAO,
+  openGraph: { title: TITULO, description: DESCRICAO, locale: "pt_BR", type: "website" },
 };
 
 // Muita gente abre pelo celular, via QR code. `viewportFit: cover` deixa o fundo escuro ir
@@ -26,8 +32,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col bg-zinc-950 text-zinc-100 lg:flex-row">
         <Sidebar />
         <TopoMobile />
-        {/* No celular, o padding de baixo reserva a altura das abas (3.5rem) + a área segura. */}
-        <main className="min-w-0 flex-1 overflow-x-hidden px-4 pt-4 pb-[calc(5rem+env(safe-area-inset-bottom))] sm:px-6 lg:p-8">
+        {/* No celular, o padding de baixo reserva as abas (3.5rem), o selo do Netlify que fica
+            logo acima delas (~3.5rem, ver globals.css) e a área segura. Sem contar o selo, o fim
+            da página ficava escondido atrás dele. */}
+        <main className="min-w-0 flex-1 overflow-x-hidden px-4 pt-4 pb-[calc(8rem+env(safe-area-inset-bottom))] sm:px-6 lg:p-8">
           {children}
         </main>
         <AbasMobile />

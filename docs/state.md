@@ -5,9 +5,8 @@ Protótipo visual do GUARÁ (Next.js em `frontend/`), quatro telas com dados ilu
 VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
 
 ## Pendências
-- [ ] Deploy Netlify no site novo `https://guaramonitora.netlify.app`: confirmar que `/`, `/mapa`
-  e `/dashboard` respondem 200 e mostram as abas embaixo no celular. Se o build falhar, suspeitar
-  de suporte do adaptador ao Next 16.4 (`cacheComponents`, `partialPrefetching`).
+- [ ] Antes de apresentar: abrir `/cadastro` no aparelho da apresentação e usar "Restaurar dados
+  originais" (o cadastro fica no `localStorage` de cada navegador).
 - [ ] Evoluções das telas listadas em [`docs/telas.md`](telas.md) (responsáveis por tela).
 - [ ] Não há testes automatizados; só `npm run lint` e `npm run build`.
 - [ ] Coordenadas dos trechos X divergem do diagrama oficial: aguardam pontos levantados
@@ -34,21 +33,17 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
 - O status "aguardando programação" é o antigo "livre": é quem está disponível para acionar.
 
 ## Última sessão (2026-10-07, Claude)
-- Site novo no ar e conferido em 375 px: abas embaixo, cartões, 0 pontos sobrepostos, sem rolagem
-  lateral. O selo do Netlify cobria duas abas; agora fica acima da barra (`globals.css`).
-- Conta do Netlify trocada: o site oficial passou a ser `guaramonitora` e deu 404 em tudo, porque
-  o `netlify.toml` estava em `frontend/` e o site novo não tem base directory no painel. Movido
-  para a raiz com `base = "frontend"`; detalhe em `specs/system.md` (Deploy).
-- O site antigo `guaramonitoramento` nunca publicou o build da junção com o mobile (`c55407e`):
-  continuou no build do PR #1. Abandonado junto com a conta antiga.
-- Juntadas na `main` as duas linhas paralelas: `mapa-pessoas` (status novos, restaurante do Porto
-  Vale, pontos sem sobreposição, popup que fica aberto, já na `main` pelo PR #1) e
-  `mobile-qrcode` (versão de celular). Conflitos em 9 arquivos: layout, abas e cartões vieram do
-  mobile; dados, status e mapa vieram do `mapa-pessoas`. O checkbox "Cobertura" foi para dentro
-  do painel "Filtros" do mapa.
-- tsc, lint e build passam. Conferido no navegador: 375 px nas quatro rotas (abas visíveis, barra
-  lateral oculta, tabelas em cartões, 0 px de rolagem horizontal, sem erros no console) e 1280 px
-  no histórico.
+- Auditoria do site publicado (`guaramonitora`), tela a tela em 375, 768 e 1280 px. Git limpo:
+  `main` local = remota, nada aberto, todas as branches já juntadas.
+- Corrigido: quem era cadastrado com ESP32 não aparecia no mapa (a mensagem dizia que sim) e quem
+  era desvinculado continuava nele; agora `posicoesAtuais()` segue o vínculo do cadastro. Também:
+  alertas antes da lista no dashboard do celular, chips de 36 px ao toque, filtros em uma coluna
+  (selects cortavam o texto), "raio 230 m" com espaço duplo, fim da página atrás do selo do
+  Netlify, prévia de link (Open Graph) e ícone de tela inicial do iPhone.
+- Conta do Netlify trocada antes: o site novo dava 404 porque o `netlify.toml` estava em
+  `frontend/`; movido para a raiz com `base = "frontend"` (detalhe em `specs/system.md`, Deploy).
 - Armadilha: com o painel do navegador oculto, a página carrega com largura ~0 e o Leaflet enquadra
   no zoom 10. Para conferir, fixe o tamanho com `resize_window` antes de recarregar.
-- `.claude/launch.json` ganhou `autoPort: true`: outra sessão ocupava a porta 3000.
+- Armadilha: o Next mantém as telas visitadas montadas e ocultas (`Activity`); filtros digitados
+  numa tela continuam aplicados ao voltar, e `querySelector` acha elementos de telas ocultas.
+- `.claude/launch.json` tem `autoPort: true`: outra sessão pode ocupar a porta 3000.

@@ -23,6 +23,10 @@ abas/sidebar no breakpoint certo, cartões abaixo de 768 px, filtros recolhívei
 O toque na rosca é conferido disparando `PointerEvent` com `pointerType: "touch"`, porque os
 cliques do painel chegam como mouse.
 
+Cadastro → mapa (manual, no `localhost`): cadastrar alguém com um ESP32 do estoque e conferir +1
+em "no mapa"; desvincular na tabela e conferir −1; depois apagar `guara.cadastro.v1` do
+`localStorage`. Não fazer no site publicado: o cadastro fica salvo no navegador de quem testou.
+
 ## Mapa por capacidade
 
 | Capability | Evidência | Situação |

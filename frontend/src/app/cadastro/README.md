@@ -59,6 +59,7 @@ Pessoas e dispositivos são guardados no **`localStorage`** do navegador (chave 
 
 - Cartões de resumo: pessoas cadastradas, com ESP32, sem ESP32, ESP32 livres
 - Wizard de 4 passos, com validação por passo
+- Quem sai do wizard com ESP32 aparece no mapa e no dashboard na hora, "aguardando programação", num ponto do pátio fixo pelo id (`leituraInicial` em `dados-mock.ts`); quem é desvinculado na tabela sai deles. Ainda não entra no histórico, que só tem as leituras geradas
 - Cadastro de dispositivo novo dentro do próprio wizard
 - Tabela com busca (nome ou matrícula), filtro por função e turno
 - Vincular, trocar e desvincular pelo seletor da linha, com a bateria do dispositivo
