@@ -12,8 +12,14 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
 - [ ] Não há testes automatizados; só `npm run lint` e `npm run build`.
 - [ ] Coordenadas dos trechos X divergem do diagrama oficial: aguardam pontos levantados
   ([`specs/open-decisions.md`](../specs/open-decisions.md)). Não corrigir por estimativa.
+- [ ] Conferir o layout de celular num aparelho real (iPhone com notch e Android) antes da
+  apresentação; até agora só viewport emulado.
 
 ## Decisões importantes
+- Navegação de celular é a da branch `mobile-qrcode`: abas embaixo (`NavMobile.tsx`) abaixo de
+  `lg`. O topo com abas roláveis que a branch `mapa-pessoas` criou no `Sidebar.tsx` (breakpoint
+  `md`) foi descartado na junção; não reintroduzir as duas navegações.
+- Ao mexer numa tabela, lembrar do cartão equivalente (as duas versões ficam no mesmo componente).
 - VLibras entra por `next/script` no layout raiz usando o loader novo (v7), que se inicializa
   sozinho. Não usar o snippet antigo com `<div vw>` + `new VLibras.Widget(...)`: o loader atual cria
   o próprio botão e o markup antigo ficaria sobrando.
@@ -28,12 +34,14 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
 - O status "aguardando programação" é o antigo "livre": é quem está disponível para acionar.
 
 ## Última sessão (2026-10-07, Claude)
-- Status novos, restaurante do Porto Vale com 3 pessoas (2 almoçando, 1 descansando), pessoas do
-  pátio espalhadas por toda a área, pontos sem sobreposição, lat/lon no popup (que agora fica
-  aberto nas atualizações de 5 s) e layout de celular em todas as telas. Lint, tsc e build passam;
-  conferido no navegador em 1280 px e em 375 px. Entregue na `main` por PR.
+- Juntadas na `main` as duas linhas paralelas: `mapa-pessoas` (status novos, restaurante do Porto
+  Vale, pontos sem sobreposição, popup que fica aberto, já na `main` pelo PR #1) e
+  `mobile-qrcode` (versão de celular). Conflitos em 9 arquivos: layout, abas e cartões vieram do
+  mobile; dados, status e mapa vieram do `mapa-pessoas`. O checkbox "Cobertura" foi para dentro
+  do painel "Filtros" do mapa.
+- tsc, lint e build passam. Conferido no navegador: 375 px nas quatro rotas (abas visíveis, barra
+  lateral oculta, tabelas em cartões, 0 px de rolagem horizontal, sem erros no console) e 1280 px
+  no histórico.
 - Armadilha: com o painel do navegador oculto, a página carrega com largura ~0 e o Leaflet enquadra
   no zoom 10. Para conferir, fixe o tamanho com `resize_window` antes de recarregar.
-- Sessão paralela (Netlify): o primeiro deploy deu 404 em tudo porque o Next.js não foi detectado
-  ("Runtime: Not set", `.next` servido como estático). `frontend/netlify.toml` declara
-  `@netlify/plugin-nextjs` e já está na `main`.
+- `.claude/launch.json` ganhou `autoPort: true`: outra sessão ocupava a porta 3000.

@@ -165,7 +165,9 @@ export default function MapaLeaflet({ posicoes, raioCoberturaM }: { posicoes: Po
     // primeira pintura não há o que animar, e um fitBounds animado deixa trabalho
     // agendado para depois, que é justamente o que não queremos num componente que
     // pode ser desmontado a qualquer momento.
-    m.fitBounds(L.latLngBounds(TRECHOS.map((t) => t.centro)), { padding: [48, 48], animate: false });
+    // No celular a margem de 48 px comeria boa parte do mapa.
+    const margem = elemento.current.clientWidth < 640 ? 16 : 48;
+    m.fitBounds(L.latLngBounds(TRECHOS.map((t) => t.centro)), { padding: [margem, margem], animate: false });
 
     // Trechos: círculos provisórios até termos os polígonos reais do pátio.
     for (const t of TRECHOS) {
@@ -280,7 +282,9 @@ export default function MapaLeaflet({ posicoes, raioCoberturaM }: { posicoes: Po
   return (
     <>
       <FiltroGosma />
-      <div ref={elemento} className="h-[65vh] min-h-[360px] w-full rounded-lg border border-zinc-800 md:h-[560px]" />
+      {/* `isolate` prende os z-index do Leaflet (os controles chegam a 1000) dentro do mapa; sem
+          isso, ao rolar a página no celular, o botão de zoom passava por cima do topo fixo. */}
+      <div ref={elemento} className="isolate h-[60svh] min-h-80 w-full rounded-lg border border-zinc-800 lg:h-[560px]" />
     </>
   );
 }
