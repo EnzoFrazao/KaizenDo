@@ -5,6 +5,9 @@ Protótipo visual do GUARÁ (Next.js em `frontend/`), quatro telas com dados ilu
 VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
 
 ## Pendências
+- [ ] Deploy Netlify: commitar/pushar `frontend/netlify.toml` na `main` e confirmar que `/`,
+  `/mapa`, `/dashboard` respondem 200 em `https://guaramonitoramento.netlify.app`. Se o build
+  falhar, suspeitar de suporte do adaptador ao Next 16.4 (`cacheComponents`, `partialPrefetching`).
 - [ ] Evoluções das telas listadas em [`docs/telas.md`](telas.md) (responsáveis por tela).
 - [ ] Não há testes automatizados; só `npm run lint` e `npm run build`.
 - [ ] Coordenadas dos trechos X divergem do diagrama oficial: aguardam pontos levantados
@@ -20,7 +23,6 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
   para sobreposição não escurecer. Detalhe em `frontend/src/app/mapa/README.md`.
 
 ## Última sessão (2026-10-07, Claude)
-- Área de cobertura fundida com pulso de radar em `/mapa` (`lib/cobertura.ts`, `MapaLeaflet.tsx`,
-  `MapaView.tsx`, `globals.css`); conferida no navegador. Lint, build e tsc passam.
-- Coordenadas conferidas contra o diagrama oficial; divergências registradas, não corrigidas.
-- Popups ainda fecham no redesenho de 5 s (comportamento anterior, não mexido).
+- Primeiro deploy no Netlify deu 404 em tudo: Next.js não detectado ("Runtime: Not set"), `.next`
+  servido como estático. Criado `frontend/netlify.toml` declarando `@netlify/plugin-nextjs`.
+- Ainda não verificado em produção: depende de commit/push do usuário.

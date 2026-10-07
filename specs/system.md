@@ -30,6 +30,14 @@ de `@/lib/rotulos`. Não há backend, login nem conexão com ESP32 ou Raspberry 
   árvore React) e só baixa o app do avatar (Unity, via iframe e CDN jsDelivr) no primeiro clique. É
   idempotente: navegar entre telas não duplica o botão.
 
+## Deploy
+
+- Netlify, site `guaramonitoramento` (`https://guaramonitoramento.netlify.app`), a partir da `main`.
+- Painel: base directory `frontend`; o resto vem de `frontend/netlify.toml` (`npm run build`,
+  publish `.next`, plugin `@netlify/plugin-nextjs`).
+- O plugin é declarado explicitamente porque o Netlify não detectou o Next.js ("Runtime: Not set")
+  e publicou o `.next` como estático: toda rota dava 404 e `/server/app/index.html` respondia 200.
+
 ## Restrições e lacunas
 
 - Os dois recursos externos (tiles e VLibras) exigem internet; offline, o mapa fica sem fundo e o
