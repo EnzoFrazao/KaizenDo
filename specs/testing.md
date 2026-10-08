@@ -51,6 +51,18 @@ centros dividida pelo maior raio (tem de ficar > 1: um não esconde o outro). Co
 movimento ao vivo, a continuidade no redesenho de 5 s e a troca de escolha no zoom ainda precisam
 ser vistos com o painel aberto.
 
+Site publicado (manual, Edge headless por CDP): o painel do navegador do app, quando oculto,
+congela `document.timeline` e o zoom do Leaflet, então movimento e hidratação são conferidos num
+`msedge --headless=new --remote-debugging-port=<porta> --user-data-dir=<temporário>`. Por quadro
+(`requestAnimationFrame`, 7 s): pontos andando, maior salto entre quadros (pega pulo no redesenho
+de 5 s e no zoom; ignorar pontos fora da tela, que têm `getBBox()` vazio), sobreposição real e
+erros do console (`Runtime.exceptionThrown`). Para reproduzir localmente o que o Netlify faz,
+reescrever o HTML com `Fetch.requestPaused` inserindo `\n<!-- ... -->` depois do `<meta charset>`.
+Conferido em 2026-10-08: no link, 29 de 48 andando e sem pulo a cada 5 s, mas #418 em todas as
+páginas e escuro salvo abrindo claro; corrigido e reconferido no `next start` com a injeção
+simulada (sem #418, escuro salvo abre escuro, nenhum salto > 2 px em 9 s após zoom a 375, 768 e
+1280 px).
+
 ## Mapa por capacidade
 
 | Capability | Evidência | Situação |

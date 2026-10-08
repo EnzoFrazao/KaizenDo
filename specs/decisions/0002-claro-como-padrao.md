@@ -18,7 +18,8 @@ no celular.
 
 - O servidor manda `<html data-tema="claro">` e `themeColor` `#f3f4f5`. O claro vale até sem
   JavaScript, e o `getServerSnapshot` do `BotaoTema` (`"claro"`) bate com o HTML.
-- O script inline do `<head>` só age quando `guara.tema === "escuro"`: tira o atributo e troca a
+- O script inline (primeiro filho do `<body>`; no `<head>` ele quebrava a hidratação no Netlify,
+  ver `system.md`) só age quando `guara.tema === "escuro"`: tira o atributo e troca a
   meta `theme-color` para `#09090b` antes da primeira pintura.
 - O botão grava sempre a escolha explícita (`"claro"` ou `"escuro"`).
 
