@@ -40,6 +40,16 @@ pelo botão, recarregar e conferir que a escolha persiste e que o console não a
 celular (375×812), o botão do topo mede 44×44 px. Conferido em 2026-10-08 em `/mapa`, a 375 e a
 1280 px.
 
+Pessoas andando no mapa (manual): em `/mapa`, `path.guara-anda` tem até 6 elementos, todos de
+"manobrando" (`fill` `#38bdf8`). Para cada um, mover `getAnimations()[0].currentTime` pela volta
+inteira e guardar o maior deslocamento do `transform`; com o centro de repouso de cada ponto
+(`getBBox()`), exigir `distância − raios − deslocamentos ≥ 0` contra todos os outros pontos.
+Conferido em 2026-10-08 a 375, 768 e 1280 px: 5 a 6 andando, passo máximo de 5,37 px no zoom 14 e
+pior folga de +3,15 px. Com o painel do navegador oculto o relógio das animações fica parado
+(`document.timeline.currentTime`), e o zoom do Leaflet, que depende de quadros, também não anda: o
+movimento ao vivo, a continuidade no redesenho de 5 s e a troca de escolha no zoom ainda precisam
+ser vistos com o painel aberto.
+
 ## Mapa por capacidade
 
 | Capability | Evidência | Situação |

@@ -5,9 +5,9 @@
    pouca luz). O atributo `data-tema="claro"` no <html> liga o claro, e o servidor já
    o manda: o claro é o padrão de quem visita (ADR 0002).
 
-   REGRA: o escuro é o estado base DO CSS (sem atributo) e NÃO pode mudar. Por isso as telas mantêm as
-   classes que já tinham e só GANHAM uma variante `claro:` ao lado. Assim é
-   impossível um ajuste do claro vazar para o escuro.
+   REGRA: o escuro é o estado base DO CSS (sem atributo) e NÃO pode mudar. Por isso
+   as telas mantêm as classes que já tinham e só GANHAM uma variante `claro:` ao
+   lado. Assim é impossível um ajuste do claro vazar para o escuro.
 
    O MAPA fica de fora: tiles, pontos de status, trechos e cobertura mantêm as
    cores dos dois lados (ver COR_STATUS_MAPA em lib/rotulos.ts). */
@@ -281,5 +281,42 @@ body {
   .guara-radar-pulso {
     animation: none;
     opacity: 0;
+  }
+}
+
+/* Pessoas andando no mapa (escolherQuemAnda em MapaLeaflet.tsx). Cada uma faz um laço de
+   poucos pixels; duração, atraso e --anda-escala (encolhe com o zoom) vêm do JS, para o
+   trajeto não recomeçar a cada 5 s. É só desenho: a posição e o popup continuam sendo a
+   leitura do ESP32. O maior deslocamento daqui (~7,3 px) é o PASSO_MAX_PX do JS. */
+.guara-anda {
+  --anda-escala: 1;
+  animation-name: guara-anda;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+@keyframes guara-anda {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(calc(var(--anda-x1) * var(--anda-escala)), calc(var(--anda-y1) * var(--anda-escala)));
+  }
+  50% {
+    transform: translate(calc(var(--anda-x2) * var(--anda-escala)), calc(var(--anda-y2) * var(--anda-escala)));
+  }
+  75% {
+    transform: translate(calc(var(--anda-x3) * var(--anda-escala)), calc(var(--anda-y3) * var(--anda-escala)));
+  }
+}
+.guara-anda-1 { --anda-x1: 4px; --anda-y1: -3px; --anda-x2: 7px; --anda-y2: 1px; --anda-x3: 3px; --anda-y3: 4px; }
+.guara-anda-2 { --anda-x1: -3px; --anda-y1: -4px; --anda-x2: -6px; --anda-y2: -1px; --anda-x3: -2px; --anda-y3: 3px; }
+.guara-anda-3 { --anda-x1: 2px; --anda-y1: 5px; --anda-x2: -3px; --anda-y2: 6px; --anda-x3: -4px; --anda-y3: 2px; }
+.guara-anda-4 { --anda-x1: -5px; --anda-y1: 2px; --anda-x2: -2px; --anda-y2: 6px; --anda-x3: 3px; --anda-y3: 3px; }
+.guara-anda-5 { --anda-x1: 3px; --anda-y1: -5px; --anda-x2: -2px; --anda-y2: -7px; --anda-x3: -4px; --anda-y3: -3px; }
+.guara-anda-6 { --anda-x1: 5px; --anda-y1: 3px; --anda-x2: 2px; --anda-y2: -4px; --anda-x3: -3px; --anda-y3: -2px; }
+@media (prefers-reduced-motion: reduce) {
+  .guara-anda {
+    animation: none;
   }
 }

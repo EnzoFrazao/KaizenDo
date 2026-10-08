@@ -45,9 +45,19 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
   borda (opção A de um mockup com três opções). Lint, build e conferência no navegador ok a 375 e a
   1280 px.
 - `/` passou a redirecionar para `/mapa` (antes `/dashboard`): o link publicado abre direto no mapa.
+- Até seis pessoas manobrando no pátio oscilam alguns pixels no mapa (só desenho; detalhe no README
+  do mapa). A auditoria antes do merge achou pontos animados passando por cima de vizinhos (corrigido:
+  só anda quem tem folga), hash do id fraco e `--anda-escala` sumindo do CSS servido. Trajetos e
+  folgas conferidos por amostragem; o movimento ao vivo não foi visto (painel do navegador oculto,
+  animações paradas).
+- Armadilha: o `next dev` às vezes não percebe edição feita por script no `globals.css`; confira o
+  CSS servido (`curl` no chunk `globals`) antes de concluir que a regra não funciona.
 - Corrigido de passagem: a meta `theme-color` não acompanhava o tema no carregamento, só no clique.
-- Tema claro já está na `main` (PR #6). O redirecionamento para `/mapa` está no PR da branch
-  `claude/mapa-como-inicio`; o link só abre no mapa depois do merge.
+- Tema claro (PR #6) e redirecionamento para `/mapa` (PR #7) estão na `main` e publicados:
+  `guaramonitora.netlify.app/` responde 307 → `/mapa` com `data-tema="claro"`.
+- Pessoas andando publicadas a pedido do usuário (branch `claude/pessoas-andando-mapa`), sem o
+  movimento ter sido visto ao vivo antes. Pendente: olhar no aparelho se é suave e se não pula a
+  cada 5 s nem no zoom.
 
 ## Histórico
 - 2026-10-07 (Claude): auditoria do site publicado (`guaramonitora`). `posicoesAtuais()` passou a

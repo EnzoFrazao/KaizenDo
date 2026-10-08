@@ -56,7 +56,15 @@ const RAIO_MAQUINISTA_PX = 6;
 const RAIO_MANOBRISTA_PX = 4.5;
 const FOLGA_PX = 1.5;
 
-type PontoDesenhado = { pessoaId: string; marcador: L.CircleMarker; real: L.LatLng; raioBase: number; raio: number };
+type PontoDesenhado = {
+  pessoaId: string;
+  marcador: L.CircleMarker;
+  real: L.LatLng;
+  raioBase: number;
+  raio: number;
+  /** Manobrando no pátio: candidato a andar (ver escolherQuemAnda). */
+  podeAndar: boolean;
+};
 
 /**
  * Tamanho do ponto conforme o zoom. No celular o enquadramento cai para o zoom 13, onde o
@@ -114,6 +122,89 @@ function espalharNaTela(m: L.Map, pontos: PontoDesenhado[]) {
     p.marcador.setLatLng(destino);
     if (p.marcador.isPopupOpen()) p.marcador.getPopup()?.setLatLng(destino);
   });
+  escolherQuemAnda(pontos, xs, ys, escala);
+}
+
+// Pessoas andando. Os dados do protótipo são fixos entre as atualizações, e o mapa parado
+// parecia uma planta com bolinhas. Algumas pessoas manobrando no pátio oscilam uns poucos
+// pixels, cada uma no seu ritmo, para ficar claro que cada ponto é alguém. É só desenho
+// (CSS em globals.css, classes `guara-anda-N`): a posição e o popup continuam sendo a
+// leitura do ESP32, e com prefers-reduced-motion ninguém se mexe.
+
+const QUANTOS_ANDAM = 6;
+/** Quantos trajetos `guara-anda-N` existem em globals.css. */
+const TRAJETOS = 6;
+/** Maior deslocamento desses trajetos, em px, no zoom 15 ou mais. Atualize junto com o CSS. */
+const PASSO_MAX_PX = 7.5;
+const TRECHO_FORA_DO_PATIO = new Set(TRECHOS.filter((t) => t.foraDoPatio).map((t) => t.id));
+
+/** No restaurante ninguém manobra, e quem está sem sinal não se mexe. */
+function podeAndar(p: PosicaoAtual) {
+  return p.status === "manobrando" && !TRECHO_FORA_DO_PATIO.has(p.trecho);
+}
+
+/**
+ * Trajeto e ritmo fixos por pessoa, tirados do id: uma nova escolha (zoom, filtro) não troca o
+ * trajeto de quem continua andando. A duração varia de 9 a 14,9 s, então mesmo duas pessoas no
+ * mesmo trajeto não andam juntas.
+ */
+function jeitoDeAndar(pessoaId: string) {
+  // FNV-1a com mistura final: os ids diferem só no fim ("P007", "P012"), e um hash simples
+  // deixava todo mundo com a mesma duração e no mesmo par de trajetos.
+  let h = 2166136261;
+  for (const c of pessoaId) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
+  h ^= h >>> 16;
+  h = Math.imul(h, 0x45d9f3b);
+  h = (h ^ (h >>> 16)) >>> 0;
+  return { trajeto: (h % TRAJETOS) + 1, duracaoS: 9 + (Math.floor(h / TRAJETOS) % 60) / 10 };
+}
+
+/**
+ * Escolhe quem anda depois do espalhamento, para o movimento nunca pôr um ponto sobre outro:
+ * só anda quem tem, até o vizinho mais perto, uma folga maior que o passo; e entre dois que
+ * andam a folga tem de ser o dobro, porque os dois se mexem. Os de mais folga vêm primeiro.
+ * Roda de novo a cada zoom; nos zooms afastados o passo encolhe junto com o ponto.
+ */
+function escolherQuemAnda(pontos: PontoDesenhado[], xs: number[], ys: number[], escala: number) {
+  const passo = PASSO_MAX_PX * escala;
+  const vao = (i: number, j: number) => Math.hypot(xs[j] - xs[i], ys[j] - ys[i]) - pontos[i].raio - pontos[j].raio;
+  const folga = pontos.map((_, i) => {
+    let menor = Infinity;
+    for (let j = 0; j < pontos.length; j++) if (j !== i) menor = Math.min(menor, vao(i, j));
+    return menor;
+  });
+  const candidatos = pontos
+    .map((_, i) => i)
+    .filter((i) => pontos[i].podeAndar && folga[i] >= passo)
+    .sort((a, b) => folga[b] - folga[a]);
+  const escolhidos: number[] = [];
+  for (const i of candidatos) {
+    if (escolhidos.length === QUANTOS_ANDAM) break;
+    if (escolhidos.every((j) => vao(i, j) >= 2 * passo)) escolhidos.push(i);
+  }
+  const anda = new Set(escolhidos);
+  pontos.forEach((p, i) => andar(p, anda.has(i), escala));
+}
+
+const CLASSES_ANDAR = ["guara-anda", ...Array.from({ length: TRAJETOS }, (_, i) => `guara-anda-${i + 1}`)];
+
+/**
+ * Liga ou desliga o trajeto no marcador. Os marcadores são recriados a cada 5 s; sem o atraso
+ * negativo tirado do relógio das animações, o trajeto recomeçaria do zero e o ponto daria um
+ * pulo. O relógio é `document.timeline`, e não `performance.now()`: com a aba escondida as
+ * animações param, mas `performance.now()` continua correndo, e o ponto pularia na volta.
+ */
+function andar(p: PontoDesenhado, liga: boolean, escala: number) {
+  const el = p.marcador.getElement() as SVGElement | undefined;
+  if (!el) return;
+  el.classList.remove(...CLASSES_ANDAR);
+  if (!liga) return;
+  const { trajeto, duracaoS } = jeitoDeAndar(p.pessoaId);
+  const agoraS = Number(document.timeline.currentTime ?? 0) / 1000;
+  el.classList.add("guara-anda", `guara-anda-${trajeto}`);
+  el.style.animationDuration = `${duracaoS}s`;
+  el.style.animationDelay = `-${(agoraS % duracaoS).toFixed(2)}s`;
+  el.style.setProperty("--anda-escala", String(escala));
 }
 
 // Cobertura ("radar" em volta de cada pessoa). Os círculos são desenhados opacos num pane
@@ -265,7 +356,7 @@ export default function MapaLeaflet({ posicoes, raioCoberturaM }: { posicoes: Po
           if (popupAberto.current === p.pessoaId) popupAberto.current = null;
         })
         .addTo(camada);
-      return { pessoaId: p.pessoaId, marcador, real: L.latLng(p.lat, p.lon), raioBase: raio, raio };
+      return { pessoaId: p.pessoaId, marcador, real: L.latLng(p.lat, p.lon), raioBase: raio, raio, podeAndar: podeAndar(p) };
     });
     espalharNaTela(m, pontos.current);
 
