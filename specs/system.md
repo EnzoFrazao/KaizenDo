@@ -29,10 +29,15 @@ atributo `data-tema="claro"` no `<html>`, que já vem do servidor
 - `globals.css` declara `@custom-variant claro`; cada elemento mantém a classe do escuro e
   **ganha** uma `claro:` ao lado. O escuro é, assim, imutável por construção
   (ADR [0001](decisions/0001-tema-claro-por-variante.md)).
-- A escolha vive no `localStorage` (`guara.tema`). Um script inline no `<head>` lê `"escuro"`, tira
-  o atributo e troca a meta `theme-color` antes da primeira pintura — um arquivo externo chegaria
-  tarde e a página piscaria. Por isso o `<html>` leva `suppressHydrationWarning`: o DOM diverge do
-  HTML do servidor de propósito.
+- A escolha vive no `localStorage` (`guara.tema`). Um script inline, **primeiro filho do
+  `<body>`**, lê `"escuro"`, tira o atributo e troca a meta `theme-color` antes de qualquer conteúdo
+  ser desenhado — um arquivo externo chegaria tarde e a página piscaria. Por isso o `<html>` leva
+  `suppressHydrationWarning`: o DOM diverge do HTML do servidor de propósito.
+- **Não pôr `<script>` (nem outro elemento não içável) no `<head>` do layout.** O Netlify injeta um
+  comentário com quebra de linha depois do `<meta charset>`; esse nó de texto no `<head>` fazia o
+  React não achar o script ao hidratar (erro #418 em todas as páginas publicadas). O React então
+  remontava a página inteira e o `<html>` voltava a `data-tema="claro"`, ignorando o escuro salvo.
+  Localmente não acontece, porque o `next start` não injeta nada.
 - O Next insere uma segunda meta `theme-color` depois de hidratar. O navegador usa a primeira; o
   `BotaoTema` atualiza todas.
 - `BotaoTema` lê o tema com `useSyncExternalStore`, porque a verdade mora no DOM, fora do React.

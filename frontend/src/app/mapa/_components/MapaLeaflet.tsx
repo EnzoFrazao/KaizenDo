@@ -200,14 +200,22 @@ const CLASSES_ANDAR = ["guara-anda", ...Array.from({ length: TRAJETOS }, (_, i) 
 function andar(p: PontoDesenhado, escala: number | null) {
   const el = p.marcador.getElement() as SVGElement | undefined;
   if (!el) return;
-  el.classList.remove(...CLASSES_ANDAR);
-  if (escala === null) return;
+  if (escala === null) {
+    el.classList.remove(...CLASSES_ANDAR);
+    delete el.dataset.anda;
+    return;
+  }
   const { trajeto, duracaoS } = jeitoDeAndar(p.pessoaId);
+  el.style.setProperty("--anda-escala", escala.toFixed(3));
+  // Já andando (nova escolha no zoom): não mexer no atraso. A animação começou quando o
+  // marcador nasceu; regravar o atraso agora deslocaria o trajeto e o ponto daria um pulo.
+  if (el.dataset.anda === String(trajeto)) return;
   const agoraS = Number(document.timeline.currentTime ?? 0) / 1000;
+  el.classList.remove(...CLASSES_ANDAR);
   el.classList.add("guara-anda", `guara-anda-${trajeto}`);
   el.style.animationDuration = `${duracaoS}s`;
   el.style.animationDelay = `-${(agoraS % duracaoS).toFixed(2)}s`;
-  el.style.setProperty("--anda-escala", escala.toFixed(3));
+  el.dataset.anda = String(trajeto);
 }
 
 // Cobertura ("radar" em volta de cada pessoa). Os círculos são desenhados opacos num pane

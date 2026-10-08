@@ -45,19 +45,18 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
   borda (opção A de um mockup com três opções). Lint, build e conferência no navegador ok a 375 e a
   1280 px.
 - `/` passou a redirecionar para `/mapa` (antes `/dashboard`): o link publicado abre direto no mapa.
-- Até seis pessoas manobrando no pátio oscilam alguns pixels no mapa (só desenho; detalhe no README
-  do mapa). A auditoria antes do merge achou pontos animados passando por cima de vizinhos (corrigido:
-  só anda quem tem folga), hash do id fraco e `--anda-escala` sumindo do CSS servido. Trajetos e
-  folgas conferidos por amostragem; o movimento ao vivo não foi visto (painel do navegador oculto,
-  animações paradas).
-- Armadilha: o `next dev` às vezes não percebe edição feita por script no `globals.css`; confira o
-  CSS servido (`curl` no chunk `globals`) antes de concluir que a regra não funciona.
-- Corrigido de passagem: a meta `theme-color` não acompanhava o tema no carregamento, só no clique.
-- Tema claro (PR #6) e redirecionamento para `/mapa` (PR #7) estão na `main` e publicados:
-  `guaramonitora.netlify.app/` responde 307 → `/mapa` com `data-tema="claro"`.
-- Pessoas andando publicadas (PR #8, 6 pessoas) e depois ampliadas para 60% das bolinhas a pedido
-  do usuário, aceitando sobreposição de poucos px em movimento (nunca esconde). O movimento nunca
-  foi visto ao vivo. Pendente: olhar no aparelho se é suave e se não pula a cada 5 s nem no zoom.
+- 60% das bolinhas do mapa oscilam (PRs #8 e #9; detalhe no README do mapa), aceitando sobreposição
+  de poucos px em movimento, nunca a ponto de esconder.
+- Auditoria do link com Edge headless (painel do app oculto congela animação): movimento confirmado
+  ao vivo. Achou e corrigiu: erro de hidratação #418 em todas as páginas publicadas, causado pelo
+  comentário que o Netlify injeta no `<head>` (o script do tema foi para o `<body>`; ver
+  `specs/system.md`), que fazia o escuro salvo abrir claro; e pulo de ~4 px no zoom. Correções no
+  PR da branch `claude/hidratacao-netlify-zoom`; publicar e auditar o link de novo.
+- Armadilhas: o painel do navegador do app, oculto, congela `document.timeline` e o zoom do
+  Leaflet; para ver animação, use um Edge headless por CDP (`--remote-debugging-port`, perfil
+  temporário). Prévia de deploy do Netlify pede login: `curl` nela devolve "Login Redirect", não o
+  site. O `next dev` às vezes não percebe edição feita por script no `globals.css`.
+- Pendente: ver no celular de verdade se o movimento é suave.
 
 ## Histórico
 - 2026-10-07 (Claude): auditoria do site publicado (`guaramonitora`). `posicoesAtuais()` passou a

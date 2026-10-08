@@ -28,8 +28,14 @@ export const viewport: Viewport = {
 };
 
 // O claro já vem no HTML do servidor; este script só desliga para quem escolheu o escuro.
-// Roda antes da primeira pintura, senão a página aparece clara e "pisca" para o escuro. Fica
-// inline no <head> de propósito: um arquivo externo chegaria tarde demais. A meta theme-color
+// Roda antes da primeira pintura, senão a página aparece clara e "pisca" para o escuro. É
+// inline porque um arquivo externo chegaria tarde demais.
+//
+// Fica no começo do <body>, e NÃO no <head>: o Netlify injeta um comentário com quebra de
+// linha logo depois do <meta charset>, e esse nó de texto no <head> fazia o React não achar
+// este <script> ao hidratar (erro #418). Aí o React remontava a página inteira e o <html>
+// voltava a data-tema="claro", ignorando quem escolheu o escuro. No <body> nada é injetado
+// antes dele, e ele ainda roda antes de qualquer conteúdo ser desenhado. A meta theme-color
 // não tem lugar garantido no <head> (a ordem é do Next), então o script a acerta na hora e de
 // novo no DOMContentLoaded. O cliente ainda insere uma cópia depois de hidratar, que fica com a
 // cor do claro; não importa, porque o navegador usa a primeira theme-color do documento.
@@ -41,10 +47,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     // data-tema do <html> antes do React hidratar, então o HTML do servidor e o DOM divergem
     // de propósito. O aviso vale só para este elemento, não desce para os filhos.
     <html lang="pt-BR" data-tema="claro" className="h-full antialiased" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: TEMA_SEM_PISCAR }} />
-      </head>
       <body className="flex min-h-full flex-col bg-zinc-950 claro:bg-areia text-zinc-100 claro:text-tinta claro:bg-areia claro:text-tinta lg:flex-row">
+        <script dangerouslySetInnerHTML={{ __html: TEMA_SEM_PISCAR }} />
         <Sidebar />
         <TopoMobile />
         {/* No celular, o padding de baixo reserva as abas (3.5rem), o selo do Netlify que fica
