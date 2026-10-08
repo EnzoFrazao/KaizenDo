@@ -35,7 +35,7 @@ export function PainelFiltros({
           aria-expanded={aberto}
           onClick={() => setAberto((a) => !a)}
         >
-          Filtros{ativos > 0 && <span className="ml-1 text-zinc-100">· {ativos}</span>}
+          Filtros{ativos > 0 && <span className="ml-1 text-zinc-100 claro:text-tinta">· {ativos}</span>}
           <span aria-hidden="true" className={`ml-1.5 inline-block transition-transform ${aberto ? "rotate-180" : ""}`}>
             ▾
           </span>

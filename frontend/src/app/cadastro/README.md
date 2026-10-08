@@ -29,7 +29,7 @@ Se mais pra frente o time quiser *mostrar* controle de acesso no pitch, a ideia 
 - `adminAtual()` · síncrono, devolve o admin fixo
 - `vincularDispositivo(pessoaId, dispositivoId)` · passe `null` para desvincular
 - `cadastrarPessoa({ nome, matricula, funcao, turno, dispositivoId })` · `dispositivoId` pode ser `null`
-- `cadastrarDispositivo(id, mac)`
+- `cadastrarDispositivo(id, mac)` · usado no estoque (avulso) e no passo 3 do wizard
 - `removerPessoa(pessoaId)` · exclui e devolve o ESP32 dela ao estoque
 - `restaurarDados()` · volta pessoas e dispositivos ao estado de `dados-mock.ts`
 
@@ -64,6 +64,10 @@ Pessoas e dispositivos são guardados no **`localStorage`** do navegador (chave 
 - Tabela com busca (nome ou matrícula), filtro por função e turno
 - Vincular, trocar e desvincular pelo seletor da linha, com a bateria do dispositivo
 - Excluir pessoa, com confirmação em dois passos na própria linha
+- **Dois caminhos para cadastrar um ESP32**, de propósito: avulso, pelo formulário do cartão
+  "Estoque de ESP32 livres" (o lote de tags costuma chegar antes das pessoas), e já vinculado,
+  pelo passo 3 do wizard (quem recebe a tag na hora do cadastro). Os dois chamam
+  `cadastrarDispositivo`, então as regras de id e MAC são as mesmas
 - Estoque de ESP32 livres, com bateria e último sinal
 - Mensagens de erro e de confirmação
 

@@ -136,20 +136,20 @@ export function NovoCadastroWizard({
                 aria-current={atual ? "step" : undefined}
                 className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-semibold ${
                   atual
-                    ? "bg-zinc-100 text-zinc-900"
+                    ? "bg-zinc-100 claro:bg-verde-vale text-zinc-900 claro:text-white"
                     : feito
-                      ? "bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-500/40"
-                      : "bg-zinc-800 text-zinc-500"
+                      ? "bg-emerald-500/20 text-emerald-300 claro:text-emerald-700 ring-1 ring-emerald-500/40"
+                      : "bg-zinc-800 claro:bg-nevoa text-zinc-500 claro:text-tinta-suave"
                 }`}
               >
                 {feito ? "✓" : i + 1}
               </span>
               <span
-                className={`text-sm ${atual ? "font-medium text-zinc-100" : "hidden text-zinc-500 sm:inline"}`}
+                className={`text-sm ${atual ? "font-medium text-zinc-100 claro:text-tinta" : "hidden text-zinc-500 claro:text-tinta-suave sm:inline"}`}
               >
                 {rotulo}
               </span>
-              {i < PASSOS.length - 1 && <span className="mx-0.5 h-px w-4 bg-zinc-800 sm:mx-1 sm:w-6" />}
+              {i < PASSOS.length - 1 && <span className="mx-0.5 h-px w-4 bg-zinc-800 claro:bg-nevoa sm:mx-1 sm:w-6" />}
             </li>
           );
         })}
@@ -158,11 +158,11 @@ export function NovoCadastroWizard({
       {passo === 0 && (
         <div className="grid max-w-md gap-3">
           <label className="grid gap-1 text-sm">
-            <span className="text-zinc-400">Nome completo</span>
+            <span className="text-zinc-400 claro:text-tinta-media">Nome completo</span>
             <input className="campo" value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ana Ribeiro" ref={focarComMouse} />
           </label>
           <label className="grid gap-1 text-sm">
-            <span className="text-zinc-400">Matrícula</span>
+            <span className="text-zinc-400 claro:text-tinta-media">Matrícula</span>
             <input
               className="campo font-mono"
               value={matricula}
@@ -177,7 +177,7 @@ export function NovoCadastroWizard({
       {passo === 1 && (
         <div className="grid max-w-md gap-4">
           <fieldset className="grid gap-2">
-            <legend className="mb-1 text-sm text-zinc-400">Função</legend>
+            <legend className="mb-1 text-sm text-zinc-400 claro:text-tinta-media">Função</legend>
             <div className="grid grid-cols-2 gap-2">
               {(Object.keys(ROTULO_FUNCAO) as Funcao[]).map((f) => (
                 <button
@@ -187,21 +187,21 @@ export function NovoCadastroWizard({
                   aria-pressed={funcao === f}
                   className={`min-h-11 rounded-md border px-3 py-2 text-sm transition-colors ${
                     funcao === f
-                      ? "border-zinc-100 bg-zinc-100 font-medium text-zinc-900"
-                      : "border-zinc-800 bg-zinc-950 text-zinc-300 hover:border-zinc-700"
+                      ? "border-zinc-100 claro:border-verde-vale bg-zinc-100 claro:bg-verde-vale font-medium text-zinc-900 claro:text-white"
+                      : "border-zinc-800 claro:border-traco bg-zinc-950 claro:bg-areia text-zinc-300 claro:text-tinta-media hover:border-zinc-700 claro:hover:border-traco-forte"
                   }`}
                 >
                   {ROTULO_FUNCAO[f]}
                 </button>
               ))}
             </div>
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-zinc-500 claro:text-tinta-suave">
               Maquinista fica na locomotiva; manobrista fica no chão. O ranking de acionamento filtra por função.
             </p>
           </fieldset>
 
           <label className="grid gap-1 text-sm">
-            <span className="text-zinc-400">Turno</span>
+            <span className="text-zinc-400 claro:text-tinta-media">Turno</span>
             <select className="campo" value={turno} onChange={(e) => setTurno(e.target.value as Turno)}>
               {Object.entries(ROTULO_TURNO).map(([v, r]) => <option key={v} value={v}>{r}</option>)}
             </select>
@@ -229,7 +229,7 @@ export function NovoCadastroWizard({
                 aria-pressed={modo === valor}
                 disabled={valor === "livre" && livres.length === 0}
                 className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-40 pointer-coarse:py-2.5 ${
-                  modo === valor ? "bg-zinc-100 text-zinc-900" : "bg-zinc-800 text-zinc-400 hover:text-zinc-100"
+                  modo === valor ? "bg-zinc-100 claro:bg-verde-vale text-zinc-900 claro:text-white" : "bg-zinc-800 claro:bg-nevoa text-zinc-400 claro:text-tinta-media hover:text-zinc-100 claro:hover:text-tinta"
                 }`}
               >
                 {rotulo}
@@ -248,17 +248,17 @@ export function NovoCadastroWizard({
                     className={`flex min-h-11 w-full items-center gap-3 rounded-md border px-3 py-2 text-left text-sm transition-colors ${
                       escolhido === d.id
                         ? "border-emerald-500/50 bg-emerald-500/10"
-                        : "border-zinc-800 bg-zinc-950 hover:border-zinc-700"
+                        : "border-zinc-800 claro:border-traco bg-zinc-950 claro:bg-areia hover:border-zinc-700 claro:hover:border-traco-forte"
                     }`}
                   >
-                    <span className="font-mono text-zinc-100">{d.id}</span>
-                    <span className="text-xs text-zinc-500">bateria {d.bateriaPct}%</span>
-                    <span className="ml-auto hidden font-mono text-xs text-zinc-600 sm:inline">{d.mac}</span>
+                    <span className="font-mono text-zinc-100 claro:text-tinta">{d.id}</span>
+                    <span className="text-xs text-zinc-500 claro:text-tinta-suave">bateria {d.bateriaPct}%</span>
+                    <span className="ml-auto hidden font-mono text-xs text-zinc-600 claro:text-tinta-suave sm:inline">{d.mac}</span>
                   </button>
                 </li>
               ))}
               {livres.length === 0 && (
-                <li className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-3 text-sm text-zinc-500">
+                <li className="rounded-md border border-zinc-800 claro:border-traco bg-zinc-950 claro:bg-areia px-3 py-3 text-sm text-zinc-500 claro:text-tinta-suave">
                   Nenhum ESP32 livre no estoque. Cadastre um novo ou siga sem dispositivo.
                 </li>
               )}
@@ -268,21 +268,21 @@ export function NovoCadastroWizard({
           {modo === "novo" && (
             <div className="grid gap-3">
               <label className="grid gap-1 text-sm">
-                <span className="text-zinc-400">Id da etiqueta</span>
+                <span className="text-zinc-400 claro:text-tinta-media">Id da etiqueta</span>
                 <input className="campo font-mono" value={novoId} onChange={(e) => setNovoId(e.target.value)} placeholder="ESP32-0B04" />
               </label>
               <label className="grid gap-1 text-sm">
-                <span className="text-zinc-400">MAC do módulo</span>
+                <span className="text-zinc-400 claro:text-tinta-media">MAC do módulo</span>
                 <input className="campo font-mono" value={novoMac} onChange={(e) => setNovoMac(e.target.value)} placeholder="24:6F:28:FF:B0:04" />
               </label>
-              <p className="text-xs text-zinc-500">
+              <p className="text-xs text-zinc-500 claro:text-tinta-suave">
                 O dispositivo é cadastrado e já sai vinculado a esta pessoa.
               </p>
             </div>
           )}
 
           {modo === "nenhum" && (
-            <p className="rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-200">
+            <p className="rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-200 claro:text-amber-800">
               Sem ESP32, a pessoa fica cadastrada mas <strong>não aparece no mapa nem no dashboard</strong>. Dá para
               vincular depois, na tabela abaixo.
             </p>
@@ -299,16 +299,16 @@ export function NovoCadastroWizard({
             ["Turno", ROTULO_TURNO[turno]],
             ["ESP32", rotuloDispositivo],
           ].map(([rotulo, valor]) => (
-            <div key={rotulo} className="flex justify-between gap-4 border-b border-zinc-800 pb-2">
-              <dt className="text-zinc-500">{rotulo}</dt>
-              <dd className="text-right font-medium text-zinc-100">{valor}</dd>
+            <div key={rotulo} className="flex justify-between gap-4 border-b border-zinc-800 claro:border-traco pb-2">
+              <dt className="text-zinc-500 claro:text-tinta-suave">{rotulo}</dt>
+              <dd className="text-right font-medium text-zinc-100 claro:text-tinta">{valor}</dd>
             </div>
           ))}
         </dl>
       )}
 
       {erro && (
-        <p role="alert" className="mt-4 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+        <p role="alert" className="mt-4 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300 claro:text-red-700">
           {erro}
         </p>
       )}
@@ -334,7 +334,7 @@ export function NovoCadastroWizard({
             {salvando ? "Cadastrando…" : "Concluir cadastro"}
           </button>
         )}
-        <span className="ml-auto text-xs text-zinc-600">
+        <span className="ml-auto text-xs text-zinc-600 claro:text-tinta-suave">
           Passo {passo + 1} de {PASSOS.length}
         </span>
       </div>

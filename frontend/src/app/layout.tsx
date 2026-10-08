@@ -15,21 +15,32 @@ export const metadata: Metadata = {
   openGraph: { title: TITULO, description: DESCRICAO, locale: "pt_BR", type: "website" },
 };
 
-// Muita gente abre pelo celular, via QR code. `viewportFit: cover` deixa o fundo escuro ir
+// Muita gente abre pelo celular, via QR code. `viewportFit: cover` deixa o fundo ir
 // até as bordas do iPhone; as barras compensam com env(safe-area-inset-*). O zoom do
 // usuário fica liberado de propósito (acessibilidade).
+// themeColor e colorScheme saem daqui: quem manda neles é o tema escolhido. O script
+// abaixo ajusta a meta, e o color-scheme vem do CSS (:root e [data-tema="claro"]).
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
   themeColor: "#09090b",
-  colorScheme: "dark",
 };
+
+// Roda antes da primeira pintura, senão a página aparece escura e "pisca" para o claro.
+// Fica inline no <head> de propósito: um arquivo externo chegaria tarde demais.
+const TEMA_SEM_PISCAR = `try{if(localStorage.getItem("guara.tema")==="claro"){document.documentElement.setAttribute("data-tema","claro")}}catch(e){}`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className="h-full antialiased dark" style={{ colorScheme: "dark" }}>
-      <body className="flex min-h-full flex-col bg-zinc-950 text-zinc-100 lg:flex-row">
+    // suppressHydrationWarning: o script abaixo põe data-tema="claro" no <html> antes
+    // do React hidratar, então o HTML do servidor (sem o atributo) e o DOM divergem de
+    // propósito. O aviso vale só para este elemento, não desce para os filhos.
+    <html lang="pt-BR" className="h-full antialiased" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: TEMA_SEM_PISCAR }} />
+      </head>
+      <body className="flex min-h-full flex-col bg-zinc-950 claro:bg-areia text-zinc-100 claro:text-tinta claro:bg-areia claro:text-tinta lg:flex-row">
         <Sidebar />
         <TopoMobile />
         {/* No celular, o padding de baixo reserva as abas (3.5rem), o selo do Netlify que fica

@@ -9,16 +9,25 @@ export const ROTULO_STATUS: Record<StatusTrabalho, string> = {
   sem_sinal: "Sem sinal",
 };
 
-/** Classes Tailwind de cada status, no tema escuro. Use sempre estas nas telas. */
+/**
+ * Classes Tailwind de cada status. Use sempre estas nas telas.
+ * O fundo e o anel (a 15 % e 30 %) servem aos dois temas: sobre papel viram pastel.
+ * Só o texto muda, pela variante `claro:` — a 300 some no branco.
+ * A MATIZ é a mesma dos pontos do mapa (COR_STATUS_MAPA) nos dois temas, senão a
+ * legenda do mapa deixaria de bater com o ponto.
+ */
 export const COR_STATUS: Record<StatusTrabalho, string> = {
-  manobrando: "bg-sky-500/15 text-sky-300 ring-1 ring-sky-500/30",
-  almocando: "bg-amber-500/15 text-amber-300 ring-1 ring-amber-500/30",
-  aguardando_programacao: "bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500/30",
-  descansando: "bg-zinc-500/15 text-zinc-300 ring-1 ring-zinc-500/30",
-  sem_sinal: "bg-red-500/15 text-red-300 ring-1 ring-red-500/30",
+  manobrando: "bg-sky-500/15 text-sky-300 claro:text-sky-700 ring-1 ring-sky-500/30",
+  almocando: "bg-amber-500/15 text-amber-300 claro:text-amber-700 ring-1 ring-amber-500/30",
+  aguardando_programacao: "bg-emerald-500/15 text-emerald-300 claro:text-emerald-700 ring-1 ring-emerald-500/30",
+  descansando: "bg-zinc-500/15 text-zinc-300 claro:text-zinc-700 ring-1 ring-zinc-500/30",
+  sem_sinal: "bg-red-500/15 text-red-300 claro:text-red-700 ring-1 ring-red-500/30",
 };
 
-/** Cor dos pontos no mapa e das barras. Tons claros, para contrastar no escuro. */
+/**
+ * Cor dos pontos no mapa, das barras e da rosca. Tons claros, para contrastar no escuro.
+ * NÃO muda com o tema: o mapa é o mesmo nos dois (pedido do time).
+ */
 export const COR_STATUS_MAPA: Record<StatusTrabalho, string> = {
   manobrando: "#38bdf8",
   almocando: "#fbbf24",
@@ -48,9 +57,9 @@ export function faixaBateria(pct: number): FaixaBateria {
 }
 
 export const COR_BATERIA: Record<FaixaBateria, string> = {
-  critica: "bg-red-500/15 text-red-300 ring-1 ring-red-500/30",
-  baixa: "bg-amber-500/15 text-amber-300 ring-1 ring-amber-500/30",
-  ok: "bg-emerald-500/15 text-emerald-300 ring-1 ring-emerald-500/30",
+  critica: "bg-red-500/15 text-red-300 claro:text-red-700 ring-1 ring-red-500/30",
+  baixa: "bg-amber-500/15 text-amber-300 claro:text-amber-700 ring-1 ring-amber-500/30",
+  ok: "bg-emerald-500/15 text-emerald-300 claro:text-emerald-700 ring-1 ring-emerald-500/30",
 };
 
 export const ROTULO_ALERTA: Record<TipoAlerta, string> = {

@@ -2,7 +2,7 @@
 id: core
 contract_status: confirmed
 implementation_status: partial
-last_verified: 2026-10-07
+last_verified: 2026-10-08
 last_verified_ref: working-tree
 ---
 
@@ -22,7 +22,14 @@ ESP32. Não há permissões: o admin é fixo (`adminAtual()`). O conteúdo de ca
 ## Contrato comportamental e critérios de aceite
 
 - As rotas `/dashboard`, `/mapa`, `/historico` e `/cadastro` existem e `/` leva ao dashboard.
-- Tema escuro único; cores e rótulos de status vêm de `lib/rotulos.ts`.
+- Dois temas, alternados por um botão presente na barra lateral (desktop) e no topo (celular):
+  **escuro** (padrão) e **claro**, repaginado com as cores oficiais da Vale. A escolha fica no
+  `localStorage` (`guara.tema`) e é aplicada antes da primeira pintura, sem piscar.
+- O **mapa não muda de cor** entre os temas: tiles, pontos de status, círculos dos trechos e área
+  de cobertura são os mesmos. Só o cromo do Leaflet (popup, tooltip, botões de zoom) acompanha.
+- Cores e rótulos de status vêm de `lib/rotulos.ts`; a matiz é a mesma nos dois temas, para a
+  legenda do mapa continuar batendo com o ponto.
+- No tema claro, todo texto atinge o contraste AA (4,5:1; 3:1 para texto grande).
 - Status de trabalho: manobrando, almoçando, aguardando programação (disponível para acionar),
   descansando e sem sinal.
 - Todas as telas funcionam no celular (375 px) sem rolagem lateral da página.
@@ -48,6 +55,8 @@ ESP32. Não há permissões: o admin é fixo (`adminAtual()`). O conteúdo de ca
 
 - As telas obtêm dados só por `@/lib/dados`.
 - "Em campo" exclui quem está sem sinal.
+- Um ESP32 pode ser cadastrado sozinho (vai para o estoque) ou já vinculado a uma pessoa nova,
+  pelo wizard. Os dois caminhos valem as mesmas regras de id e MAC.
 - Mapa e Dashboard mostram exatamente quem tem ESP32 vinculado agora no cadastro: cadastrar com
   ESP32 põe a pessoa no mapa na hora (posição inicial no pátio, fixa pelo id) e desvincular a tira.
 - O widget VLibras aparece uma única vez por página, inclusive após navegação no cliente.
@@ -74,6 +83,9 @@ coordenadas dos trechos divergem do diagrama oficial e seguem como aproximação
 
 ## Evidências de implementação e teste
 
+- Tema: [`frontend/src/components/BotaoTema.tsx`](../../frontend/src/components/BotaoTema.tsx) e o
+  bloco "Temas" de [`frontend/src/app/globals.css`](../../frontend/src/app/globals.css);
+  decisão em [`decisions/0001-tema-claro-por-variante.md`](../decisions/0001-tema-claro-por-variante.md).
 - Implementação: [`frontend/src/app/layout.tsx`](../../frontend/src/app/layout.tsx),
   `frontend/src/app/*/page.tsx` e, para o celular, `frontend/src/components/{NavMobile,PainelFiltros}.tsx`.
 - Gates: `npm run lint` e `npm run build` em `frontend/` (ver [`testing.md`](../testing.md)).
@@ -81,4 +93,4 @@ coordenadas dos trechos divergem do diagrama oficial e seguem como aproximação
 ## Relações
 
 - Decisão aberta: [topologia dos trechos X](../open-decisions.md#topologia-dos-trechos-x-diverge-do-diagrama-oficial-do-pátio).
-- ADR relacionado: nenhum.
+- ADR relacionado: [0001 — tema claro como variante aditiva](../decisions/0001-tema-claro-por-variante.md).

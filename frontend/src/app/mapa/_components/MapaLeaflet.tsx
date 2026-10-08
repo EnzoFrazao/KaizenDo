@@ -284,7 +284,7 @@ export default function MapaLeaflet({ posicoes, raioCoberturaM }: { posicoes: Po
       <FiltroGosma />
       {/* `isolate` prende os z-index do Leaflet (os controles chegam a 1000) dentro do mapa; sem
           isso, ao rolar a página no celular, o botão de zoom passava por cima do topo fixo. */}
-      <div ref={elemento} className="isolate h-[60svh] min-h-80 w-full rounded-lg border border-zinc-800 lg:h-[560px]" />
+      <div ref={elemento} className="isolate h-[60svh] min-h-80 w-full rounded-lg border border-zinc-800 claro:border-traco lg:h-[560px]" />
     </>
   );
 }

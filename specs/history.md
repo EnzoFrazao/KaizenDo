@@ -1,5 +1,15 @@
 # Marcos do projeto
 
+## 2026-10-08 — tema claro com as cores da Vale
+
+- Botão de alternar tema na barra lateral e no topo do celular; escolha guardada no `localStorage`
+  e aplicada antes da primeira pintura.
+- Tema claro repaginado com a paleta oficial (Verde, Vermelho e Amarelo Vale, Grafite e Ardósia);
+  o escuro ficou intocado e o mapa não muda de cor em nenhum dos dois.
+- Primeiro ADR: [0001 — tema claro como variante aditiva](decisions/0001-tema-claro-por-variante.md).
+- Cadastro: ESP32 avulso pelo estoque (além do wizard), colunas de bateria e ações justas ao
+  conteúdo e número do centro da rosca legível no tema claro.
+
 ## 2026-10-07 — site novo no Netlify e auditoria
 
 - Conta do Netlify trocada; `netlify.toml` movido para a raiz (`base = "frontend"`) e selo do

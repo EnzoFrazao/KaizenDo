@@ -15,6 +15,11 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
   apresentação; até agora só viewport emulado.
 
 ## Decisões importantes
+- Tema claro entra como variante `claro:` ao lado das classes do escuro, nunca no lugar delas: o
+  escuro é o estado base e não pode mudar. Classe de cor nova precisa do par `claro:`. O mapa é
+  igual nos dois temas. Ver [ADR 0001](../specs/decisions/0001-tema-claro-por-variante.md).
+- O Cinza Vale oficial (#747678) não serve para texto: dá 4,54:1 sobre branco puro e reprova em AA
+  sobre qualquer fundo tingido. No claro o texto usa Grafite, #45494f e Ardósia.
 - Navegação de celular é a da branch `mobile-qrcode`: abas embaixo (`NavMobile.tsx`) abaixo de
   `lg`. O topo com abas roláveis que a branch `mapa-pessoas` criou no `Sidebar.tsx` (breakpoint
   `md`) foi descartado na junção; não reintroduzir as duas navegações.

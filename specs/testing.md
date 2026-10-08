@@ -1,6 +1,6 @@
 # Estratégia e mapa de testes
 
-**Última verificação:** 2026-10-07
+**Última verificação:** 2026-10-08
 
 ## Gates
 
@@ -27,14 +27,25 @@ Cadastro → mapa (manual, no `localhost`): cadastrar alguém com um ESP32 do es
 em "no mapa"; desvincular na tabela e conferir −1; depois apagar `guara.cadastro.v1` do
 `localStorage`. Não fazer no site publicado: o cadastro fica salvo no navegador de quem testou.
 
+Contraste do tema claro (manual, no navegador): com `data-tema="claro"`, percorrer os nós de
+texto visíveis de `main`, `aside`, `header` e `nav`, achar o primeiro ancestral com fundo opaco e
+exigir 4,5:1 (3:1 para ≥ 24 px, ou ≥ 18,66 px em negrito). Conferido em 2026-10-08 nas quatro
+rotas: zero falhas. Foi assim que se descobriu que o Cinza Vale oficial (#747678) reprova sobre
+qualquer fundo que não seja branco puro.
+
+Tema (manual): alternar pelo botão e conferir que o escuro volta a `rgb(9, 9, 11)` sem sombra nos
+cartões; recarregar e conferir que a escolha persiste e que o console não acusa hidratação.
+
 ## Mapa por capacidade
 
 | Capability | Evidência | Situação |
 |---|---|---|
-| `core` | gates acima + conferência manual das quatro rotas (desktop e celular) | Implementada parcialmente, sem teste automatizado |
+| `core` | gates acima + conferência manual das quatro rotas (desktop e celular) + auditoria de contraste do tema claro | Implementada parcialmente, sem teste automatizado |
 
 ## Lacunas
 
 - Nenhum teste unitário, de componente ou E2E.
 - Responsivo não foi testado em aparelho físico (iPhone/Android), só em viewport emulado.
+- Nada impede que uma classe de cor nova entre sem o par `claro:`; só a auditoria de contraste
+  pega, e só quando o contraste cai.
 - VLibras depende de serviço externo; só é verificável com internet.

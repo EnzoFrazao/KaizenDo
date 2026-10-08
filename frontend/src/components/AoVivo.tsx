@@ -15,9 +15,9 @@ export function AoVivo({
   pausado?: boolean;
 }) {
   const cor = pausado
-    ? "border-zinc-700 bg-zinc-800/60 text-zinc-400"
-    : "border-emerald-500/30 bg-emerald-500/10 text-emerald-300";
-  const ponto = pausado ? "bg-zinc-500" : "bg-emerald-400 pulso";
+    ? "border-zinc-700 claro:border-traco-forte bg-zinc-800/60 claro:bg-nevoa text-zinc-400 claro:text-tinta-media"
+    : "border-emerald-500/30 bg-emerald-500/10 text-emerald-300 claro:text-emerald-700";
+  const ponto = pausado ? "bg-zinc-500 claro:bg-cinza-vale" : "bg-emerald-400 claro:bg-emerald-600 pulso";
 
   return (
     <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${cor}`}>

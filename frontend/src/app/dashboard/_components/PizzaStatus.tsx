@@ -72,7 +72,7 @@ export function PizzaStatus({ fatias }: { fatias: FatiaStatus[] }) {
             cy={TAMANHO / 2}
             r={RAIO}
             fill="none"
-            stroke="#27272a"
+            stroke="var(--color-trilho-rosca)"
             strokeWidth={ESPESSURA}
           />
           {arcos.map((a) => {
@@ -102,7 +102,7 @@ export function PizzaStatus({ fatias }: { fatias: FatiaStatus[] }) {
           x={TAMANHO / 2}
           y={TAMANHO / 2 - 4}
           textAnchor="middle"
-          className="fill-zinc-50 text-2xl font-semibold tabular-nums"
+          className="fill-zinc-50 claro:fill-tinta text-2xl font-semibold tabular-nums"
         >
           {foco ? foco.n : total}
         </text>
@@ -110,7 +110,7 @@ export function PizzaStatus({ fatias }: { fatias: FatiaStatus[] }) {
           x={TAMANHO / 2}
           y={TAMANHO / 2 + 14}
           textAnchor="middle"
-          className="fill-zinc-500 text-[11px]"
+          className="fill-zinc-500 claro:fill-tinta-suave text-[11px]"
         >
           {foco ? `${pct(foco.n).toFixed(0)}% ${ROTULO_STATUS[foco.status].toLowerCase()}` : "com dispositivo"}
         </text>
@@ -124,16 +124,16 @@ export function PizzaStatus({ fatias }: { fatias: FatiaStatus[] }) {
               key={f.status}
               {...interacao(f.status)}
               className={`flex cursor-default items-center gap-2 rounded px-2 py-1.5 transition-colors ${
-                emFoco === f.status ? "bg-zinc-800" : ""
+                emFoco === f.status ? "bg-zinc-800 claro:bg-nevoa" : ""
               } ${apagado ? "opacity-50" : ""}`}
             >
               <span
                 className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
                 style={{ background: COR_STATUS_MAPA[f.status] }}
               />
-              <span className="text-zinc-300">{ROTULO_STATUS[f.status]}</span>
-              <span className="ml-auto font-medium tabular-nums text-zinc-100">{f.n}</span>
-              <span className="w-10 text-right tabular-nums text-zinc-500">{pct(f.n).toFixed(0)}%</span>
+              <span className="text-zinc-300 claro:text-tinta-media">{ROTULO_STATUS[f.status]}</span>
+              <span className="ml-auto font-medium tabular-nums text-zinc-100 claro:text-tinta">{f.n}</span>
+              <span className="w-10 text-right tabular-nums text-zinc-500 claro:text-tinta-suave">{pct(f.n).toFixed(0)}%</span>
             </li>
           );
         })}

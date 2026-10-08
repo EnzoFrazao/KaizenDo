@@ -1,7 +1,7 @@
 # Sistema implementado
 
-**Última verificação:** 2026-10-07
-**Referência:** `working-tree` (sobre `132c2cd`)
+**Última verificação:** 2026-10-08
+**Referência:** `working-tree`
 
 ## Finalidade e unidade executável
 
@@ -11,13 +11,28 @@ unidade executável é o app Next.js em `frontend/`.
 ## Stack e entrypoints
 
 - Next.js 16 (App Router, Turbopack, `cacheComponents`), React 19, TypeScript, Tailwind 4, Leaflet;
-- `frontend/src/app/layout.tsx`: layout raiz (viewport, barra lateral, navegação de celular, tema
-  escuro, widget VLibras);
+- `frontend/src/app/layout.tsx`: layout raiz (viewport, barra lateral, navegação de celular,
+  script que aplica o tema antes da primeira pintura, widget VLibras);
+- `frontend/src/components/BotaoTema.tsx`: alternador de tema;
 - `frontend/src/components/navegacao.ts`: lista única das telas, lida pela `Sidebar` (≥ 1024 px) e
   por `TopoMobile`/`AbasMobile` em `NavMobile.tsx` (< 1024 px);
 - `frontend/src/components/PainelFiltros.tsx`: filtros em linha no desktop e recolhíveis no celular;
 - `frontend/src/app/{dashboard,mapa,historico,cadastro}/page.tsx`: as quatro telas;
 - `frontend/src/lib/dados.ts`: única porta de dados das telas (hoje lê `dados-mock.ts`).
+
+## Temas
+
+Dois temas: **escuro** (padrão) e **claro** com as cores da Vale. Liga-se pelo atributo
+`data-tema="claro"` no `<html>`.
+
+- `globals.css` declara `@custom-variant claro`; cada elemento mantém a classe do escuro e
+  **ganha** uma `claro:` ao lado. O escuro é, assim, imutável por construção
+  (ADR [0001](decisions/0001-tema-claro-por-variante.md)).
+- A escolha vive no `localStorage` (`guara.tema`) e é aplicada por um script inline no `<head>`,
+  antes da primeira pintura — um arquivo externo chegaria tarde e a página piscaria. Por isso o
+  `<html>` leva `suppressHydrationWarning`: o DOM diverge do HTML do servidor de propósito.
+- `BotaoTema` lê o tema com `useSyncExternalStore`, porque a verdade mora no DOM, fora do React.
+- O **mapa não muda**: `COR_STATUS_MAPA`, tiles, trechos e cobertura são iguais nos dois temas.
 
 ## Fronteiras e fluxo
 

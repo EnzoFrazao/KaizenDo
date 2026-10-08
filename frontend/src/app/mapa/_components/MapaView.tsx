@@ -15,7 +15,7 @@ import type { Funcao, PosicaoAtual, StatusTrabalho, Trecho, TrechoId, Turno } fr
 
 const MapaLeaflet = dynamic(() => import("./MapaLeaflet"), {
   ssr: false,
-  loading: () => <div className="h-[60svh] min-h-80 animate-pulse lg:h-[560px] rounded-lg border border-zinc-800 bg-zinc-900" />,
+  loading: () => <div className="h-[60svh] min-h-80 animate-pulse lg:h-[560px] rounded-lg border border-zinc-800 claro:border-traco bg-zinc-900 claro:bg-papel" />,
 });
 
 const INTERVALO_MS = 5000;
@@ -79,8 +79,8 @@ export function MapaView() {
           ativos={[funcao, status, turno, trecho].filter(Boolean).length}
           depois={
             <div className="flex items-center justify-between gap-3 lg:contents">
-              <span className="text-sm text-zinc-400">
-                <strong className="font-semibold text-zinc-100 tabular-nums">{filtradas.length}</strong> no mapa
+              <span className="text-sm text-zinc-400 claro:text-tinta-media">
+                <strong className="font-semibold text-zinc-100 claro:text-tinta tabular-nums">{filtradas.length}</strong> no mapa
               </span>
               <div className="lg:ml-auto">
                 <AoVivo atualizadoEm={atualizadoEm} rotulo="Posições a cada 5 s" />
@@ -104,13 +104,13 @@ export function MapaView() {
             <option value="">Todos os trechos</option>
             {trechos.map((t) => <option key={t.id} value={t.id}>{t.nome}</option>)}
           </select>
-          <label className="flex items-center gap-2 text-sm text-zinc-300">
+          <label className="flex items-center gap-2 text-sm text-zinc-300 claro:text-tinta-media">
             <input type="checkbox" checked={cobertura} onChange={(e) => setCobertura(e.target.checked)} />
             Cobertura
           </label>
         </PainelFiltros>
 
-        <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1.5 border-t border-zinc-800 pt-3 text-xs text-zinc-400">
+        <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1.5 border-t border-zinc-800 claro:border-traco pt-3 text-xs text-zinc-400 claro:text-tinta-media">
           {Object.entries(COR_STATUS_MAPA).map(([s, cor]) => (
             <span key={s} className="flex items-center gap-1.5">
               <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: cor }} />
@@ -130,7 +130,7 @@ export function MapaView() {
               </span>
             </span>
           )}
-          <span className="w-full text-zinc-600 sm:ml-auto sm:w-auto">Ponto maior = maquinista</span>
+          <span className="w-full text-zinc-600 claro:text-tinta-suave sm:ml-auto sm:w-auto">Ponto maior = maquinista</span>
         </div>
       </Card>
 

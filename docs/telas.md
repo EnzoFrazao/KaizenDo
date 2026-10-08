@@ -69,6 +69,7 @@ Vincular cada pessoa ao ESP32 que ela carrega. Sem isso o sistema não sabe de q
 - **Estoque de dispositivos livres** visível, com bateria e último sinal.
 - **Nova pessoa** (nome, matrícula, função, turno, ESP32 opcional) e **novo dispositivo** (id da etiqueta e MAC).
 - **Excluir pessoa**, com confirmação em dois passos. O ESP32 dela volta para o estoque.
+- **Cadastrar ESP32 avulso** pelo cartão de estoque, sem precisar criar uma pessoa junto.
 - **Validações** ficam em `lib/dados.ts`, não na tela: matrícula de 6 dígitos sem repetir, id no formato `ESP32-XXXX`, MAC válido e vínculo 1 para 1.
 - **Persistência:** o cadastro é guardado no `localStorage` para sobreviver ao F5 na demonstração. Continua tudo no front, sem servidor. O botão "Restaurar dados originais" volta ao estado de `dados-mock.ts` — use antes de apresentar.
 - Evolução: ler o id do ESP32 por QR code na etiqueta; histórico de trocas.

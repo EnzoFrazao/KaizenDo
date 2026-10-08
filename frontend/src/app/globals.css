@@ -1,7 +1,43 @@
 @import "tailwindcss";
 
-/* Tema escuro único: o painel fica num CCO, muitas vezes em sala de pouca luz,
-   e o mapa usa tiles escuros. Não há alternância de tema. */
+/* ───────────────────────── Temas ─────────────────────────
+   Dois temas: escuro (padrão, para o CCO em sala de pouca luz) e claro, com as
+   cores oficiais da Vale. O atributo `data-tema="claro"` no <html> liga o claro.
+
+   REGRA: o escuro é o estado base e NÃO pode mudar. Por isso as telas mantêm as
+   classes que já tinham e só GANHAM uma variante `claro:` ao lado. Assim é
+   impossível um ajuste do claro vazar para o escuro.
+
+   O MAPA fica de fora: tiles, pontos de status, trechos e cobertura mantêm as
+   cores dos dois lados (ver COR_STATUS_MAPA em lib/rotulos.ts). */
+
+@custom-variant claro (&:where([data-tema="claro"] *));
+
+/* Paleta Vale. Hex do manual da marca (p23 e p38) e do guia de cores do logo Guará. */
+@theme {
+  --color-verde-vale: #007e7a;      /* Pantone 328 C · penas e rota do guará */
+  --color-verde-vale-escuro: #00615e;
+  --color-amarelo-vale: #ecb11f;    /* Pantone 124 C · pontos de localização */
+  --color-vermelho-vale: #bb133e;   /* Pantone 193 C · corpo e asa do guará */
+  --color-cinza-vale: #747678;      /* Pantone Cool Gray 9 C · só para não-texto */
+
+  /* Tinta do tema claro, em três níveis. O Cinza Vale oficial dá 4,54:1 sobre branco
+     puro, então reprova em AA assim que o fundo ganha qualquer tom; por isso o texto
+     usa Grafite e Ardósia (ambos do guia do logo) e um meio-termo entre os dois. */
+  --color-tinta: #242424;           /* Grafite · títulos e números */
+  --color-tinta-media: #45494f;     /* secundário · rótulos e células */
+  --color-tinta-suave: #5f646c;     /* Ardósia · legendas e ids */
+
+  /* Superfícies do tema claro, derivadas do cinza Vale (sem azulado). */
+  --color-papel: #ffffff;           /* cartão */
+  --color-areia: #f3f4f5;           /* fundo da página e encaixes dentro do cartão */
+  --color-nevoa: #e6e9ea;           /* chip inativo, trilho de barra */
+  --color-traco: #dcdfe1;           /* borda padrão */
+  --color-traco-forte: #c2c7ca;     /* borda em destaque */
+
+  /* Cartão branco sobre fundo areia: a borda sozinha deixa tudo chapado. */
+  --shadow-cartao: 0 1px 2px rgb(36 36 36 / 0.04), 0 1px 3px rgb(36 36 36 / 0.06);
+}
 
 :root {
   --fundo: #09090b;
@@ -10,6 +46,23 @@
   --borda: #27272a;
   --texto: #fafafa;
   --texto-suave: #a1a1aa;
+  /* Cor do foco e dos detalhes de marca. No escuro segue o verde de "disponível". */
+  --marca: #34d399;
+  /* Trilho da rosca do dashboard (PizzaStatus): o que sobra quando um status é 0. */
+  --color-trilho-rosca: #27272a;
+  color-scheme: dark;
+}
+
+[data-tema="claro"] {
+  --fundo: #f3f4f5;
+  --superficie: #ffffff;
+  --superficie-alta: #ffffff;
+  --borda: #dcdfe1;
+  --texto: #242424;
+  --texto-suave: #5f646c;
+  --marca: #007e7a;
+  --color-trilho-rosca: #e6e9ea;
+  color-scheme: light;
 }
 
 html {
@@ -37,13 +90,24 @@ body {
 .campo::placeholder {
   color: #52525b;
 }
+[data-tema="claro"] .campo {
+  background: var(--color-papel);
+}
+[data-tema="claro"] .campo::placeholder {
+  color: #9aa0a4;
+}
 .campo:focus-visible {
-  outline: 2px solid #34d399;
+  outline: 2px solid var(--marca);
   outline-offset: 1px;
 }
-/* O seletor de data do Chrome desenha o ícone preto sobre fundo escuro. */
+/* O seletor de data do Chrome desenha o ícone preto sobre fundo escuro. No claro o
+   ícone já nasce certo, então o invert sai. */
 .campo::-webkit-calendar-picker-indicator {
   filter: invert(1) opacity(0.6);
+}
+[data-tema="claro"] .campo::-webkit-calendar-picker-indicator {
+  filter: none;
+  opacity: 0.6;
 }
 
 .botao {
@@ -59,6 +123,13 @@ body {
 }
 .botao:disabled {
   opacity: 0.4;
+}
+[data-tema="claro"] .botao {
+  background: var(--color-verde-vale);
+  color: #ffffff;
+}
+[data-tema="claro"] .botao:hover {
+  background: var(--color-verde-vale-escuro);
 }
 
 .botao-secundario {
@@ -76,6 +147,9 @@ body {
 }
 .botao-secundario:disabled {
   opacity: 0.4;
+}
+[data-tema="claro"] .botao-secundario:hover:not(:disabled) {
+  background: var(--color-areia);
 }
 
 /* Celular e tablet (abaixo de lg). Campo com fonte menor que 16 px faz o iOS dar zoom
@@ -112,6 +186,7 @@ body {
 /* Leaflet: os popups, tooltips e controles vêm claros por padrão. */
 .leaflet-container {
   background: #0b0b0d;
+  /* Só o vazio atrás dos tiles enquanto carregam. Os tiles em si não mudam de tema. */
   /* Os panes do Leaflet usam z-index 200–1000; isolando o mapa, eles não passam por cima
      da barra fixa do topo no celular quando a página rola. */
   isolation: isolate;
@@ -150,6 +225,21 @@ body {
 }
 .leaflet-control-attribution a {
   color: #71717a !important;
+}
+
+/* O cromo do Leaflet (popup, tooltip, botões de zoom, crédito) acompanha o tema: é
+   painel de interface, não desenho do mapa. Os tiles, os pontos de status, os
+   círculos dos trechos e a cobertura continuam com as mesmas cores nos dois temas. */
+[data-tema="claro"] .leaflet-container {
+  background: var(--color-areia);
+}
+[data-tema="claro"] .leaflet-popup-content-wrapper,
+[data-tema="claro"] .leaflet-popup-tip,
+[data-tema="claro"] .leaflet-tooltip {
+  box-shadow: 0 8px 24px rgb(36 36 36 / 0.18);
+}
+[data-tema="claro"] .leaflet-bar a:hover {
+  background: var(--color-areia) !important;
 }
 
 /* O ponto que pulsa no mapa e nos indicadores "ao vivo". */

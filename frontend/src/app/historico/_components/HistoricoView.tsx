@@ -79,26 +79,26 @@ export function HistoricoView() {
         {/* Celular: uma leitura por cartão. */}
         <ul className="grid gap-2 md:hidden">
           {visiveis.map((l) => (
-            <li key={`${l.pessoaId}-${l.timestamp}`} className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2.5 text-sm">
+            <li key={`${l.pessoaId}-${l.timestamp}`} className="rounded-md border border-zinc-800 claro:border-traco bg-zinc-950 claro:bg-areia px-3 py-2.5 text-sm">
               <div className="flex items-start justify-between gap-2">
                 <span className="min-w-0">
-                  <span className="mr-2 font-mono text-xs tabular-nums text-zinc-500">{hora(l.timestamp)}</span>
-                  <span className="font-medium text-zinc-100">{l.pessoa.nome}</span>
+                  <span className="mr-2 font-mono text-xs tabular-nums text-zinc-500 claro:text-tinta-suave">{hora(l.timestamp)}</span>
+                  <span className="font-medium text-zinc-100 claro:text-tinta">{l.pessoa.nome}</span>
                 </span>
                 <StatusBadge status={l.status} />
               </div>
-              <p className="mt-1 text-xs text-zinc-400">
+              <p className="mt-1 text-xs text-zinc-400 claro:text-tinta-media">
                 {ROTULO_FUNCAO[l.pessoa.funcao]} · Turno {l.pessoa.turno} · {nomeTrecho.get(l.trecho) ?? l.trecho} ·{" "}
                 <span className="tabular-nums">{l.velocidadeKmh} km/h</span>
               </p>
             </li>
           ))}
-          {visiveis.length === 0 && <li className="py-6 text-center text-zinc-500">Nenhuma leitura com esses filtros.</li>}
+          {visiveis.length === 0 && <li className="py-6 text-center text-zinc-500 claro:text-tinta-suave">Nenhuma leitura com esses filtros.</li>}
         </ul>
 
         <div className="hidden overflow-x-auto md:block">
           <table className="w-full text-left text-sm">
-            <thead className="text-xs uppercase tracking-wide text-zinc-500">
+            <thead className="text-xs uppercase tracking-wide text-zinc-500 claro:text-tinta-suave">
               <tr>
                 <th className="py-2">Horário</th>
                 <th>Nome</th>
@@ -111,25 +111,25 @@ export function HistoricoView() {
             </thead>
             <tbody>
               {visiveis.map((l) => (
-                <tr key={`${l.pessoaId}-${l.timestamp}`} className="border-t border-zinc-800">
-                  <td className="py-2 font-mono text-xs tabular-nums text-zinc-400">{hora(l.timestamp)}</td>
+                <tr key={`${l.pessoaId}-${l.timestamp}`} className="border-t border-zinc-800 claro:border-traco">
+                  <td className="py-2 font-mono text-xs tabular-nums text-zinc-400 claro:text-tinta-media">{hora(l.timestamp)}</td>
                   <td>{l.pessoa.nome}</td>
-                  <td className="text-zinc-400">{ROTULO_FUNCAO[l.pessoa.funcao]}</td>
-                  <td className="text-zinc-400">{l.pessoa.turno}</td>
-                  <td className="text-zinc-400">{nomeTrecho.get(l.trecho) ?? l.trecho}</td>
-                  <td className="tabular-nums text-zinc-400">{l.velocidadeKmh} km/h</td>
+                  <td className="text-zinc-400 claro:text-tinta-media">{ROTULO_FUNCAO[l.pessoa.funcao]}</td>
+                  <td className="text-zinc-400 claro:text-tinta-media">{l.pessoa.turno}</td>
+                  <td className="text-zinc-400 claro:text-tinta-media">{nomeTrecho.get(l.trecho) ?? l.trecho}</td>
+                  <td className="tabular-nums text-zinc-400 claro:text-tinta-media">{l.velocidadeKmh} km/h</td>
                   <td><StatusBadge status={l.status} /></td>
                 </tr>
               ))}
               {visiveis.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="py-6 text-center text-zinc-500">Nenhuma leitura com esses filtros.</td>
+                  <td colSpan={7} className="py-6 text-center text-zinc-500 claro:text-tinta-suave">Nenhuma leitura com esses filtros.</td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
-        <div className="mt-3 flex items-center justify-between gap-3 text-sm text-zinc-400 md:justify-start">
+        <div className="mt-3 flex items-center justify-between gap-3 text-sm text-zinc-400 claro:text-tinta-media md:justify-start">
           <button className="botao-secundario" disabled={pagina === 0} onClick={() => setPagina((p) => p - 1)}>
             Anterior
           </button>
