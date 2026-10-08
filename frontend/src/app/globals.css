@@ -1,10 +1,11 @@
 @import "tailwindcss";
 
 /* ───────────────────────── Temas ─────────────────────────
-   Dois temas: escuro (padrão, para o CCO em sala de pouca luz) e claro, com as
-   cores oficiais da Vale. O atributo `data-tema="claro"` no <html> liga o claro.
+   Dois temas: claro, com as cores oficiais da Vale, e escuro (para o CCO em sala de
+   pouca luz). O atributo `data-tema="claro"` no <html> liga o claro, e o servidor já
+   o manda: o claro é o padrão de quem visita (ADR 0002).
 
-   REGRA: o escuro é o estado base e NÃO pode mudar. Por isso as telas mantêm as
+   REGRA: o escuro é o estado base DO CSS (sem atributo) e NÃO pode mudar. Por isso as telas mantêm as
    classes que já tinham e só GANHAM uma variante `claro:` ao lado. Assim é
    impossível um ajuste do claro vazar para o escuro.
 

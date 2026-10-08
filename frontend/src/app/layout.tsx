@@ -18,25 +18,29 @@ export const metadata: Metadata = {
 // Muita gente abre pelo celular, via QR code. `viewportFit: cover` deixa o fundo ir
 // até as bordas do iPhone; as barras compensam com env(safe-area-inset-*). O zoom do
 // usuário fica liberado de propósito (acessibilidade).
-// themeColor e colorScheme saem daqui: quem manda neles é o tema escolhido. O script
-// abaixo ajusta a meta, e o color-scheme vem do CSS (:root e [data-tema="claro"]).
+// themeColor sai com a cor do claro, que é o padrão (ADR 0002); o script abaixo troca a meta
+// para quem escolheu o escuro. O color-scheme vem do CSS (:root e [data-tema="claro"]).
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#09090b",
+  themeColor: "#f3f4f5",
 };
 
-// Roda antes da primeira pintura, senão a página aparece escura e "pisca" para o claro.
-// Fica inline no <head> de propósito: um arquivo externo chegaria tarde demais.
-const TEMA_SEM_PISCAR = `try{if(localStorage.getItem("guara.tema")==="claro"){document.documentElement.setAttribute("data-tema","claro")}}catch(e){}`;
+// O claro já vem no HTML do servidor; este script só desliga para quem escolheu o escuro.
+// Roda antes da primeira pintura, senão a página aparece clara e "pisca" para o escuro. Fica
+// inline no <head> de propósito: um arquivo externo chegaria tarde demais. A meta theme-color
+// não tem lugar garantido no <head> (a ordem é do Next), então o script a acerta na hora e de
+// novo no DOMContentLoaded. O cliente ainda insere uma cópia depois de hidratar, que fica com a
+// cor do claro; não importa, porque o navegador usa a primeira theme-color do documento.
+const TEMA_SEM_PISCAR = `try{if(localStorage.getItem("guara.tema")==="escuro"){document.documentElement.removeAttribute("data-tema");var m=function(){document.querySelectorAll('meta[name="theme-color"]').forEach(function(e){e.setAttribute("content","#09090b")})};m();document.addEventListener("DOMContentLoaded",m)}}catch(e){}`;
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    // suppressHydrationWarning: o script abaixo põe data-tema="claro" no <html> antes
-    // do React hidratar, então o HTML do servidor (sem o atributo) e o DOM divergem de
-    // propósito. O aviso vale só para este elemento, não desce para os filhos.
-    <html lang="pt-BR" className="h-full antialiased" suppressHydrationWarning>
+    // suppressHydrationWarning: para quem escolheu o escuro, o script abaixo tira o
+    // data-tema do <html> antes do React hidratar, então o HTML do servidor e o DOM divergem
+    // de propósito. O aviso vale só para este elemento, não desce para os filhos.
+    <html lang="pt-BR" data-tema="claro" className="h-full antialiased" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: TEMA_SEM_PISCAR }} />
       </head>

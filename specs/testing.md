@@ -33,8 +33,12 @@ exigir 4,5:1 (3:1 para ≥ 24 px, ou ≥ 18,66 px em negrito). Conferido em 2026
 rotas: zero falhas. Foi assim que se descobriu que o Cinza Vale oficial (#747678) reprova sobre
 qualquer fundo que não seja branco puro.
 
-Tema (manual): alternar pelo botão e conferir que o escuro volta a `rgb(9, 9, 11)` sem sombra nos
-cartões; recarregar e conferir que a escolha persiste e que o console não acusa hidratação.
+Tema (manual): sem `guara.tema` no `localStorage`, recarregar e conferir `data-tema="claro"`, fundo
+`rgb(243, 244, 245)` e `theme-color` `#f3f4f5`; com `guara.tema = "escuro"`, recarregar e conferir
+o fundo `rgb(9, 9, 11)`, sem sombra nos cartões, e a primeira `theme-color` em `#09090b`. Alternar
+pelo botão, recarregar e conferir que a escolha persiste e que o console não acusa hidratação. No
+celular (375×812), o botão do topo mede 44×44 px. Conferido em 2026-10-08 em `/mapa`, a 375 e a
+1280 px.
 
 ## Mapa por capacidade
 
