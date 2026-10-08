@@ -43,6 +43,16 @@ Em volta de cada pessoa há um círculo azul; os círculos se fundem numa forma 
 - **Ponto encolhe nos zooms afastados** (`escalaDoZoom`: 100 % do zoom 15 para cima, 80 % no 14, 60 % no 13 ou menos). No celular o enquadramento cai para o zoom 13; com o ponto cheio, o espalhamento empurrava gente para fora da gosma.
 - **Popup sobrevive ao redesenho de 5 s.** O `clearLayers` fecha o popup; guardamos quem estava aberto antes e reabrimos sem `autoPan`, para não puxar o mapa de volta se a pessoa o arrastou.
 
+## Pessoas andando
+
+Os dados do protótipo não mudam entre as atualizações de 5 s, e o mapa parado parecia uma planta com bolinhas. Até seis pessoas **manobrando no pátio** oscilam até ~7 px num laço lento (`escolherQuemAnda` e `andar` no `MapaLeaflet`; trajetos `guara-anda-N` em `globals.css`).
+
+- **Ninguém passa por cima de ninguém.** O espalhamento deixa só 1,5 px entre vizinhos, então não dá para animar qualquer um. Depois de espalhar, só anda quem tem folga até o vizinho maior que o passo (`PASSO_MAX_PX`), e entre dois que andam a folga tem de ser o dobro. Os de mais folga vêm primeiro; a escolha refaz a cada zoom, e o passo encolhe com o ponto (`--anda-escala`). Na primeira versão, que pegava as primeiras pessoas por id, 5 de 6 tinham ~1 px de folga.
+- **Trajeto e ritmo por pessoa**, tirados de um hash do id (`jeitoDeAndar`): a escolha pode mudar com zoom ou filtro sem trocar o trajeto de quem continua andando. O hash precisa misturar bem: os ids só diferem no fim, e um `h * 31 + c` deixava todos com a mesma duração.
+- **Só desenho.** É um `transform` de CSS no `<path>` do marcador: a posição, o espalhamento e o popup continuam sendo a leitura do ESP32. Com `prefers-reduced-motion`, ninguém se mexe.
+- **`--anda-escala` sem fallback no `var()`; o padrão fica na classe `.guara-anda`.** Com `calc(var(--anda-x1) * var(--anda-escala, 1))` o CSS servido pelo `next dev` chegou sem o `calc` e o passo não encolhia. Não ficou claro se foi o otimizador do Tailwind ou cache do dev; sem o fallback, o `calc` chega no dev e no build.
+- **Sem pulo a cada 5 s.** Os marcadores são recriados no redesenho; o atraso negativo da animação vem de `document.timeline.currentTime`, então o trajeto continua de onde estava. Não use `performance.now()`: com a aba escondida as animações param, mas ele continua correndo, e o ponto pularia na volta.
+
 ## Tiles
 
 `tile.openstreetmap.org`, coloridos de propósito — a cor do terreno e da água ajuda a situar quem olha, e o resto da interface é escuro. Os basemaps escuros prontos (CARTO, Stadia) passaram a exigir chave de API; se um dia precisar de mapa escuro, prefira escurecer por CSS em `.leaflet-tile-pane` a depender de chave.
@@ -55,7 +65,7 @@ Em volta de cada pessoa há um círculo azul; os círculos se fundem numa forma 
 
 ## Já feito
 
-Mapa OpenStreetMap, círculos dos trechos (viradores em vermelho) e do restaurante, pontos coloridos por status e sem sobreposição, área de cobertura fundida com pulso de radar, popup com detalhes e lat/lon (fica aberto nas atualizações), layout de celular, filtros de nome, função, status, turno e trecho, legenda, selo "ao vivo" com hora da última leitura, enquadramento automático no pátio (`fitBounds`) e atualização a cada 5 s.
+Mapa OpenStreetMap, círculos dos trechos (viradores em vermelho) e do restaurante, pontos coloridos por status e sem sobreposição, área de cobertura fundida com pulso de radar, até seis pessoas manobrando que andam um pouco sem encostar em ninguém, popup com detalhes e lat/lon (fica aberto nas atualizações), layout de celular, filtros de nome, função, status, turno e trecho, legenda, selo "ao vivo" com hora da última leitura, enquadramento automático no pátio (`fitBounds`) e atualização a cada 5 s.
 
 ## A fazer
 

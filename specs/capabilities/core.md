@@ -66,6 +66,9 @@ ESP32. Não há permissões: o admin é fixo (`adminAtual()`). O conteúdo de ca
   forma uma área única e translúcida; locais `foraDoPatio` (restaurante) não entram no cálculo
   (detalhe em `frontend/src/app/mapa/README.md`).
 - No mapa, nenhum ponto fica sobre outro em nenhum zoom; o popup mostra a lat/lon real.
+- No mapa, até seis pessoas manobrando no pátio oscilam alguns pixels (até ~7 px), só no desenho,
+  para mostrar que cada ponto é alguém. Só anda quem tem folga para isso: o movimento nunca põe
+  um ponto sobre outro. A posição não muda e, com `prefers-reduced-motion`, nada se mexe.
 - Nos dados ilustrativos, "almoçando" e "descansando" só valem para as três pessoas do
   restaurante.
 
