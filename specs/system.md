@@ -22,15 +22,19 @@ unidade executável é o app Next.js em `frontend/`.
 
 ## Temas
 
-Dois temas: **escuro** (padrão) e **claro** com as cores da Vale. Liga-se pelo atributo
-`data-tema="claro"` no `<html>`.
+Dois temas: **claro** com as cores da Vale (padrão de quem visita) e **escuro**. Liga-se pelo
+atributo `data-tema="claro"` no `<html>`, que já vem do servidor
+(ADR [0002](decisions/0002-claro-como-padrao.md)); sem ele vale o escuro, que é a base do CSS.
 
 - `globals.css` declara `@custom-variant claro`; cada elemento mantém a classe do escuro e
   **ganha** uma `claro:` ao lado. O escuro é, assim, imutável por construção
   (ADR [0001](decisions/0001-tema-claro-por-variante.md)).
-- A escolha vive no `localStorage` (`guara.tema`) e é aplicada por um script inline no `<head>`,
-  antes da primeira pintura — um arquivo externo chegaria tarde e a página piscaria. Por isso o
-  `<html>` leva `suppressHydrationWarning`: o DOM diverge do HTML do servidor de propósito.
+- A escolha vive no `localStorage` (`guara.tema`). Um script inline no `<head>` lê `"escuro"`, tira
+  o atributo e troca a meta `theme-color` antes da primeira pintura — um arquivo externo chegaria
+  tarde e a página piscaria. Por isso o `<html>` leva `suppressHydrationWarning`: o DOM diverge do
+  HTML do servidor de propósito.
+- O Next insere uma segunda meta `theme-color` depois de hidratar. O navegador usa a primeira; o
+  `BotaoTema` atualiza todas.
 - `BotaoTema` lê o tema com `useSyncExternalStore`, porque a verdade mora no DOM, fora do React.
 - O **mapa não muda**: `COR_STATUS_MAPA`, tiles, trechos e cobertura são iguais nos dois temas.
 

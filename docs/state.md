@@ -18,6 +18,8 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
 - Tema claro entra como variante `claro:` ao lado das classes do escuro, nunca no lugar delas: o
   escuro é o estado base e não pode mudar. Classe de cor nova precisa do par `claro:`. O mapa é
   igual nos dois temas. Ver [ADR 0001](../specs/decisions/0001-tema-claro-por-variante.md).
+- O claro é o padrão de quem visita, em qualquer aparelho: `data-tema="claro"` vem do servidor e
+  só o `"escuro"` salvo o desliga. Ver [ADR 0002](../specs/decisions/0002-claro-como-padrao.md).
 - O Cinza Vale oficial (#747678) não serve para texto: dá 4,54:1 sobre branco puro e reprova em AA
   sobre qualquer fundo tingido. No claro o texto usa Grafite, #45494f e Ardósia.
 - Navegação de celular é a da branch `mobile-qrcode`: abas embaixo (`NavMobile.tsx`) abaixo de
@@ -37,16 +39,20 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
   iria a ~1,4 km.
 - O status "aguardando programação" é o antigo "livre": é quem está disponível para acionar.
 
-## Última sessão (2026-10-07, Claude)
-- Auditoria do site publicado (`guaramonitora`), tela a tela em 375, 768 e 1280 px. Git limpo:
-  `main` local = remota, nada aberto, todas as branches já juntadas.
-- Corrigido: quem era cadastrado com ESP32 não aparecia no mapa (a mensagem dizia que sim) e quem
-  era desvinculado continuava nele; agora `posicoesAtuais()` segue o vínculo do cadastro. Também:
-  alertas antes da lista no dashboard do celular, chips de 36 px ao toque, filtros em uma coluna
-  (selects cortavam o texto), "raio 230 m" com espaço duplo, fim da página atrás do selo do
-  Netlify, prévia de link (Open Graph) e ícone de tela inicial do iPhone.
-- Conta do Netlify trocada antes: o site novo dava 404 porque o `netlify.toml` estava em
-  `frontend/`; movido para a raiz com `base = "frontend"` (detalhe em `specs/system.md`, Deploy).
+## Última sessão (2026-10-08, Claude)
+- Partiu de `61f73f0` (tema claro, feito por loky070), que já era a `main` remota. Tema claro
+  virou o padrão para todos (ADR 0002) e o botão do topo do celular passou a ter 44×44 px, sem
+  borda (opção A de um mockup com três opções). Lint, build e conferência no navegador ok a 375 e a
+  1280 px.
+- Corrigido de passagem: a meta `theme-color` não acompanhava o tema no carregamento, só no clique.
+- Pendente: merge do PR da branch `claude/light-theme-mobile-default-31300d` na `main` (o Netlify
+  publica dela); o link só abre claro depois disso.
+
+## Histórico
+- 2026-10-07 (Claude): auditoria do site publicado (`guaramonitora`). `posicoesAtuais()` passou a
+  seguir o vínculo do cadastro, mais ajustes de celular, Open Graph e ícone do iPhone. O
+  `netlify.toml` foi movido para a raiz com `base = "frontend"` (detalhe em `specs/system.md`,
+  Deploy).
 - Armadilha: com o painel do navegador oculto, a página carrega com largura ~0 e o Leaflet enquadra
   no zoom 10. Para conferir, fixe o tamanho com `resize_window` antes de recarregar.
 - Armadilha: o Next mantém as telas visitadas montadas e ocultas (`Activity`); filtros digitados

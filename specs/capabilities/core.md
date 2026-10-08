@@ -22,14 +22,15 @@ ESP32. Não há permissões: o admin é fixo (`adminAtual()`). O conteúdo de ca
 ## Contrato comportamental e critérios de aceite
 
 - As rotas `/dashboard`, `/mapa`, `/historico` e `/cadastro` existem e `/` leva ao dashboard.
-- Dois temas, alternados por um botão presente na barra lateral (desktop) e no topo (celular):
-  **escuro** (padrão) e **claro**, repaginado com as cores oficiais da Vale. A escolha fica no
-  `localStorage` (`guara.tema`) e é aplicada antes da primeira pintura, sem piscar.
+- Dois temas, alternados por um botão presente na barra lateral (desktop) e no topo (celular,
+  só o ícone, com área de toque de 44 px): **claro** (padrão de quem visita, em qualquer aparelho),
+  repaginado com as cores oficiais da Vale, e **escuro**. A escolha fica no `localStorage`
+  (`guara.tema`) e é aplicada antes da primeira pintura, sem piscar.
 - O **mapa não muda de cor** entre os temas: tiles, pontos de status, círculos dos trechos e área
   de cobertura são os mesmos. Só o cromo do Leaflet (popup, tooltip, botões de zoom) acompanha.
 - Cores e rótulos de status vêm de `lib/rotulos.ts`; a matiz é a mesma nos dois temas, para a
   legenda do mapa continuar batendo com o ponto.
-- No tema claro, todo texto atinge o contraste AA (4,5:1; 3:1 para texto grande).
+- No tema claro, cada texto atinge o contraste AA (4,5:1; 3:1 para texto grande).
 - Status de trabalho: manobrando, almoçando, aguardando programação (disponível para acionar),
   descansando e sem sinal.
 - Todas as telas funcionam no celular (375 px) sem rolagem lateral da página.
@@ -85,7 +86,8 @@ coordenadas dos trechos divergem do diagrama oficial e seguem como aproximação
 
 - Tema: [`frontend/src/components/BotaoTema.tsx`](../../frontend/src/components/BotaoTema.tsx) e o
   bloco "Temas" de [`frontend/src/app/globals.css`](../../frontend/src/app/globals.css);
-  decisão em [`decisions/0001-tema-claro-por-variante.md`](../decisions/0001-tema-claro-por-variante.md).
+  decisões em [`decisions/0001-tema-claro-por-variante.md`](../decisions/0001-tema-claro-por-variante.md)
+  e [`decisions/0002-claro-como-padrao.md`](../decisions/0002-claro-como-padrao.md).
 - Implementação: [`frontend/src/app/layout.tsx`](../../frontend/src/app/layout.tsx),
   `frontend/src/app/*/page.tsx` e, para o celular, `frontend/src/components/{NavMobile,PainelFiltros}.tsx`.
 - Gates: `npm run lint` e `npm run build` em `frontend/` (ver [`testing.md`](../testing.md)).
@@ -93,4 +95,5 @@ coordenadas dos trechos divergem do diagrama oficial e seguem como aproximação
 ## Relações
 
 - Decisão aberta: [topologia dos trechos X](../open-decisions.md#topologia-dos-trechos-x-diverge-do-diagrama-oficial-do-pátio).
-- ADR relacionado: [0001 — tema claro como variante aditiva](../decisions/0001-tema-claro-por-variante.md).
+- ADRs relacionados: [0001 — tema claro como variante aditiva](../decisions/0001-tema-claro-por-variante.md)
+  e [0002 — tema claro como padrão](../decisions/0002-claro-como-padrao.md).

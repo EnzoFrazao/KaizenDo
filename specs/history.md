@@ -9,6 +9,9 @@
 - Primeiro ADR: [0001 — tema claro como variante aditiva](decisions/0001-tema-claro-por-variante.md).
 - Cadastro: ESP32 avulso pelo estoque (além do wizard), colunas de bateria e ações justas ao
   conteúdo e número do centro da rosca legível no tema claro.
+- No mesmo dia, o claro passou a ser o padrão de quem visita
+  ([ADR 0002](decisions/0002-claro-como-padrao.md)), e o botão do topo do celular ganhou área de
+  toque de 44 px.
 
 ## 2026-10-07 — site novo no Netlify e auditoria
 
