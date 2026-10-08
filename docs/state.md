@@ -44,9 +44,10 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
   virou o padrão para todos (ADR 0002) e o botão do topo do celular passou a ter 44×44 px, sem
   borda (opção A de um mockup com três opções). Lint, build e conferência no navegador ok a 375 e a
   1280 px.
+- `/` passou a redirecionar para `/mapa` (antes `/dashboard`): o link publicado abre direto no mapa.
 - Corrigido de passagem: a meta `theme-color` não acompanhava o tema no carregamento, só no clique.
-- Pendente: merge do PR da branch `claude/light-theme-mobile-default-31300d` na `main` (o Netlify
-  publica dela); o link só abre claro depois disso.
+- Tema claro já está na `main` (PR #6). O redirecionamento para `/mapa` está no PR da branch
+  `claude/mapa-como-inicio`; o link só abre no mapa depois do merge.
 
 ## Histórico
 - 2026-10-07 (Claude): auditoria do site publicado (`guaramonitora`). `posicoesAtuais()` passou a
