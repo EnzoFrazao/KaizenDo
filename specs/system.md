@@ -38,6 +38,9 @@ atributo `data-tema="claro"` no `<html>`, que já vem do servidor
   React não achar o script ao hidratar (erro #418 em todas as páginas publicadas). O React então
   remontava a página inteira e o `<html>` voltava a `data-tema="claro"`, ignorando o escuro salvo.
   Localmente não acontece, porque o `next start` não injeta nada.
+- O claro declara `color-scheme: only light`. Com só `light`, o escuro automático do navegador
+  (Chrome do Android, Samsung Internet, aparelho em modo escuro) escurecia a página clara sozinho, e
+  o link "abria escuro" para quem nunca escolheu o escuro. O `only` proíbe esse ajuste.
 - O Next insere uma segunda meta `theme-color` depois de hidratar. O navegador usa a primeira; o
   `BotaoTema` atualiza todas.
 - `BotaoTema` lê o tema com `useSyncExternalStore`, porque a verdade mora no DOM, fora do React.

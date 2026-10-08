@@ -51,12 +51,16 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
   ao vivo. Achou e corrigiu: erro de hidratação #418 em todas as páginas publicadas, causado pelo
   comentário que o Netlify injeta no `<head>` (o script do tema foi para o `<body>`; ver
   `specs/system.md`), que fazia o escuro salvo abrir claro; e pulo de ~4 px no zoom. Correções no
-  PR da branch `claude/hidratacao-netlify-zoom`; publicar e auditar o link de novo.
+  PR #10, publicadas e reauditadas no link: sem erros no console nas quatro telas a 375, 768 e
+  1280 px, escuro salvo abre escuro, 29 de 48 bolinhas andando e nenhum salto > 2 px após zoom.
 - Armadilhas: o painel do navegador do app, oculto, congela `document.timeline` e o zoom do
   Leaflet; para ver animação, use um Edge headless por CDP (`--remote-debugging-port`, perfil
   temporário). Prévia de deploy do Netlify pede login: `curl` nela devolve "Login Redirect", não o
   site. O `next dev` às vezes não percebe edição feita por script no `globals.css`.
 - Pendente: ver no celular de verdade se o movimento é suave.
+- O link abria escuro no celular em modo escuro: o navegador escurece sozinho página com
+  `color-scheme: light`. Corrigido com `only light` no claro (branch
+  `claude/tema-claro-primeira-visita`; ver `specs/system.md`, Temas). Falta conferir no celular.
 
 ## Histórico
 - 2026-10-07 (Claude): auditoria do site publicado (`guaramonitora`). `posicoesAtuais()` passou a

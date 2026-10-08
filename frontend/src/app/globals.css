@@ -63,7 +63,9 @@
   --texto-suave: #5f646c;
   --marca: #007e7a;
   --color-trilho-rosca: #e6e9ea;
-  color-scheme: light;
+  /* "only": sem isso o escuro automático do navegador (Chrome do Android, Samsung Internet,
+     celular em modo escuro) escurece a página clara por conta própria. */
+  color-scheme: only light;
 }
 
 html {
