@@ -21,7 +21,8 @@ ESP32. Não há permissões: o admin é fixo (`adminAtual()`). O conteúdo de ca
 
 ## Contrato comportamental e critérios de aceite
 
-- As rotas `/dashboard`, `/mapa`, `/historico` e `/cadastro` existem e `/` leva ao dashboard.
+- As rotas `/dashboard`, `/mapa`, `/historico` e `/cadastro` existem e `/` leva ao mapa (é o que o link
+  publicado e o QR code abrem).
 - Dois temas, alternados por um botão presente na barra lateral (desktop) e no topo (celular,
   só o ícone, com área de toque de 44 px): **claro** (padrão de quem visita, em qualquer aparelho),
   repaginado com as cores oficiais da Vale, e **escuro**. A escolha fica no `localStorage`

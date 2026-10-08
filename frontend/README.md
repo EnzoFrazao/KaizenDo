@@ -49,7 +49,7 @@ git push -u origin tela/mapa
 src/
   app/
     layout.tsx          barra lateral + conteúdo (compartilhado)
-    page.tsx            redireciona para /dashboard
+    page.tsx            redireciona para /mapa
     dashboard/          ← tela 1
     mapa/               ← tela 2
     historico/          ← tela 3
