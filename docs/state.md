@@ -55,9 +55,9 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
 - Corrigido de passagem: a meta `theme-color` não acompanhava o tema no carregamento, só no clique.
 - Tema claro (PR #6) e redirecionamento para `/mapa` (PR #7) estão na `main` e publicados:
   `guaramonitora.netlify.app/` responde 307 → `/mapa` com `data-tema="claro"`.
-- Pessoas andando publicadas a pedido do usuário (branch `claude/pessoas-andando-mapa`), sem o
-  movimento ter sido visto ao vivo antes. Pendente: olhar no aparelho se é suave e se não pula a
-  cada 5 s nem no zoom.
+- Pessoas andando publicadas (PR #8, 6 pessoas) e depois ampliadas para 60% das bolinhas a pedido
+  do usuário, aceitando sobreposição de poucos px em movimento (nunca esconde). O movimento nunca
+  foi visto ao vivo. Pendente: olhar no aparelho se é suave e se não pula a cada 5 s nem no zoom.
 
 ## Histórico
 - 2026-10-07 (Claude): auditoria do site publicado (`guaramonitora`). `posicoesAtuais()` passou a
