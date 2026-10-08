@@ -40,6 +40,12 @@ pelo botão, recarregar e conferir que a escolha persiste e que o console não a
 celular (375×812), o botão do topo mede 44×44 px. Conferido em 2026-10-08 em `/mapa`, a 375 e a
 1280 px.
 
+Escuro automático do navegador (manual, Edge headless): abrir com `--force-dark-mode
+--enable-features=WebContentsForceDark`, sem `guara.tema`, e tirar um print
+(`Page.captureScreenshot`). O estilo computado não muda (o fundo segue `rgb(243, 244, 245)`), só a
+pintura; por isso o print é a evidência. Em 2026-10-08 o link saiu escuro com `color-scheme: light`
+e claro com `only light`.
+
 Pessoas andando no mapa (manual): em `/mapa`, `path.guara-anda` é 60% dos pontos, nenhum
 vermelho (sem sinal). Para simular o movimento sem depender do relógio, percorrer um tempo
 comum `T` (ex.: 30–90 s de 250 em 250 ms), pôr `getAnimations()[0].currentTime = T + atraso`
