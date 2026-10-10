@@ -2,7 +2,7 @@
 
 Next.js 16 (App Router) + React 19 + TypeScript + Tailwind 4 + Leaflet. Protótipo **só visual, com dados ilustrativos**. Não há backend nem conexão com ESP32 ou Raspberry.
 
-**Tema escuro único**, sem alternância: o painel fica num CCO, muitas vezes em sala de pouca luz. O mapa é a exceção — os tiles ficam coloridos, porque a cor do terreno e da água ajuda a situar quem olha. Cores, campos e botões vêm de `globals.css` (`.campo`, `.botao`, `.botao-secundario`) e de `lib/rotulos.ts`; **não invente cor nova na página.**
+**Dois temas, claro e escuro**, com alternância pelo botão do rodapé. O claro é o padrão de quem abre o link publicado; o escuro existe porque o painel fica num CCO, muitas vezes em sala de pouca luz. O mapa é a exceção — não muda de cor em nenhum dos dois, porque a cor do terreno e da água ajuda a situar quem olha. Cores, campos e botões vêm de `globals.css` (`.campo`, `.botao`, `.botao-secundario`) e de `lib/rotulos.ts`; **não invente cor nova na página.** Ver [ADR 0001](../specs/decisions/0001-tema-claro-por-variante.md) e [ADR 0002](../specs/decisions/0002-claro-como-padrao.md).
 
 ## Rodar
 

@@ -2,6 +2,8 @@
 
 Solução para o desafio **Posicionamento Operacional Inteligente**, do programa **KaizenDO** da Vale, no Terminal Ferroviário de Ponta da Madeira (TFPM), em São Luís/MA.
 
+**Protótipo no ar:** https://guaramonitora.netlify.app
+
 ## O problema em uma frase
 
 Cerca de 50 maquinistas e manobristas por turno trabalham em 13 km de pátio, e ninguém sabe com precisão onde cada um está. Por isso, a escolha de quem acionar e o revezamento dependem da memória de quem coordena, e os vagões ficam parados esperando gente chegar.
@@ -21,10 +23,11 @@ Cada pessoa leva um **ESP32** (GPS + rádio) e um **Raspberry Pi** no pátio rec
 
 ## Estrutura do repositório
 
-O protótipo é **só visual, com dados ilustrativos**, em tema escuro. Não há conexão com ESP32 nem com Raspberry, e não há login: o operário não acessa o sistema, só é identificado pela tag.
+O protótipo é **só visual, com dados ilustrativos**, em tema claro e escuro — o claro é o padrão de quem abre o link publicado ([ADR 0002](specs/decisions/0002-claro-como-padrao.md)). Não há conexão com ESP32 nem com Raspberry, e não há login: o operário não acessa o sistema, só é identificado pela tag.
 
 ```
 docs/                    problema, solução, especificação das telas, slides
+specs/                   memória técnica: arquitetura implementada, testes e decisões (ADRs)
 frontend/                telas (Next.js), uma pasta por membro da equipe → veja frontend/README.md
   src/app/dashboard/       Dashboard de monitoramento
   src/app/mapa/            Mapa ao vivo
