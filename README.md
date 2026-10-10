@@ -4,6 +4,8 @@ Solução para o desafio **Posicionamento Operacional Inteligente**, do programa
 
 **Protótipo no ar:** https://guaramonitora.netlify.app
 
+https://github.com/user-attachments/assets/5d6ed487-bc94-40b0-8565-b04e0280e3df
+
 ## O problema em uma frase
 
 Cerca de 50 maquinistas e manobristas por turno trabalham em 13 km de pátio, e ninguém sabe com precisão onde cada um está. Por isso, a escolha de quem acionar e o revezamento dependem da memória de quem coordena, e os vagões ficam parados esperando gente chegar.
