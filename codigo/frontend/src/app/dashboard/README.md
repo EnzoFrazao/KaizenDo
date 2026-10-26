@@ -1,6 +1,6 @@
 # Tela: Dashboard de monitoramento
 
-**Responsável:** _nome aqui_ · **Rota:** `/dashboard` · **Especificação:** [docs/telas.md](../../../../docs/telas.md#1-dashboard-de-monitoramento)
+**Responsável:** _nome aqui_ · **Rota:** `/dashboard` · **Especificação:** [docs/telas.md](../../../../../documentos/docs/telas.md#1-dashboard-de-monitoramento)
 
 ## Arquivos desta tela (só você mexe)
 

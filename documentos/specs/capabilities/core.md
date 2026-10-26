@@ -64,7 +64,7 @@ ESP32. Não há permissões: o admin é fixo (`adminAtual()`). O conteúdo de ca
 - O widget VLibras aparece uma única vez por página, inclusive após navegação no cliente.
 - No mapa, a área de cobertura usa o menor raio que conecta todas as pessoas visíveis no pátio e
   forma uma área única e translúcida; locais `foraDoPatio` (restaurante) não entram no cálculo
-  (detalhe em `frontend/src/app/mapa/README.md`).
+  (detalhe em `codigo/frontend/src/app/mapa/README.md`).
 - No mapa, nenhum ponto fica sobre outro em nenhum zoom quando parado; o popup mostra a lat/lon
   real.
 - No mapa, 60% das bolinhas (quem está sem sinal fica parado) oscilam alguns pixels, só no
@@ -90,13 +90,13 @@ coordenadas dos trechos divergem do diagrama oficial e seguem como aproximação
 
 ## Evidências de implementação e teste
 
-- Tema: [`frontend/src/components/BotaoTema.tsx`](../../frontend/src/components/BotaoTema.tsx) e o
-  bloco "Temas" de [`frontend/src/app/globals.css`](../../frontend/src/app/globals.css);
+- Tema: [`codigo/frontend/src/components/BotaoTema.tsx`](../../../codigo/frontend/src/components/BotaoTema.tsx) e o
+  bloco "Temas" de [`codigo/frontend/src/app/globals.css`](../../../codigo/frontend/src/app/globals.css);
   decisões em [`decisions/0001-tema-claro-por-variante.md`](../decisions/0001-tema-claro-por-variante.md)
   e [`decisions/0002-claro-como-padrao.md`](../decisions/0002-claro-como-padrao.md).
-- Implementação: [`frontend/src/app/layout.tsx`](../../frontend/src/app/layout.tsx),
-  `frontend/src/app/*/page.tsx` e, para o celular, `frontend/src/components/{NavMobile,PainelFiltros}.tsx`.
-- Gates: `npm run lint` e `npm run build` em `frontend/` (ver [`testing.md`](../testing.md)).
+- Implementação: [`codigo/frontend/src/app/layout.tsx`](../../../codigo/frontend/src/app/layout.tsx),
+  `codigo/frontend/src/app/*/page.tsx` e, para o celular, `codigo/frontend/src/components/{NavMobile,PainelFiltros}.tsx`.
+- Gates: `npm run lint` e `npm run build` em `codigo/frontend/` (ver [`testing.md`](../testing.md)).
 
 ## Relações
 

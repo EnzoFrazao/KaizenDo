@@ -1,21 +1,21 @@
 # GUARÁ · Especificação das telas
 
-São 4 telas, uma por membro da equipe. O protótipo é **só visual, com dados ilustrativos**. Todas já existem em [`frontend/`](../frontend/) com uma versão inicial, para ninguém começar do zero. Cada pessoa evolui a sua a partir do mockup (quando houver) e desta especificação.
+São 4 telas, uma por membro da equipe. O protótipo é **só visual, com dados ilustrativos**. Todas já existem em [`codigo/frontend/`](../../codigo/frontend/) com uma versão inicial, para ninguém começar do zero. Cada pessoa evolui a sua a partir do mockup (quando houver) e desta especificação.
 
 | Tela | Rota | Pasta | Responsável |
 |---|---|---|---|
-| Dashboard de monitoramento | `/dashboard` | [`frontend/src/app/dashboard/`](../frontend/src/app/dashboard/) | _a definir_ |
-| Mapa ao vivo | `/mapa` | [`frontend/src/app/mapa/`](../frontend/src/app/mapa/) | _a definir_ |
-| Histórico | `/historico` | [`frontend/src/app/historico/`](../frontend/src/app/historico/) | _a definir_ |
-| Cadastro (pessoa ↔ ESP32) | `/cadastro` | [`frontend/src/app/cadastro/`](../frontend/src/app/cadastro/) | Luick Vieira |
+| Dashboard de monitoramento | `/dashboard` | [`codigo/frontend/src/app/dashboard/`](../../codigo/frontend/src/app/dashboard/) | _a definir_ |
+| Mapa ao vivo | `/mapa` | [`codigo/frontend/src/app/mapa/`](../../codigo/frontend/src/app/mapa/) | _a definir_ |
+| Histórico | `/historico` | [`codigo/frontend/src/app/historico/`](../../codigo/frontend/src/app/historico/) | _a definir_ |
+| Cadastro (pessoa ↔ ESP32) | `/cadastro` | [`codigo/frontend/src/app/cadastro/`](../../codigo/frontend/src/app/cadastro/) | Luick Vieira |
 
-Cada pasta tem um `README.md` com o que a tela precisa ter, as funções de dados a usar e o que falta fazer. Como trabalhar em equipe está em [`frontend/README.md`](../frontend/README.md).
+Cada pasta tem um `README.md` com o que a tela precisa ter, as funções de dados a usar e o que falta fazer. Como trabalhar em equipe está em [`codigo/frontend/README.md`](../../codigo/frontend/README.md).
 
 ## Quem usa
 
 Quem coordena o turno no pátio (ou no CCO), olhando um monitor ou tablet. Precisa responder rápido: **onde está cada um, quem está livre perto de onde preciso, e tem alguém em risco?**
 
-**O operário não é usuário do sistema.** Ele entra como *dado*, pela tag ESP32 que carrega, e nunca abre nenhuma tela. Por isso as 4 telas são todas do ponto de vista de quem coordena, e **não existe tela de login** no protótipo: quem avalia abre a URL e o sistema já está funcionando. O papel de administrador aparece como um usuário fixo no rodapé da barra lateral (`adminAtual()`), sem senha e sem sessão. O porquê da decisão está no [README da tela de Cadastro](../frontend/src/app/cadastro/README.md#por-que-não-tem-login).
+**O operário não é usuário do sistema.** Ele entra como *dado*, pela tag ESP32 que carrega, e nunca abre nenhuma tela. Por isso as 4 telas são todas do ponto de vista de quem coordena, e **não existe tela de login** no protótipo: quem avalia abre a URL e o sistema já está funcionando. O papel de administrador aparece como um usuário fixo no rodapé da barra lateral (`adminAtual()`), sem senha e sem sessão. O porquê da decisão está no [README da tela de Cadastro](../../codigo/frontend/src/app/cadastro/README.md#por-que-não-tem-login).
 
 ## 1. Dashboard de monitoramento
 
@@ -88,11 +88,11 @@ Vincular cada pessoa ao ESP32 que ela carrega. Sem isso o sistema não sabe de q
 
 **Celular:** abaixo de 768 px (`md`) a barra lateral vira uma barra no topo com as telas numa linha que rola de lado; os filtros do mapa ficam em duas colunas, o mapa ocupa 65% da altura e as tabelas rolam de lado em vez de espremer as colunas.
 
-- Cores e rótulos ficam em [`frontend/src/lib/rotulos.ts`](../frontend/src/lib/rotulos.ts). **Não repita cores na página**, importe de lá.
+- Cores e rótulos ficam em [`codigo/frontend/src/lib/rotulos.ts`](../../codigo/frontend/src/lib/rotulos.ts). **Não repita cores na página**, importe de lá.
 - Campos e botões são `.campo`, `.botao` e `.botao-secundario`, definidos em `globals.css`.
 - Superfícies: fundo `zinc-950`, cartões `zinc-900`, bordas `zinc-800`, texto `zinc-100` e `zinc-400`.
-- Componentes comuns em `frontend/src/components/`: `PageHeader`, `Card`, `StatusBadge`, `Sidebar`, `AoVivo`.
-- A marca fica em `frontend/public/guara-marca.png` (só o pássaro, usada na barra lateral e no favicon) e `guara-logo-completo.png` (com o nome, para pitch).
+- Componentes comuns em `codigo/frontend/src/components/`: `PageHeader`, `Card`, `StatusBadge`, `Sidebar`, `AoVivo`.
+- A marca fica em `codigo/frontend/public/guara-marca.png` (só o pássaro, usada na barra lateral e no favicon) e `guara-logo-completo.png` (com o nome, para pitch).
 - Textos em português; horários no formato 24 h; ids técnicos (P001, ESP32-0A1B) em fonte monoespaçada.
 
 ## Sobre o mockup

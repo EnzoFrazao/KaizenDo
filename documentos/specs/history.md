@@ -1,5 +1,12 @@
 # Marcos do projeto
 
+## 2026-10-26 — repositório separado em `codigo/` e `documentos/`
+
+- `frontend/` foi para `codigo/frontend/` (o backend entra ao lado dele); `docs/`, `specs/`, `slide/`,
+  `video/` e o `.docx` de custos foram para `documentos/`. Na raiz ficam README, AGENTS.md,
+  `netlify.toml` e `.claude/`.
+- `netlify.toml` passou a `base = "codigo/frontend"` e `.claude/launch.json` a `--prefix codigo/frontend`.
+
 ## 2026-10-08 — tema claro com as cores da Vale
 
 - Botão de alternar tema na barra lateral e no topo do celular; escolha guardada no `localStorage`
@@ -15,7 +22,7 @@
 
 ## 2026-10-07 — site novo no Netlify e auditoria
 
-- Conta do Netlify trocada; `netlify.toml` movido para a raiz (`base = "frontend"`) e selo do
+- Conta do Netlify trocada; `netlify.toml` movido para a raiz (`base = "codigo/frontend"`) e selo do
   Netlify afastado das abas do celular.
 - Auditoria do site publicado: mapa e dashboard passaram a seguir o vínculo ESP32 do cadastro;
   alertas sobem no dashboard do celular; filtros em uma coluna; prévia de link (Open Graph) e

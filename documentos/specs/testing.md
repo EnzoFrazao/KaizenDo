@@ -4,7 +4,7 @@
 
 ## Gates
 
-Rodar dentro de `frontend/`:
+Rodar dentro de `codigo/frontend/`:
 
 | Comando | Evidência |
 |---|---|

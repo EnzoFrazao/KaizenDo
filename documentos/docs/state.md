@@ -1,7 +1,7 @@
 # Estado do projeto
 
 ## Visão atual
-Protótipo visual do GUARÁ (Next.js em `frontend/`), quatro telas com dados ilustrativos e widget
+Protótipo visual do GUARÁ (Next.js em `codigo/frontend/`), quatro telas com dados ilustrativos e widget
 VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
 
 ## Pendências
@@ -32,16 +32,18 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
 
 - Cobertura do mapa com raio calculado, e não os 3 km pedidos: a pera tem ~2 km, então 3 km
   cobriria tudo e a malha sumiria. Filtro SVG (`#guara-gosma`) em vez de círculos translúcidos,
-  para sobreposição não escurecer. Detalhe em `frontend/src/app/mapa/README.md`.
+  para sobreposição não escurecer. Detalhe em `codigo/frontend/src/app/mapa/README.md`.
 
 - Pontos sem sobreposição por afastamento na tela (`espalharNaTela`), e não por agrupamento: o
   coordenador precisa ver cada pessoa. O restaurante fica fora do cálculo do raio, senão o raio
   iria a ~1,4 km.
 - O status "aguardando programação" é o antigo "livre": é quem está disponível para acionar.
 
-## Última sessão (2026-10-25, Claude)
-- Registrada a decisão do grupo sobre o envio da posição: MQTT, hoje a cada 5 min, mínimo testado
-  1 s, recomendado 30 s (`docs/solucao.md` seção 4.2; nota em `docs/telas.md`). Só documentação.
+## Última sessão (2026-10-26, Claude)
+- Repositório separado em `codigo/frontend/` e `documentos/{docs,specs,slide,video}`; links, `netlify.toml`
+  (`base = "codigo/frontend"`) e `.claude/launch.json` ajustados. `npm run build` passou. Nada commitado.
+- Atenção: outros worktrees ainda editam `frontend/` (mobile-qrcode, atualizar-repositorio); ao
+  mesclar, o git deve tratar como rename. Conferir o deploy do Netlify após o merge.
 
 ## Histórico
 
@@ -70,7 +72,7 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
 
 - 2026-10-07 (Claude): auditoria do site publicado (`guaramonitora`). `posicoesAtuais()` passou a
   seguir o vínculo do cadastro, mais ajustes de celular, Open Graph e ícone do iPhone. O
-  `netlify.toml` foi movido para a raiz com `base = "frontend"` (detalhe em `specs/system.md`,
+  `netlify.toml` foi movido para a raiz com `base = "codigo/frontend"` (detalhe em `specs/system.md`,
   Deploy).
 - Armadilha: com o painel do navegador oculto, a página carrega com largura ~0 e o Leaflet enquadra
   no zoom 10. Para conferir, fixe o tamanho com `resize_window` antes de recarregar.

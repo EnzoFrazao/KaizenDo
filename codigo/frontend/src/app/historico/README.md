@@ -1,6 +1,6 @@
 # Tela: Histórico
 
-**Responsável:** _nome aqui_ · **Rota:** `/historico` · **Especificação:** [docs/telas.md](../../../../docs/telas.md#3-histórico)
+**Responsável:** _nome aqui_ · **Rota:** `/historico` · **Especificação:** [docs/telas.md](../../../../../documentos/docs/telas.md#3-histórico)
 
 ## Arquivos desta tela (só você mexe)
 

@@ -6,7 +6,7 @@ verificação: 2026-10-07.
 ## Topologia dos trechos X diverge do diagrama oficial do pátio
 
 Conferido contra o diagrama de circuitos do pátio (VLI/FTL, versão de 22/11/2024) e o satélite do
-Google, em 2026-10-07. As coordenadas de `frontend/src/lib/dados-mock.ts` **não foram alteradas**:
+Google, em 2026-10-07. As coordenadas de `codigo/frontend/src/lib/dados-mock.ts` **não foram alteradas**:
 o README do mapa exige pontos levantados, não estimativa.
 
 - Batem: `VIRADORES` cai no prédio operacional dos viradores; `OFICINA` (PIAL) cai no "Posto de

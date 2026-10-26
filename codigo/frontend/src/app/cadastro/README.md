@@ -1,6 +1,6 @@
 # Tela: Cadastro (pessoa ↔ ESP32)
 
-**Responsável:** Luick Vieira · **Rota:** `/cadastro` · **Especificação:** [docs/telas.md](../../../../docs/telas.md#4-cadastro)
+**Responsável:** Luick Vieira · **Rota:** `/cadastro` · **Especificação:** [docs/telas.md](../../../../../documentos/docs/telas.md#4-cadastro)
 
 ## Arquivos desta tela (só você mexe)
 
@@ -73,7 +73,7 @@ Pessoas e dispositivos são guardados no **`localStorage`** do navegador (chave 
 
 ## A fazer
 
-- [ ] Ajustar ao mockup, quando houver (`docs/mockups/cadastro.png`)
+- [ ] Ajustar ao mockup, quando houver (`documentos/docs/mockups/cadastro.png`)
 - [ ] Ler o id do ESP32 por QR code na etiqueta (evolução da especificação)
 - [ ] Histórico de trocas de dispositivo
 - [ ] Trocar a exclusão por inativação (o campo `ativo` existe em `Pessoa` e ainda não é usado). Hoje `removerPessoa` apaga de vez; num sistema real isso perderia o registro do turno, então o certo é inativar e esconder das telas operacionais

@@ -4,7 +4,7 @@
     {
       "name": "guara-frontend",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev", "--prefix", "frontend"],
+      "runtimeArgs": ["run", "dev", "--prefix", "codigo/frontend"],
       "port": 3000,
       "autoPort": true
     }

@@ -18,29 +18,32 @@ Cada pessoa leva um **ESP32** (GPS + rádio) e um **Raspberry Pi** no pátio rec
 
 | Documento | Conteúdo |
 |---|---|
-| [docs/problema.md](docs/problema.md) | Contexto completo: terminal, operação, ficha oficial, descobertas da visita de campo, glossário, perguntas abertas e hipóteses |
-| [docs/solucao.md](docs/solucao.md) | Solução explicada passo a passo, opções, protótipo, pitch e o módulo de segurança |
-| [docs/telas.md](docs/telas.md) | Especificação das 4 telas e divisão por membro da equipe |
-| [docs/slides/](docs/slides/) | Fotos dos slides da apresentação e do mapa oficial do terminal |
+| [documentos/docs/problema.md](documentos/docs/problema.md) | Contexto completo: terminal, operação, ficha oficial, descobertas da visita de campo, glossário, perguntas abertas e hipóteses |
+| [documentos/docs/solucao.md](documentos/docs/solucao.md) | Solução explicada passo a passo, opções, protótipo, pitch e o módulo de segurança |
+| [documentos/docs/telas.md](documentos/docs/telas.md) | Especificação das 4 telas e divisão por membro da equipe |
+| [documentos/docs/slides/](documentos/docs/slides/) | Fotos dos slides da apresentação e do mapa oficial do terminal |
 
 ## Estrutura do repositório
 
-O protótipo é **só visual, com dados ilustrativos**, em tema claro e escuro — o claro é o padrão de quem abre o link publicado ([ADR 0002](specs/decisions/0002-claro-como-padrao.md)). Não há conexão com ESP32 nem com Raspberry, e não há login: o operário não acessa o sistema, só é identificado pela tag.
+O protótipo é **só visual, com dados ilustrativos**, em tema claro e escuro — o claro é o padrão de quem abre o link publicado ([ADR 0002](documentos/specs/decisions/0002-claro-como-padrao.md)). Não há conexão com ESP32 nem com Raspberry, e não há login: o operário não acessa o sistema, só é identificado pela tag.
 
 ```
-docs/                    problema, solução, especificação das telas, slides
-specs/                   memória técnica: arquitetura implementada, testes e decisões (ADRs)
-frontend/                telas (Next.js), uma pasta por membro da equipe → veja frontend/README.md
-  src/app/dashboard/       Dashboard de monitoramento
-  src/app/mapa/            Mapa ao vivo
-  src/app/historico/       Histórico com filtros
-  src/app/cadastro/        Cadastro pessoa ↔ ESP32
+documentos/              tudo que não é código
+  docs/                    problema, solução, especificação das telas, slides
+  specs/                   memória técnica: arquitetura implementada, testes e decisões (ADRs)
+  slide/ video/            pitch e material de divulgação (não versionados)
+codigo/                  tudo que roda (hoje só o frontend; o backend entra aqui)
+  frontend/                telas (Next.js), uma pasta por membro da equipe → veja codigo/frontend/README.md
+    src/app/dashboard/       Dashboard de monitoramento
+    src/app/mapa/            Mapa ao vivo
+    src/app/historico/       Histórico com filtros
+    src/app/cadastro/        Cadastro pessoa ↔ ESP32
 ```
 
 ## Rodar as telas
 
 ```bash
-cd frontend
+cd codigo/frontend
 npm install
 npm run dev
 ```

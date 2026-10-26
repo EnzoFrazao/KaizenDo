@@ -1,6 +1,6 @@
 # Tela: Mapa ao vivo
 
-**Responsável:** _nome aqui_ · **Rota:** `/mapa` · **Especificação:** [docs/telas.md](../../../../docs/telas.md#2-mapa-ao-vivo)
+**Responsável:** _nome aqui_ · **Rota:** `/mapa` · **Especificação:** [docs/telas.md](../../../../../documentos/docs/telas.md#2-mapa-ao-vivo)
 
 ## Arquivos desta tela (só você mexe)
 
@@ -74,7 +74,7 @@ Mapa OpenStreetMap, círculos dos trechos (viradores em vermelho) e do restauran
 - [ ] Ajustar ao mockup
 - [ ] Destacar pessoas com alerta ativo (piscar ou ícone)
 - [ ] Rastro dos últimos minutos ao clicar numa pessoa (usar `historico({ nome, dia })`)
-- [ ] Imagem do mapa oficial do TFPM como camada (`docs/slides/09-mapa-tfpm-a.png`)
+- [ ] Imagem do mapa oficial do TFPM como camada (`documentos/docs/slides/09-mapa-tfpm-a.png`)
 - [ ] Polígonos de verdade dos trechos, no lugar dos círculos
 
 ## Coordenadas
@@ -87,6 +87,6 @@ O **restaurante (Porto Vale)** fica fora da pera, em `-2.5569236, -44.3600747` (
 
 Continua sendo aproximação — o polígono de cada trecho só sai com a planta oficial da Vale.
 
-**Divergências com o diagrama oficial (conferido em 2026-10-07, não corrigido de propósito):** ver [`specs/open-decisions.md`](../../../../specs/open-decisions.md). Resumo: no diagrama X01/X02 ficam dentro do Pátio de Recepção e X06/X07 dentro da Formação; aqui são trechos separados e distantes, e falta o X04.
+**Divergências com o diagrama oficial (conferido em 2026-10-07, não corrigido de propósito):** ver [`specs/open-decisions.md`](../../../../../documentos/specs/open-decisions.md). Resumo: no diagrama X01/X02 ficam dentro do Pátio de Recepção e X06/X07 dentro da Formação; aqui são trechos separados e distantes, e falta o X04.
 
 > Houve duas versões erradas antes desta: coordenadas inventadas (as pessoas apareciam **no mar**) e depois um corredor tirado do OpenStreetMap, longo demais e deslocado. Se precisar mexer, parta dos pontos levantados, não de estimativa.

@@ -6,19 +6,19 @@
 ## Finalidade e unidade executável
 
 Protótipo web **só visual** do GUARÁ (posicionamento de maquinistas e manobristas no TFPM). A única
-unidade executável é o app Next.js em `frontend/`.
+unidade executável é o app Next.js em `codigo/frontend/`.
 
 ## Stack e entrypoints
 
 - Next.js 16 (App Router, Turbopack, `cacheComponents`), React 19, TypeScript, Tailwind 4, Leaflet;
-- `frontend/src/app/layout.tsx`: layout raiz (viewport, barra lateral, navegação de celular,
+- `codigo/frontend/src/app/layout.tsx`: layout raiz (viewport, barra lateral, navegação de celular,
   script que aplica o tema antes da primeira pintura, widget VLibras);
-- `frontend/src/components/BotaoTema.tsx`: alternador de tema;
-- `frontend/src/components/navegacao.ts`: lista única das telas, lida pela `Sidebar` (≥ 1024 px) e
+- `codigo/frontend/src/components/BotaoTema.tsx`: alternador de tema;
+- `codigo/frontend/src/components/navegacao.ts`: lista única das telas, lida pela `Sidebar` (≥ 1024 px) e
   por `TopoMobile`/`AbasMobile` em `NavMobile.tsx` (< 1024 px);
-- `frontend/src/components/PainelFiltros.tsx`: filtros em linha no desktop e recolhíveis no celular;
-- `frontend/src/app/{dashboard,mapa,historico,cadastro}/page.tsx`: as quatro telas;
-- `frontend/src/lib/dados.ts`: única porta de dados das telas (hoje lê `dados-mock.ts`).
+- `codigo/frontend/src/components/PainelFiltros.tsx`: filtros em linha no desktop e recolhíveis no celular;
+- `codigo/frontend/src/app/{dashboard,mapa,historico,cadastro}/page.tsx`: as quatro telas;
+- `codigo/frontend/src/lib/dados.ts`: única porta de dados das telas (hoje lê `dados-mock.ts`).
 
 ## Temas
 
@@ -65,7 +65,7 @@ de `@/lib/rotulos`. Não há backend, login nem conexão com ESP32 ou Raspberry 
 
 - Netlify, site `guaramonitora` (`https://guaramonitora.netlify.app`), a partir da `main`. O site
   antigo (`guaramonitoramento`) ficou na conta anterior e não é mais o oficial.
-- Toda a configuração está no `netlify.toml` da raiz: `base = "frontend"`, `npm run build`, publish
+- Toda a configuração está no `netlify.toml` da raiz: `base = "codigo/frontend"`, `npm run build`, publish
   `.next`, Node 22 e plugin `@netlify/plugin-nextjs`. O painel não precisa de base directory.
 - O arquivo fica na raiz porque o Netlify procura o `netlify.toml` na base directory do painel e,
   sem ela, na raiz. Quando ele morava em `frontend/`, o site novo (sem base no painel) buildou na
