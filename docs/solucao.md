@@ -1,6 +1,6 @@
 # KaizenDO · A solução
 
-> Proposta de solução para o desafio **Posicionamento Operacional Inteligente**. **Atualizada em 05/10 com a visita de campo:** o rádio de voz não tem GPS, então a captura passou a usar o sistema de alerta de aproximação de trens, que já existe (ver seção 1.4, passo 1, e a seção 4). **Atualizada em 07/10 com a decisão de hardware:** cada pessoa leva um **ESP32** (GPS + rádio) como transmissor e o **Raspberry Pi** é o receptor, que pega latitude, longitude e velocidade (ver a seção 4.1). O contexto, os dados e as perguntas abertas estão em [problema.md](problema.md). Esta proposta parte das hipóteses H1 a H6 daquele documento. Quando uma pergunta for respondida, confira a seção 7 deste arquivo para ver o que muda.
+> Proposta de solução para o desafio **Posicionamento Operacional Inteligente**. **Atualizada em 05/10 com a visita de campo:** o rádio de voz não tem GPS, então a captura passou a usar o sistema de alerta de aproximação de trens, que já existe (ver seção 1.4, passo 1, e a seção 4). **Atualizada em 07/10 com a decisão de hardware:** cada pessoa leva um **ESP32** (GPS + rádio) como transmissor e o **Raspberry Pi** é o receptor, que pega latitude, longitude e velocidade (ver a seção 4.1). **Atualizada em 25/10:** a posição é enviada por **MQTT**, e a frequência recomendada é de **30 em 30 segundos** (ver a seção 4.2). O contexto, os dados e as perguntas abertas estão em [problema.md](problema.md). Esta proposta parte das hipóteses H1 a H6 daquele documento. Quando uma pergunta for respondida, confira a seção 7 deste arquivo para ver o que muda.
 
 ## 1. A solução explicada
 
@@ -142,9 +142,17 @@ Isso responde aos quatro elos do slide 08 e à frase do slide 06: *"planejar o r
 ### 4.1 Decisão de hardware (07/10)
 
 O time fechou a alternativa do **rastreador de baixo custo**:
-- **Transmissor:** um **ESP32** com GPS e rádio LoRa por pessoa, que envia latitude, longitude, velocidade e bateria a cada poucos segundos.
+- **Transmissor:** um **ESP32** com GPS e rádio LoRa por pessoa, que envia latitude, longitude, velocidade e bateria periodicamente (frequência na seção 4.2).
 - **Receptor:** um **Raspberry Pi** no pátio, que escuta a frequência, decodifica os pacotes, envia para o backend e aciona o relé de segurança da seção 8.
 - O vínculo entre pessoa e ESP32 é feito na tela de Cadastro.
+
+### 4.2 Envio da posição (25/10)
+
+O time fechou como a posição chega ao sistema:
+- **Protocolo:** a posição é publicada por **MQTT**.
+- **Hoje:** o envio acontece a cada **5 minutos**.
+- **Dá para reduzir:** o menor intervalo já testado foi de **1 segundo**.
+- **Recomendado:** **30 em 30 segundos**. Para a Vale isso basta: a pé (~5 km/h) uma pessoa anda uns 40 m em 30 s, bem menos que um trecho de 1,5 km, e o intervalo maior economiza bateria e rádio.
 
 As telas do protótipo (só visuais, com dados ilustrativos) estão em [telas.md](telas.md).
 
@@ -174,6 +182,8 @@ As telas do protótipo (só visuais, com dados ilustrativos) estão em [telas.md
 
 **Stack sugerida:** Python (simulador e motor) com FastAPI, PostgreSQL com PostGIS, painel web com mapa (Leaflet ou MapLibre). A ingestão pode reaproveitar o receptor Raspberry Pi que já existe.
 
+O código do protótipo está num **repositório público no GitHub**.
+
 ## 6. Para o pitch
 
 - Abrir com a cadeia do slide 08 e mostrar cada elo sendo resolvido.
@@ -188,7 +198,7 @@ As telas do protótipo (só visuais, com dados ilustrativos) estão em [telas.md
 | Se descobrirmos que… | Pergunta | Impacto na solução |
 |---|---|---|
 | ✅ **Aconteceu (05/10):** o rádio de voz **não tem GPS** | P1.2 | A captura passou a usar o sistema de alerta de aproximação (GPS + rádio): locomotivas pelo receptor que já existe, manobristas por dispositivo portátil |
-| A posição só é enviada **quando o operador fala** | P1.3 | Não há tempo real contínuo; é preciso estimar a posição entre um envio e outro, ou pedir configuração de envio periódico |
+| ~~A posição só é enviada **quando o operador fala**~~ Não é: o ESP32 envia periodicamente por MQTT | P1.3 | Envio de 30 em 30 s (seção 4.2); entre um envio e outro vale a última posição |
 | **Existe histórico** de posições | P1.4 | Os tempos de deslocamento passam a ser medidos, e não estimados. O pitch fica muito mais forte |
 | A precisão é **boa o bastante para separar linhas** | P1.5 | Dá para localizar por linha, não só por pátio |
 | **Rádios são compartilhados** | P1.6 | É preciso um passo de "login" do operador no rádio a cada turno |

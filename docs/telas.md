@@ -45,7 +45,7 @@ Mapa do pátio com cada pessoa como um ponto colorido pelo status.
 - **Ao clicar:** nome, função, turno, status, trecho, velocidade, latitude e longitude, dispositivo e bateria. O popup continua aberto nas atualizações de 5 s.
 - **Trechos:** desenhados no mapa; área de risco (viradores) em vermelho. O restaurante (Porto Vale, fora da pera) também aparece, como local de apoio.
 - **Legenda** de cores e contador "N pessoas no mapa".
-- **Atualização:** a cada 5 s.
+- **Atualização:** a tela busca dados a cada 5 s. A posição em si chega por MQTT na frequência do dispositivo: hoje 5 min, recomendado 30 s (ver [solucao.md](solucao.md), seção 4.2).
 - **Enquadramento:** o mapa se ajusta sozinho ao pátio (`fitBounds` nos trechos).
 - **Coordenadas:** os centros dos trechos vêm de pontos levantados pela equipe (viradores, PIAL, centro da pera e os vértices do anel). Os tiles ficam coloridos; o resto da interface é escuro.
 - Evolução: rastro dos últimos minutos ao clicar numa pessoa; imagem do mapa oficial do TFPM como camada; polígonos reais no lugar dos círculos.

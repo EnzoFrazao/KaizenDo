@@ -39,7 +39,13 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
   iria a ~1,4 km.
 - O status "aguardando programação" é o antigo "livre": é quem está disponível para acionar.
 
-## Última sessão (2026-10-08, Claude)
+## Última sessão (2026-10-25, Claude)
+- Registrada a decisão do grupo sobre o envio da posição: MQTT, hoje a cada 5 min, mínimo testado
+  1 s, recomendado 30 s (`docs/solucao.md` seção 4.2; nota em `docs/telas.md`). Só documentação.
+
+## Histórico
+
+### Sessão 2026-10-08 (Claude)
 - Partiu de `61f73f0` (tema claro, feito por loky070), que já era a `main` remota. Tema claro
   virou o padrão para todos (ADR 0002) e o botão do topo do celular passou a ter 44×44 px, sem
   borda (opção A de um mockup com três opções). Lint, build e conferência no navegador ok a 375 e a
@@ -62,7 +68,6 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
   `color-scheme: light`. Corrigido com `only light` no claro (branch
   `claude/tema-claro-primeira-visita`; ver `specs/system.md`, Temas). Falta conferir no celular.
 
-## Histórico
 - 2026-10-07 (Claude): auditoria do site publicado (`guaramonitora`). `posicoesAtuais()` passou a
   seguir o vínculo do cadastro, mais ajustes de celular, Open Graph e ícone do iPhone. O
   `netlify.toml` foi movido para a raiz com `base = "frontend"` (detalhe em `specs/system.md`,
