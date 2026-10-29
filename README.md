@@ -2,14 +2,14 @@
 
 ![Next.js 16](https://img.shields.io/badge/Next.js-16-black) ![React 19](https://img.shields.io/badge/React-19-61dafb) ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6) ![Tailwind 4](https://img.shields.io/badge/Tailwind-4-38bdf8) ![Estado](https://img.shields.io/badge/estado-protótipo%20visual-orange)
 
-> **EN:** GUARÁ is a 5-day prototype for Vale's KaizenDO innovation challenge at the Ponta da Madeira rail terminal (São Luís, Brazil). About 50 locomotive drivers and ground crew work across 13 km of yard and nobody knows exactly where each one is. Each person carries an ESP32 with GPS and a radio, a Raspberry Pi receives the positions, and a web panel shows who is where, who can reach a work front fastest and a history for the shift. **What is built here is the web panel, with illustrative data**; the hardware, the MQTT link and the safety relay are the proposed design. I led the team. The prototype was presented at the Pitch Day.
+> **EN:** GUARÁ is a 5-day prototype for Vale's KaizenDO innovation challenge at the Ponta da Madeira rail terminal (São Luís, Brazil). About 50 locomotive drivers and ground crew work across 13 km of yard and nobody knows exactly where each one is. Each person carries an ESP32 with GPS and a radio, a Raspberry Pi receives the positions, and a web panel shows who is where, who can reach a work front fastest and a history for the shift. **What is built here is the web panel, with illustrative data**; the hardware, the MQTT link and the safety relay are the proposed design. I led the team.
 
 Solução para o desafio **Posicionamento Operacional Inteligente**, do programa **KaizenDO** da Vale, no Terminal Ferroviário de Ponta da Madeira (TFPM), em São Luís/MA.
 
 | | |
 |---|---|
 | **Meu papel** | Líder da equipe: conduzi a concepção da solução e o desenvolvimento do protótipo, durante uma imersão de 5 dias na Estrada de Ferro Carajás, com visita de campo ao terminal |
-| **Resultado** | Solução apresentada no **Pitch Day** do programa, com protótipo publicado e vídeo de demonstração |
+| **Resultado** | Protótipo publicado e vídeo de demonstração |
 | **Estado** | Protótipo **visual**, com dados ilustrativos. Não há backend, nem conexão com ESP32 ou Raspberry |
 | **Feito com** | Next.js, React, TypeScript, Tailwind e Leaflet. Desenvolvido com apoio de agentes de IA (Claude Code), guiado por specs e ADRs em [`documentos/specs/`](documentos/specs/README.md) |
 
