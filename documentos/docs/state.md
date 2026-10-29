@@ -39,8 +39,24 @@ VLibras em todas. Memória técnica em [`specs/`](../specs/README.md).
   iria a ~1,4 km.
 - O status "aguardando programação" é o antigo "livre": é quem está disponível para acionar.
 
-## Última sessão (2026-10-26, Claude)
-- Repositório separado em `codigo/frontend/` e `documentos/{docs,specs,slide,video}`; links, `netlify.toml`
+## Última sessão (2026-10-29, Claude)
+- `documentos/` sem nomes parecidos: `slide/`→`apresentacao/`, `video/`→`divulgacao/`,
+  `docs/slides/`→`docs/fotos-desafio/`; o `.docx` de custos foi para `entregas/`. Links do README,
+  `problema.md` e do README do mapa atualizados. Nada commitado.
+- Respostas à banca (MQTT, stack, arquitetura, broker) em `documentos/entregas/respostas-banca-guara.docx`.
+  Não renderizei o Word (sem LibreOffice): só validei ZIP/XML; abrir e conferir o layout.
+- Arquitetura real do hardware (Heltec V4, mesh LoRa, gateway LoRa) e tópicos `guara/*` registrados em
+  `documentos/docs/solucao.md` seção 4.3 e no `.docx` das respostas (arquivo ainda não versionado).
+- Decidido com Emerson: o teste usa `guara/lat`... como estão, no broker público do HiveMQ
+  (`broker.hivemq.com:1883`, aberto), com a posição real dele, só para ver a informação chegar.
+  Código por dispositivo (`ESP32-XXXX/…`) é plano para vários dispositivos, formato em aberto.
+  Ligar o site ao MQTT (via `wss`) fica para depois: sem código ainda.
+- Pendências não urgentes: ainda dizem "Raspberry Pi como receptor" as seções 1.4, 4.1, 5, 8 e a stack
+  de `solucao.md`; as telas mostram bateria, que o hardware não publica; relé de segurança sem
+  controlador definido.
+
+## Sessão anterior (2026-10-26, Claude)
+- Repositório separado em `codigo/frontend/` e `documentos/`; links, `netlify.toml`
   (`base = "codigo/frontend"`) e `.claude/launch.json` ajustados. `npm run build` passou. Nada commitado.
 - Atenção: outros worktrees ainda editam `frontend/` (mobile-qrcode, atualizar-repositorio); ao
   mesclar, o git deve tratar como rename. Conferir o deploy do Netlify após o merge.

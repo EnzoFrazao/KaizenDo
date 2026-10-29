@@ -145,6 +145,7 @@ O time fechou a alternativa do **rastreador de baixo custo**:
 - **Transmissor:** um **ESP32** com GPS e rádio LoRa por pessoa, que envia latitude, longitude, velocidade e bateria periodicamente (frequência na seção 4.2).
 - **Receptor:** um **Raspberry Pi** no pátio, que escuta a frequência, decodifica os pacotes, envia para o backend e aciona o relé de segurança da seção 8.
 - O vínculo entre pessoa e ESP32 é feito na tela de Cadastro.
+- **Substituído em 29/10 pelo hardware real (seção 4.3):** placa Heltec V4 em rede mesh LoRa e gateway LoRa no lugar do Raspberry Pi como receptor.
 
 ### 4.2 Envio da posição (25/10)
 
@@ -153,6 +154,23 @@ O time fechou como a posição chega ao sistema:
 - **Hoje:** o envio acontece a cada **5 minutos**.
 - **Dá para reduzir:** o menor intervalo já testado foi de **1 segundo**.
 - **Recomendado:** **30 em 30 segundos**. Para a Vale isso basta: a pé (~5 km/h) uma pessoa anda uns 40 m em 30 s, bem menos que um trecho de 1,5 km, e o intervalo maior economiza bateria e rádio.
+
+### 4.3 Arquitetura de comunicação do hardware (29/10)
+
+Quem cuida do hardware (Emerson Ribeiro) enviou a arquitetura real e a lista de tópicos:
+- **Dispositivo:** Heltec V4 (ESP32-S3 + LoRa SX1262 + GPS u-blox M10 + IMU de queda/movimento + bateria Li-ion/LiPo). Também repete o sinal dos vizinhos.
+- **Rede mesh LoRa:** os dispositivos se conectam entre si, formam clusters e ampliam a cobertura.
+- **Gateway LoRa:** Heltec V4 ou ESP32-S3 que recebe a mesh e envia à internet por MQTT/HTTPS. Substitui o Raspberry Pi como receptor.
+- **Servidor em nuvem** (armazena, processa, expõe a API) e **plataforma web** (esta).
+- **Tópicos MQTT (lista original):** `guara/lat`, `guara/lon`, `guara/sats` (satélites), `guara/hdop`, `guara/vel` (km/h), `guara/alt` (m), `guara/hora` (UTC, HH:MM:SS) e `guara/status` (`online`/`offline`, via Last Will). Nessa lista **não há tópico de bateria nem identificador do dispositivo**.
+- **Teste atual (resposta do Emerson, 29/10):** **mantém os tópicos como estão, `guara/lat` etc.**, porque é o nome que já está no dispositivo. O teste serve só para ver se a informação chega, usando a posição real dele. Nada de produção.
+- **Identificação por dispositivo (plano, para vários dispositivos):** o código do dispositivo, o mesmo id do Cadastro (`ESP32-XXXX`), entraria **no lugar de `guara`** (`ESP32-0A1B/lat` etc.), e o site ligaria o código à pessoa vinculada. Sem isso, com mais de um dispositivo o site não sabe de quem é cada posição. O formato exato não foi fechado.
+- **Broker nos testes:** o público do HiveMQ, `broker.hivemq.com`, porta `1883` (host e porta passados pelo Emerson). **É aberto:** sem senha, sem TLS e sem ACL, então qualquer pessoa na internet pode ler e publicar nos mesmos tópicos, e `guara/…` pode colidir com os de terceiros. Aceito só para teste de recebimento. A segurança prometida à banca (usuário e senha por dispositivo, TLS 8883, ACL, QoS 1) vale para o broker próprio, ainda não implementado.
+- **Acesso do site (ainda sem código):** a porta 1883 não funciona no navegador. A ideia é usar WebSocket; o HiveMQ público oferece `ws` na 8000 e `wss` na 8884 (de memória, conferir na documentação do HiveMQ antes de implementar). Com o site em HTTPS só `wss` funciona.
+- **Segurança:** o time considera mais seguro um código gerado por dispositivo do que o tópico geral `guara/#`, e o protocolo pode mudar para reforçar a segurança.
+- **Em aberto:** o relé de segurança (seção 8) estava no Raspberry Pi; falta definir qual controlador o assume. Se for o servidor na nuvem, a falha segura (relé aberto sem sinal) depende de internet. Falta também saber se o dispositivo envia bateria: não há tópico para ela, e as telas mostram.
+
+As respostas enviadas à banca foram atualizadas com isso (`documentos/entregas/respostas-banca-guara.docx`).
 
 As telas do protótipo (só visuais, com dados ilustrativos) estão em [telas.md](telas.md).
 
