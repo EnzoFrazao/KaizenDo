@@ -4,7 +4,7 @@ Solução para o desafio **Posicionamento Operacional Inteligente**, do programa
 
 **Protótipo no ar:** https://guaramonitora.netlify.app
 
-https://github.com/user-attachments/assets/5d6ed487-bc94-40b0-8565-b04e0280e3df
+https://github.com/user-attachments/assets/99c044fc-238a-470b-b75a-42dcc65f4911
 
 ## O problema em uma frase
 
